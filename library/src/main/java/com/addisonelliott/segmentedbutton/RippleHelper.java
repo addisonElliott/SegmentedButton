@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package co.ceryle.segmentedbutton;
+package com.addisonelliott.segmentedbutton;
 
 import android.annotation.TargetApi;
 import android.content.Context;

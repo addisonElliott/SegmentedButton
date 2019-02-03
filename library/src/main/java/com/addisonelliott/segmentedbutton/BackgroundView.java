@@ -1,4 +1,4 @@
-package co.ceryle.segmentedbutton;
+package com.addisonelliott.segmentedbutton;
 
 import android.content.Context;
 import androidx.annotation.Nullable;

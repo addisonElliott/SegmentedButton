@@ -1,4 +1,4 @@
-package co.ceryle.segmentedbutton.sample;
+package com.addisonelliott.segmentedbutton.sample;
 
 import android.graphics.Color;
 import android.os.Handler;
@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import co.ceryle.segmentedbutton.SegmentedButton;
-import co.ceryle.segmentedbutton.SegmentedButtonGroup;
-import co.ceryle.segmentedbutton.sample.drawable.BadgeDrawable;
+import com.addisonelliott.segmentedbutton.SegmentedButton;
+import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
+import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
 
 public class MainActivity extends AppCompatActivity {
 

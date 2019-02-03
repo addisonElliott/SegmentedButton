@@ -1,4 +1,4 @@
-package co.ceryle.segmentedbutton.sample.drawable;
+package com.addisonelliott.segmentedbutton.sample.drawable;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;

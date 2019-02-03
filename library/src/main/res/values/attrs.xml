@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SegmentedButton">
-
+        <!--TODO Look into renaming these to get rid of sb_ prefix -->
+        <!-- Need to research whether it is normal to do that, customary -->
         <attr name="sb_rippleColor" format="color"/>
 
         <attr name="sb_drawable" format="reference"/>
