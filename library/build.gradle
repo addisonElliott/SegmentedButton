@@ -23,7 +23,6 @@ android {
 
     // Configure only for each module that uses Java 8 language features (either in its source code or through
     // dependencies).
-    // TODO Not sure I want to be supporting Java 8 here, might be worthwhile to keep Java 7 compatibility for now
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
