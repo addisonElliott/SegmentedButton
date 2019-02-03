@@ -181,6 +181,7 @@ This project is still under a major rehaul. The following is a list of items lef
     * [ ] Include better previews with just simple segmented controls
     * [ ] Have a description for each preview option to see what this contains
     * [ ] Contain a note that the code for these previews can be found in the examples
+* [ ] Consider switching to Maven from JitPack in future
 
 ## License
 

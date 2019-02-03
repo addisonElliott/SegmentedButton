@@ -22,6 +22,14 @@ allprojects {
     }
 }
 
+ext {
+    minSdkVersion = 16
+    compileSdkVersion = 28
+    buildToolsVersion = '28.0.3'
+    // TODO not using this
+    androidXLibraryVersion = '1.0.3'
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
