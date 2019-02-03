@@ -2,11 +2,14 @@
 
 # SegmentedButton
 
-![poster](https://cloud.githubusercontent.com/assets/20969019/19036424/75a0b61c-8978-11e6-873d-e316f77fd740.png)
-
-
-Segmented Button is a IOS-like "Segmented Control" with animation.<br/>
+Segmented Button is an iOS-like "Segmented Control" with animation.<br/>
 For more Android-like segmented control, check [Radio Real Button](https://github.com/ceryle/RadioRealButton).
+
+## Forked Repo!
+
+This project is forked from [ceryle/SegmentedButton](https://github.com/ceryle/SegmentedButton). The parent repository
+has been stagnant since **October 17th, 2017**. This repository contains bug fixes and features that the parent
+repository does not have.
 
 ## Preview
 ![1](https://cloud.githubusercontent.com/assets/20969019/21565956/9fec9300-cea6-11e6-981f-c5c2a70a2e57.gif)
@@ -161,6 +164,23 @@ segmentedButtonGroup.setOnClickedButtonPosition(new SegmentedButtonGroup.OnClick
 });
 segmentedButtonGroup.setPosition(2, 0);
 ```
+
+## Todo List
+
+This project is still under a major rehaul. The following is a list of items left to be done.
+
+* [ ] Update onMeasure calculations for height to work in scroll views
+* [ ] Fix issue with multiple buttons selected if changing orientation
+* [ ] Redo formatting for the entire library to better suit what I'm use to
+* [ ] Upload to JitPack
+* [ ] Include note in README that repository is not original work but updated
+* [ ] Include PRs and fix issues from upstream repo
+* [ ] Advertise branch via issues and PRs in upstream repo
+* [ ] Update README to include better graphics and docs and real JitPack version
+* [ ] Major rehaul to README
+    * [ ] Include better previews with just simple segmented controls
+    * [ ] Have a description for each preview option to see what this contains
+    * [ ] Contain a note that the code for these previews can be found in the examples
 
 ## License
 
