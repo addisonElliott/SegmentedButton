@@ -54,18 +54,65 @@ import java.util.ArrayList;
 
 public class SegmentedButtonGroup extends LinearLayout {
 
+    // region Variables & Constants
+    private static final String TAG = "SegmentedButtonGroup";
+
+    public final static int FastOutSlowInInterpolator = 0;
+    public final static int BounceInterpolator = 1;
+    public final static int LinearInterpolator = 2;
+    public final static int DecelerateInterpolator = 3;
+    public final static int CycleInterpolator = 4;
+    public final static int AnticipateInterpolator = 5;
+    public final static int AccelerateDecelerateInterpolator = 6;
+    public final static int AccelerateInterpolator = 7;
+    public final static int AnticipateOvershootInterpolator = 8;
+    public final static int FastOutLinearInInterpolator = 9;
+    public final static int LinearOutSlowInInterpolator = 10;
+    public final static int OvershootInterpolator = 11;
+
+    private LinearLayout mainGroup, rippleContainer, dividerContainer;
+
+    private RectF rectF;
+    private Paint paint;
+
+    private boolean draggable = false;
+    private int numberOfButtons = 0;
+    private ArrayList<SegmentedButton> buttons;
+    private ArrayList<BackgroundView> ripples = new ArrayList<>();
+
+    private int selectorColor, animateSelector, animateSelectorDuration, position, backgroundColor, dividerColor,
+            radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderSize, borderColor;
+    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
+
+    private Drawable backgroundDrawable, selectorBackgroundDrawable, dividerBackgroundDrawable;
+
+    private Interpolator interpolatorSelector;
+
+    private int toggledPosition = 0;
+    private float toggledPositionOffset = 0;
+    private int lastPosition = 0;
+    private float lastPositionOffset = 0;
+
+    private OnPositionChangedListener onPositionChangedListener;
+    private OnClickedButtonListener onClickedButtonListener;
+
+    // endregion
+
     public SegmentedButtonGroup(Context context) {
         super(context);
+
         init(null);
     }
 
     public SegmentedButtonGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
+
         init(attrs);
     }
 
     public SegmentedButtonGroup(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
         init(attrs);
     }
 
@@ -73,10 +120,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     public SegmentedButtonGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
-
-    private LinearLayout mainGroup, rippleContainer, dividerContainer;
-
-    private boolean draggable = false;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -99,8 +142,9 @@ public class SegmentedButtonGroup extends LinearLayout {
                 break;
             case MotionEvent.ACTION_MOVE:
 
-                if (!draggable)
+                if (!draggable) {
                     break;
+                }
 
                 selectorWidth = (float) getWidth() / numberOfButtons / 2f;
 
@@ -128,6 +172,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private class ButtonOutlineProvider extends ViewOutlineProvider {
+
         @Override
         public void getOutline(View view, Outline outline) {
             outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
@@ -146,7 +191,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         buttons = new ArrayList<>();
 
         FrameLayout container = new FrameLayout(getContext());
-        container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.setLayoutParams(
+                new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         addView(container);
 
         mainGroup = new LinearLayout(getContext());
@@ -155,7 +201,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         container.addView(mainGroup);
 
         rippleContainer = new LinearLayout(getContext());
-        rippleContainer.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        rippleContainer
+                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         rippleContainer.setOrientation(LinearLayout.HORIZONTAL);
         rippleContainer.setClickable(false);
         rippleContainer.setFocusable(false);
@@ -163,7 +210,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         container.addView(rippleContainer);
 
         dividerContainer = new LinearLayout(getContext());
-        dividerContainer.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        dividerContainer
+                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         dividerContainer.setOrientation(LinearLayout.HORIZONTAL);
         dividerContainer.setClickable(false);
         dividerContainer.setFocusable(false);
@@ -176,9 +224,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         rectF = new RectF();
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
-
-    private RectF rectF;
-    private Paint paint;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -211,17 +256,17 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     private void setDividerAttrs() {
-        if (!hasDivider)
+        if (!hasDivider) {
             return;
+        }
         dividerContainer.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
         // Divider Views
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize, dividerBackgroundDrawable);
+        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+                dividerBackgroundDrawable);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             dividerContainer.setDividerPadding(dividerPadding);
         }
     }
-
-    private int numberOfButtons = 0;
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
@@ -234,14 +279,15 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setSelectorRadius(radius);
             button.setBorderSize(borderSize);
 
-            if (position == 0)
+            if (position == 0) {
                 button.hasBorderLeft(true);
+            }
 
-            if (position > 0)
+            if (position > 0) {
                 buttons.get(position - 1).hasBorderRight(false);
+            }
 
             button.hasBorderRight(true);
-
 
             mainGroup.addView(child, params);
             buttons.add(button);
@@ -259,39 +305,43 @@ public class SegmentedButtonGroup extends LinearLayout {
                 rippleView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (clickable && enabled)
+                        if (clickable && enabled) {
                             toggle(position, animateSelectorDuration, true);
+                        }
                     }
                 });
             }
 
             setRipple(rippleView, enabled && clickable);
             rippleContainer.addView(rippleView,
-                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT, button.getWeight()));
+                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
+                            button.getWeight()));
             ripples.add(rippleView);
 
-            if (!hasDivider)
+            if (!hasDivider) {
                 return;
+            }
 
             BackgroundView dividerView = new BackgroundView(getContext());
             dividerContainer.addView(dividerView,
-                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT, button.getWeight()));
-        } else
+                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
+                            button.getWeight()));
+        } else {
             super.addView(child, index, params);
+        }
     }
-
-    private ArrayList<BackgroundView> ripples = new ArrayList<>();
 
     private void setRipple(View v, boolean isClickable) {
         if (isClickable) {
-            if (hasRippleColor)
+            if (hasRippleColor) {
                 RippleHelper.setRipple(v, rippleColor, radius);
-            else if (ripple)
+            } else if (ripple) {
                 RippleHelper.setSelectableItemBackground(getContext(), v);
-            else {
+            } else {
                 for (View button : buttons) {
-                    if (button instanceof SegmentedButton && ((SegmentedButton) button).hasRipple())
+                    if (button instanceof SegmentedButton && ((SegmentedButton) button).hasRipple()) {
                         RippleHelper.setRipple(v, ((SegmentedButton) button).getRippleColor(), radius);
+                    }
                 }
             }
         } else {
@@ -300,17 +350,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     private void setContainerAttrs() {
-        if (isInEditMode())
+        if (isInEditMode()) {
             mainGroup.setBackgroundColor(backgroundColor);
+        }
     }
-
-    private ArrayList<SegmentedButton> buttons;
-
-    private int selectorColor, animateSelector, animateSelectorDuration, position, backgroundColor, dividerColor, radius,
-            dividerSize, rippleColor, dividerPadding, dividerRadius, borderSize, borderColor;
-    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
-
-    private Drawable backgroundDrawable, selectorBackgroundDrawable, dividerBackgroundDrawable;
 
     /**
      * Get attributes
@@ -339,10 +382,11 @@ public class SegmentedButtonGroup extends LinearLayout {
         borderSize = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_borderSize, 0);
         borderColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_sbg_borderColor, Color.BLACK);
 
-
         backgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_sbg_backgroundDrawable);
-        selectorBackgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_sbg_selectorBackgroundDrawable);
-        dividerBackgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_sbg_dividerBackgroundDrawable);
+        selectorBackgroundDrawable = typedArray
+                .getDrawable(R.styleable.SegmentedButtonGroup_sbg_selectorBackgroundDrawable);
+        dividerBackgroundDrawable = typedArray
+                .getDrawable(R.styleable.SegmentedButtonGroup_sbg_dividerBackgroundDrawable);
 
         enabled = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_sbg_enabled, true);
 
@@ -356,8 +400,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         typedArray.recycle();
     }
-
-    private Interpolator interpolatorSelector;
 
     private void initInterpolations() {
         ArrayList<Class> interpolatorList = new ArrayList<Class>() {{
@@ -382,21 +424,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
-    public final static int FastOutSlowInInterpolator = 0;
-    public final static int BounceInterpolator = 1;
-    public final static int LinearInterpolator = 2;
-    public final static int DecelerateInterpolator = 3;
-    public final static int CycleInterpolator = 4;
-    public final static int AnticipateInterpolator = 5;
-    public final static int AccelerateDecelerateInterpolator = 6;
-    public final static int AccelerateInterpolator = 7;
-    public final static int AnticipateOvershootInterpolator = 8;
-    public final static int FastOutLinearInInterpolator = 9;
-    public final static int LinearOutSlowInInterpolator = 10;
-    public final static int OvershootInterpolator = 11;
-
-    private OnPositionChangedListener onPositionChangedListener;
-
     /**
      * @param onPositionChangedListener set your instance that you have created to listen any position change
      */
@@ -409,10 +436,9 @@ public class SegmentedButtonGroup extends LinearLayout {
      * Listener is called when one of segmented button is clicked or setPosition is called.
      */
     public interface OnPositionChangedListener {
+
         void onPositionChanged(int position);
     }
-
-    private OnClickedButtonListener onClickedButtonListener;
 
     /**
      * @param onClickedButtonListener set your instance that you have created to listen clicked positions
@@ -426,6 +452,7 @@ public class SegmentedButtonGroup extends LinearLayout {
      * Listener is called when one of segmented button is clicked
      */
     public interface OnClickedButtonListener {
+
         void onClickedButton(int position);
     }
 
@@ -469,10 +496,11 @@ public class SegmentedButtonGroup extends LinearLayout {
             lastPosition = toggledPosition = position;
             lastPositionOffset = toggledPositionOffset = (float) position;
         } else {
-            if (withAnimation)
+            if (withAnimation) {
                 toggle(position, animateSelectorDuration, false);
-            else
+            } else {
                 toggle(position, 1, false);
+            }
         }
     }
 
@@ -545,8 +573,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     /**
-     * @param interpolatorSelector is used to give an animation to selector with the given one of android's interpolator.
-     *                             Ex: {@link FastOutSlowInInterpolator}, {@link BounceInterpolator}, {@link LinearInterpolator}
+     * @param interpolatorSelector is used to give an animation to selector with the given one of android's
+     *                             interpolator.
+     *                             Ex: {@link FastOutSlowInInterpolator}, {@link BounceInterpolator}, {@link
+     *                             LinearInterpolator}
      */
     public void setInterpolatorSelector(Interpolator interpolatorSelector) {
         this.interpolatorSelector = interpolatorSelector;
@@ -558,7 +588,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     public void setDividerColor(int dividerColor) {
         this.dividerColor = dividerColor;
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize, dividerBackgroundDrawable);
+        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+                dividerBackgroundDrawable);
     }
 
     /**
@@ -567,7 +598,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     public void setDividerSize(int dividerSize) {
         this.dividerSize = dividerSize;
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize, dividerBackgroundDrawable);
+        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+                dividerBackgroundDrawable);
     }
 
     /**
@@ -576,7 +608,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     public void setDividerRadius(int dividerRadius) {
         this.dividerRadius = dividerRadius;
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize, dividerBackgroundDrawable);
+        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+                dividerBackgroundDrawable);
     }
 
     /**
@@ -670,8 +703,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     private void setEnabledAlpha(boolean enabled) {
         float alpha = 1f;
-        if (!enabled)
+        if (!enabled) {
             alpha = 0.5f;
+        }
 
         setAlpha(alpha);
     }
@@ -720,24 +754,10 @@ public class SegmentedButtonGroup extends LinearLayout {
         super.onRestoreInstanceState(state);
     }
 
-    /**
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     */
-
-    private int toggledPosition = 0;
-    private float toggledPositionOffset = 0;
-
     private void toggle(int position, int duration, boolean isToggledByTouch) {
-        if (!draggable && toggledPosition == position)
+        if (!draggable && toggledPosition == position) {
             return;
+        }
 
         toggledPosition = position;
 
@@ -759,23 +779,20 @@ public class SegmentedButtonGroup extends LinearLayout {
         animator.setDuration(duration);
         animator.start();
 
-
-        if (null != onClickedButtonListener && isToggledByTouch)
+        if (null != onClickedButtonListener && isToggledByTouch) {
             onClickedButtonListener.onClickedButton(position);
+        }
 
-        if (null != onPositionChangedListener)
+        if (null != onPositionChangedListener) {
             onPositionChangedListener.onPositionChanged(position);
+        }
 
         this.position = position;
     }
 
-    private int lastPosition = 0;
-    private float lastPositionOffset = 0;
-
     private void animateViews(int position, float positionOffset) {
         float realPosition = position + positionOffset;
         float lastRealPosition = lastPosition + lastPositionOffset;
-
 
         if (realPosition == lastRealPosition) {
             return;
@@ -808,12 +825,14 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     private void toPosition(int position, float clip) {
-        if (position >= 0 && position < numberOfButtons)
+        if (position >= 0 && position < numberOfButtons) {
             buttons.get(position).clipToRight(clip);
+        }
     }
 
     private void toNextPosition(int position, float clip) {
-        if (position >= 0 && position < numberOfButtons)
+        if (position >= 0 && position < numberOfButtons) {
             buttons.get(position).clipToLeft(clip);
+        }
     }
 }
