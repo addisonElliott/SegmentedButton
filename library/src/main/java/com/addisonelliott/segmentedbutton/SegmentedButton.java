@@ -298,84 +298,6 @@ public class SegmentedButton extends View {
 
         // Required to be called to notify the View of the width & height decided
         setMeasuredDimension(width, height);
-
-//        int width = 0;
-//        int bitmapWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
-//        int textWidth = hasText ? mStaticLayout.getWidth() : 0;
-//
-//        int height = getPaddingTop() + getPaddingBottom();
-//        int bitmapHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
-//        int textHeight = hasText ? mStaticLayout.getHeight() : 0;
-//
-//        switch (widthMode) {
-//            case MeasureSpec.EXACTLY:
-//                if (width < widthRequirement) {
-//                    width = widthRequirement;
-//                    measureTextWidth(width);
-//                }
-//                break;
-//
-//            case MeasureSpec.AT_MOST:
-//                if (drawableGravity.isHorizontal()) {
-//                    width = textWidth + bitmapWidth + drawablePadding;
-//                } else {
-//                    width = Math.max(bitmapWidth, textWidth);
-//                }
-//                width += getPaddingLeft() * 2 + getPaddingRight() * 2;
-//
-//                /*
-//                if (width > widthRequirement) {
-//                    width = widthRequirement;
-//                    measureTextWidth(width);
-//                }*/
-//                break;
-//
-//            case MeasureSpec.UNSPECIFIED:
-//                width = textWidth + bitmapWidth;
-//                break;
-//        }
-//
-//        if (hasText) {
-//            mTextPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-//        }
-//
-//        switch (heightMode) {
-//            case MeasureSpec.EXACTLY:
-//
-//                if (drawableGravity.isHorizontal()) {
-//                    height = heightRequirement;
-//                    int h = Math.max(textHeight, bitmapHeight) + getPaddingTop() + getPaddingBottom();
-//                    if (heightRequirement < h) {
-//                        height = h;
-//                    }
-//                } else {
-//                    int h = textHeight + bitmapHeight + getPaddingTop() + getPaddingBottom();
-//                    if (heightRequirement < h) {
-//                        height = h;
-//                    } else {
-//                        height = heightRequirement + getPaddingTop() - getPaddingBottom();
-//                    }
-//                }
-//                break;
-//
-//            case MeasureSpec.AT_MOST:
-//                int vHeight;
-//                if (drawableGravity.isHorizontal()) {
-//                    vHeight = Math.max(textHeight, bitmapHeight);
-//                } else {
-//                    vHeight = textHeight + bitmapHeight + drawablePadding;
-//                }
-//
-//                height = vHeight + getPaddingTop() * 2 + getPaddingBottom() * 2;
-//
-//                break;
-//            case MeasureSpec.UNSPECIFIED:
-//                // height = heightMeasureSpec;
-//                break;
-//        }
-//
-//        calculate(width, height);
-//        setMeasuredDimension(width, height);
     }
 
     // Measures the text width given entire width of the segmented button
@@ -487,82 +409,6 @@ public class SegmentedButton extends View {
             mDrawable.setBounds((int) drawablePosition.x, (int) drawablePosition.y,
                     (int) drawablePosition.x + drawableWidth, (int) drawablePosition.y + drawableHeight);
         }
-
-//        float textHeight = 0, textWidth = 0, textBoundsWidth = 0;
-//        if (hasText) {
-//            textHeight = mStaticLayout.getHeight();
-//            textWidth = mStaticLayout.getWidth();
-//            textBoundsWidth = mTextBounds.width(); // TODO ???
-//        }
-//
-//        float bitmapHeight = 0, bitmapWidth = 0;
-//        if (hasDrawable) {
-//            bitmapHeight = mDrawable.getIntrinsicHeight();
-//            bitmapWidth = mDrawable.getIntrinsicWidth();
-//        }
-//
-//        if (Gravity.isHorizontal(drawableGravity)) {
-//            if (height > Math.max(textHeight, bitmapHeight)) {
-//                text_Y = height / 2f - textHeight / 2f + getPaddingTop() - getPaddingBottom();
-//                bitmap_Y = height / 2f - bitmapHeight / 2f + getPaddingTop() - getPaddingBottom();
-//            } else if (textHeight > bitmapHeight) {
-//                text_Y = getPaddingTop();
-//                bitmap_Y = text_Y + textHeight / 2f - bitmapHeight / 2f;
-//            } else {
-//                bitmap_Y = getPaddingTop();
-//                text_Y = bitmap_Y + bitmapHeight / 2f - textHeight / 2f;
-//            }
-//
-//            text_X = getPaddingLeft();
-//            bitmap_X = textWidth;
-//
-//            float remainingSpace = width - (textBoundsWidth + bitmapWidth);
-//            if (remainingSpace > 0) {
-//                remainingSpace /= 2f;
-//            }
-//
-//            if (drawableGravity == DrawableGravity.RIGHT) {
-//                text_X = remainingSpace + getPaddingLeft() - getPaddingRight() - drawablePadding / 2f;
-//                bitmap_X = text_X + textBoundsWidth + drawablePadding;
-//            } else if (drawableGravity == DrawableGravity.LEFT) {
-//                bitmap_X = remainingSpace + getPaddingLeft() - getPaddingRight() - drawablePadding / 2f;
-//                text_X = bitmap_X + bitmapWidth + drawablePadding;
-//            }
-//        } else {
-//
-//            if (drawableGravity == DrawableGravity.TOP) {
-//                bitmap_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
-//
-//                float vHeight = (height - (textHeight + bitmapHeight)) / 2f;
-//
-//                if (vHeight > 0) {
-//                    bitmap_Y += vHeight;
-//                }
-//
-//                text_Y = bitmap_Y + bitmapHeight + drawablePadding;
-//
-//            } else if (drawableGravity == DrawableGravity.BOTTOM) {
-//                text_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
-//
-//                float vHeight = height - (textHeight + bitmapHeight);
-//                if (vHeight > 0) {
-//                    text_Y += vHeight / 2f;
-//                }
-//
-//                bitmap_Y = text_Y + textHeight + drawablePadding;
-//            }
-//
-//            if (width > Math.max(textBoundsWidth, bitmapWidth)) {
-//                text_X = width / 2f - textBoundsWidth / 2f + getPaddingLeft() - getPaddingRight();
-//                bitmap_X = width / 2f - bitmapWidth / 2f + getPaddingLeft() - getPaddingRight();
-//            } else if (textBoundsWidth > bitmapWidth) {
-//                text_X = getPaddingLeft();
-//                bitmap_X = text_X + textBoundsWidth / 2f - bitmapWidth / 2f;
-//            } else {
-//                bitmap_X = getPaddingLeft();
-//                text_X = bitmap_X + bitmapWidth / 2f - textBoundsWidth / 2f;
-//            }
-//        }
     }
 
     // endregion
@@ -580,16 +426,16 @@ public class SegmentedButton extends View {
 //        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
 //        canvas.restore();
 
-        // Draw text (non-selected)
+        // Draw text (unselected)
         if (hasText) {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
             mTextPaint.setColor(textColor);
             mStaticLayout.draw(canvas);
-//            mStaticLayout.setB
             canvas.restore();
         }
 
+        // Draw drawable (unselected)
         if (hasDrawable) {
             canvas.save();
             mDrawable.setColorFilter(mBitmapNormalColor);
