@@ -12,7 +12,8 @@ class RoundHelper {
         BackgroundHelper.setBackground(view, gradient);
     }
 
-    static void makeDividerRound(LinearLayout layout, int dividerColor, int dividerRadius, int dividerSize, Drawable drawable) {
+    static void makeDividerRound(LinearLayout layout, int dividerColor, int dividerRadius, int dividerSize,
+            Drawable drawable) {
         GradientDrawable gradient = null;
         if (null != drawable) {
             if (drawable instanceof GradientDrawable) {

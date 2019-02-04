@@ -115,12 +115,15 @@ public class SegmentedButtonGroup extends LinearLayout {
         getAttributes(context, attrs);
 
         // TODO Analyze these parts below to see what is necessary
-        setWillNotDraw(false);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setOutlineProvider(new ButtonOutlineProvider());
-        }
+        // Typically ViewGroups's do not have their onDraw method called but rather just draw all of their children
+        // Set this to false to allow drawing this view group
+//        setWillNotDraw(false);
 
-        setClickable(true);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            setOutlineProvider(new ButtonOutlineProvider());
+//        }
+
+//        setClickable(true);
 
         buttons = new ArrayList<>();
 
@@ -134,29 +137,31 @@ public class SegmentedButtonGroup extends LinearLayout {
         mainGroup.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(mainGroup);
 
-        rippleContainer = new LinearLayout(getContext());
-        rippleContainer
-                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        rippleContainer.setOrientation(LinearLayout.HORIZONTAL);
-        rippleContainer.setClickable(false);
-        rippleContainer.setFocusable(false);
-        rippleContainer.setPadding(borderSize, borderSize, borderSize, borderSize);
-        container.addView(rippleContainer);
+//        rippleContainer = new LinearLayout(getContext());
+//        rippleContainer
+//                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//        rippleContainer.setOrientation(LinearLayout.HORIZONTAL);
+//        rippleContainer.setClickable(false);
+//        rippleContainer.setFocusable(false);
+//        rippleContainer.setPadding(borderSize, borderSize, borderSize, borderSize);
+//        container.addView(rippleContainer);
 
-        dividerContainer = new LinearLayout(getContext());
-        dividerContainer
-                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        dividerContainer.setOrientation(LinearLayout.HORIZONTAL);
-        dividerContainer.setClickable(false);
-        dividerContainer.setFocusable(false);
-        container.addView(dividerContainer);
+        // TODO Struggling to see the purpose of this container
+        // Oh, it probably is so that the divider appears over the ripple container
+//        dividerContainer = new LinearLayout(getContext());
+//        dividerContainer
+//                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+//        dividerContainer.setOrientation(LinearLayout.HORIZONTAL);
+//        dividerContainer.setClickable(false);
+//        dividerContainer.setFocusable(false);
+//        container.addView(dividerContainer);
 
         initInterpolations();
         setContainerAttrs();
-        setDividerAttrs();
+//        setDividerAttrs();
 
-        rectF = new RectF();
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        rectF = new RectF();
+//        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -165,42 +170,42 @@ public class SegmentedButtonGroup extends LinearLayout {
         TypedArray typedArray = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
+        backgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_backgroundDrawable);
+        backgroundColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_backgroundColor, Color.TRANSPARENT);
+
+        selectorBackgroundDrawable = typedArray
+                .getDrawable(R.styleable.SegmentedButtonGroup_selectorBackgroundDrawable);
+        selectorColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_selectorColor, Color.GRAY);
+
+        borderSize = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderSize, 0);
+        borderColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
+
+        radius = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
+        position = typedArray.getInt(R.styleable.SegmentedButtonGroup_position, 0);
+
+        hasRippleColor = typedArray.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
+        ripple = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
+        rippleColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
+
         hasDivider = typedArray.hasValue(R.styleable.SegmentedButtonGroup_dividerSize);
+        dividerBackgroundDrawable = typedArray
+                .getDrawable(R.styleable.SegmentedButtonGroup_dividerBackgroundDrawable);
         dividerSize = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerSize, 0);
         dividerColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_dividerColor, Color.WHITE);
         dividerPadding = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
         dividerRadius = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
 
-        selectorColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_selectorColor, Color.GRAY);
         animateSelector = typedArray.getInt(R.styleable.SegmentedButtonGroup_animateSelector, 0);
         animateSelectorDuration = typedArray.getInt(R.styleable.SegmentedButtonGroup_animateSelectorDuration, 500);
 
-        radius = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
-        position = typedArray.getInt(R.styleable.SegmentedButtonGroup_position, 0);
-        backgroundColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_backgroundColor, Color.TRANSPARENT);
-
-        ripple = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
-        hasRippleColor = typedArray.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
-        rippleColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
-
-        borderSize = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderSize, 0);
-        borderColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
-
-        backgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_backgroundDrawable);
-        selectorBackgroundDrawable = typedArray
-                .getDrawable(R.styleable.SegmentedButtonGroup_selectorBackgroundDrawable);
-        dividerBackgroundDrawable = typedArray
-                .getDrawable(R.styleable.SegmentedButtonGroup_dividerBackgroundDrawable);
-
         enabled = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_enabled, true);
-
         draggable = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
 
         // TODO Why is clickable needed and why is it in a try/catch?
         try {
             clickable = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true);
         } catch (Exception ex) {
-            Log.d("SegmentedButtonGroup", ex.toString());
+            Log.d(TAG, ex.toString());
         }
 
         // Recycle the typed array, required once done using it
@@ -211,52 +216,140 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float selectorWidth, offsetX;
-        int position = 0;
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_UP:
-
-                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
-                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
-                position = (int) Math.floor(offsetX + 0.5);
-
-                toggledPositionOffset = lastPositionOffset = offsetX;
-
-                toggle(position, animateSelectorDuration, true);
-
-                break;
-            case MotionEvent.ACTION_DOWN:
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                if (!draggable) {
-                    break;
-                }
-
-                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
-
-                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / (float) getWidth();
-                position = (int) Math.floor(offsetX);
-                offsetX -= position;
-
-                if (event.getRawX() - selectorWidth < getLeft()) {
-                    offsetX = 0;
-                    animateViews(position + 1, offsetX);
-                    break;
-                }
-                if (event.getRawX() + selectorWidth > getRight()) {
-                    offsetX = 1;
-                    animateViews(position - 1, offsetX);
-                    break;
-                }
-
-                animateViews(position, offsetX);
-
-                break;
-        }
+//        float selectorWidth, offsetX;
+//        int position = 0;
+//
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_UP:
+//
+//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
+//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
+//                position = (int) Math.floor(offsetX + 0.5);
+//
+//                toggledPositionOffset = lastPositionOffset = offsetX;
+//
+//                toggle(position, animateSelectorDuration, true);
+//
+//                break;
+//            case MotionEvent.ACTION_DOWN:
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//
+//                if (!draggable) {
+//                    break;
+//                }
+//
+//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
+//
+//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / (float) getWidth();
+//                position = (int) Math.floor(offsetX);
+//                offsetX -= position;
+//
+//                if (event.getRawX() - selectorWidth < getLeft()) {
+//                    offsetX = 0;
+//                    animateViews(position + 1, offsetX);
+//                    break;
+//                }
+//                if (event.getRawX() + selectorWidth > getRight()) {
+//                    offsetX = 1;
+//                    animateViews(position - 1, offsetX);
+//                    break;
+//                }
+//
+//                animateViews(position, offsetX);
+//
+//                break;
+//        }
         return true;
     }
+
+//    @Override
+//    protected void onDraw(Canvas canvas) {
+//        super.onDraw(canvas);
+//
+//        float width = canvas.getWidth();
+//        float height = canvas.getHeight();
+//
+//        rectF.set(0, 0, width, height);
+//        paint.setStyle(Paint.Style.FILL);
+//        paint.setColor(backgroundColor);
+//        canvas.drawRoundRect(rectF, radius, radius, paint);
+//
+//        if (borderSize > 0) {
+//            float bSize = borderSize / 2f;
+//            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
+//            paint.setStyle(Paint.Style.STROKE);
+//            paint.setColor(borderColor);
+//            paint.setStrokeWidth(borderSize);
+//            canvas.drawRoundRect(rectF, radius, radius, paint);
+//        }
+//    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+
+        if (child instanceof SegmentedButton) {
+            SegmentedButton button = (SegmentedButton) child;
+            final int position = numberOfButtons++;
+
+//            button.setSelectorColor(selectorColor);
+//            button.setSelectorRadius(radius);
+//            button.setBorderSize(borderSize);
+//
+//            if (position == 0) {
+//                button.hasBorderLeft(true);
+//            }
+//
+//            if (position > 0) {
+//                buttons.get(position - 1).hasBorderRight(false);
+//            }
+//
+//            button.hasBorderRight(true);
+
+            // Add the button to the main group instead and store the button in our buttons list
+            mainGroup.addView(button, params);
+            buttons.add(button);
+
+//            if (this.position == position) {
+//                button.clipToRight(1);
+//
+//                lastPosition = toggledPosition = position;
+//                lastPositionOffset = toggledPositionOffset = (float) position;
+//            }
+//
+//            // RIPPLE
+//            BackgroundView rippleView = new BackgroundView(getContext());
+//            if (!draggable) {
+//                rippleView.setOnClickListener(new OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        if (clickable && enabled) {
+//                            toggle(position, animateSelectorDuration, true);
+//                        }
+//                    }
+//                });
+//            }
+//
+//            setRipple(rippleView, enabled && clickable);
+//            rippleContainer.addView(rippleView,
+//                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
+//                            button.getWeight()));
+//            ripples.add(rippleView);
+//
+//            if (!hasDivider) {
+//                return;
+//            }
+//
+//            BackgroundView dividerView = new BackgroundView(getContext());
+//            dividerContainer.addView(dividerView,
+//                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
+//                            button.getWeight()));
+        } else {
+            super.addView(child, index, params);
+        }
+    }
+
+    // region Untouched
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private class ButtonOutlineProvider extends ViewOutlineProvider {
@@ -264,28 +357,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         @Override
         public void getOutline(View view, Outline outline) {
             outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
-        }
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        float width = canvas.getWidth();
-        float height = canvas.getHeight();
-
-        rectF.set(0, 0, width, height);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(backgroundColor);
-        canvas.drawRoundRect(rectF, radius, radius, paint);
-
-        if (borderSize > 0) {
-            float bSize = borderSize / 2f;
-            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(borderColor);
-            paint.setStrokeWidth(borderSize);
-            canvas.drawRoundRect(rectF, radius, radius, paint);
         }
     }
 
@@ -305,72 +376,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Divider Views
         RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
                 dividerBackgroundDrawable);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            dividerContainer.setDividerPadding(dividerPadding);
-        }
-    }
-
-    @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-
-        if (child instanceof SegmentedButton) {
-            SegmentedButton button = (SegmentedButton) child;
-            final int position = numberOfButtons++;
-
-            button.setSelectorColor(selectorColor);
-            button.setSelectorRadius(radius);
-            button.setBorderSize(borderSize);
-
-            if (position == 0) {
-                button.hasBorderLeft(true);
-            }
-
-            if (position > 0) {
-                buttons.get(position - 1).hasBorderRight(false);
-            }
-
-            button.hasBorderRight(true);
-
-            mainGroup.addView(child, params);
-            buttons.add(button);
-
-            if (this.position == position) {
-                button.clipToRight(1);
-
-                lastPosition = toggledPosition = position;
-                lastPositionOffset = toggledPositionOffset = (float) position;
-            }
-
-            // RIPPLE
-            BackgroundView rippleView = new BackgroundView(getContext());
-            if (!draggable) {
-                rippleView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (clickable && enabled) {
-                            toggle(position, animateSelectorDuration, true);
-                        }
-                    }
-                });
-            }
-
-            setRipple(rippleView, enabled && clickable);
-            rippleContainer.addView(rippleView,
-                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
-                            button.getWeight()));
-            ripples.add(rippleView);
-
-            if (!hasDivider) {
-                return;
-            }
-
-            BackgroundView dividerView = new BackgroundView(getContext());
-            dividerContainer.addView(dividerView,
-                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
-                            button.getWeight()));
-        } else {
-            super.addView(child, index, params);
-        }
     }
 
     private void setRipple(View v, boolean isClickable) {
@@ -831,4 +836,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             buttons.get(position).clipToLeft(clip);
         }
     }
+
+    // endregion
 }

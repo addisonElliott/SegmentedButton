@@ -49,26 +49,26 @@
     </declare-styleable>
 
     <declare-styleable name="SegmentedButtonGroup">
-        <attr name="selectorBackgroundDrawable" format="reference" />
-        <attr name="dividerBackgroundDrawable" format="reference" />
         <attr name="backgroundDrawable" format="reference" />
+        <attr name="backgroundColor" format="color" />
+
+        <attr name="selectorColor" format="color" />
+        <attr name="selectorBackgroundDrawable" format="reference" />
 
         <attr name="borderSize" format="dimension" />
         <attr name="borderColor" format="color" />
 
+        <attr name="position" format="integer" />
+        <attr name="radius" format="dimension" />
+
         <attr name="ripple" format="boolean" />
         <attr name="rippleColor" format="color" />
 
-        <attr name="selectorColor" format="color" />
-
+        <attr name="dividerBackgroundDrawable" format="reference" />
         <attr name="dividerSize" format="dimension" />
         <attr name="dividerPadding" format="dimension" />
         <attr name="dividerColor" format="color" />
         <attr name="dividerRadius" format="dimension" />
-
-        <attr name="position" format="integer" />
-        <attr name="radius" format="dimension" />
-        <attr name="backgroundColor" format="color" />
 
         <attr name="enabled" format="boolean" />
         <attr name="android:clickable" />
