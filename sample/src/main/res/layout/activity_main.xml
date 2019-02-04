@@ -439,43 +439,43 @@
 
     <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
-    <co.ceryle.segmentedbutton.SegmentedButtonGroup
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:id="@+id/buttonGroup_pickupDropoffBoth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:elevation="3dp"
-        app:sbg_backgroundColor="@color/white"
-        app:sbg_position="0"
-        app:sbg_radius="2dp"
-        app:sbg_selectorColor="@color/blue_600">
+        app:backgroundColor="@color/white"
+        app:position="0"
+        app:radius="2dp"
+        app:selectorColor="@color/blue_600">
 
-        <co.ceryle.segmentedbutton.SegmentedButton
+        <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_weight="1"
             android:padding="4dp"
-            app:sb_text="Both"
-            app:sb_textColor="@color/black"
-            app:sb_textColor_onSelection="@color/white" />
+            app:text="Both"
+            app:textColor="@color/black"
+            app:textColor_onSelection="@color/white" />
 
-        <co.ceryle.segmentedbutton.SegmentedButton
+        <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_weight="1"
             android:padding="4dp"
-            app:sb_text="Pickup"
-            app:sb_textColor="@color/black"
-            app:sb_textColor_onSelection="@color/white" />
+            app:text="Pickup"
+            app:textColor="@color/black"
+            app:textColor_onSelection="@color/white" />
 
-        <co.ceryle.segmentedbutton.SegmentedButton
+        <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_weight="1"
             android:padding="4dp"
-            app:sb_text="Dropoff"
-            app:sb_textColor="@color/black"
-            app:sb_textColor_onSelection="@color/white" />
+            app:text="Dropoff"
+            app:textColor="@color/black"
+            app:textColor_onSelection="@color/white" />
 
-    </co.ceryle.segmentedbutton.SegmentedButtonGroup>
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 </LinearLayout>

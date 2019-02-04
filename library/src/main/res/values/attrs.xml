@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="GlobalAttrs">
+        <attr name="rippleColor" format="color" />
+    </declare-styleable>
+
     <declare-styleable name="SegmentedButton">
         <!--TODO Look into renaming these to get rid of sb_ prefix -->
         <!-- Need to research whether it is normal to do that, customary -->
-        <attr name="rippleColor" format="color" />
+        <attr name="rippleColor" />
 
         <attr name="drawable" format="reference" />
         <attr name="drawablePadding" format="dimension" />
@@ -13,10 +17,10 @@
         <attr name="drawableHeight" format="dimension" />
         <attr name="drawableKeepAspectRatio" format="boolean" />
         <attr name="drawableGravity" format="integer">
-            <flag name="left" value="0" />
-            <flag name="top" value="1" />
-            <flag name="right" value="2" />
-            <flag name="bottom" value="3" />
+            <flag name="top" value="0x30" />
+            <flag name="bottom" value="0x50" />
+            <flag name="left" value="0x03" />
+            <flag name="right" value="0x05" />
         </attr>
 
         <attr name="text" format="string" />
@@ -37,9 +41,9 @@
             <flag name="italic" value="2" />
         </attr>
         <attr name="textGravity" format="integer">
-            <flag name="left" value="0" />
-            <flag name="center" value="1" />
-            <flag name="right" value="2" />
+            <flag name="left" value="0x03" />
+            <flag name="right" value="0x05" />
+            <flag name="center" value="0x11" />
         </attr>
 
         <attr name="android:layout_width" />
@@ -62,7 +66,7 @@
         <attr name="radius" format="dimension" />
 
         <attr name="ripple" format="boolean" />
-        <attr name="rippleColor" format="color" />
+        <attr name="rippleColor" />
 
         <attr name="dividerBackgroundDrawable" format="reference" />
         <attr name="dividerSize" format="dimension" />
