@@ -456,7 +456,7 @@
             android:layout_weight="1"
             android:padding="4dp"
             app:text="Both"
-            app:textColor="@color/black"
+            app:textColor="@color/red"
             app:textColor_onSelection="@color/white" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton

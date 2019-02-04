@@ -128,8 +128,8 @@ public class SegmentedButton extends View {
         textColorOnSelection = ta.getColor(R.styleable.SegmentedButton_textColor_onSelection, Color.WHITE);
         textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
 
-        boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_fontFamily);
-        int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_fontFamily, 0);
+        boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
+        int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
         int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
         if (hasFontFamily) {
             textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);

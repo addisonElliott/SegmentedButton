@@ -28,7 +28,7 @@
         <attr name="textColor_onSelection" format="color" />
         <attr name="textSize" format="dimension" />
         <attr name="textFillSpace" format="boolean" />
-        <attr name="fontFamily" format="reference" />
+        <attr name="android:fontFamily" />
         <attr name="textStyle" format="integer">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
