@@ -1,5 +1,6 @@
 package com.addisonelliott.segmentedbutton;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -12,6 +13,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -161,7 +164,13 @@ public class SegmentedButton extends View {
         // TODO Look into making this onMeasure probably
         // default to a single line of text
         int width = (int) mTextPaint.measureText(text);
-        mStaticLayout = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+            mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, width).build();
+        } else {
+            mStaticLayout = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+                    false);
+        }
     }
 
     private void initDrawable(Context context) {
@@ -182,6 +191,7 @@ public class SegmentedButton extends View {
 
     // region Layout & Measure
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
@@ -190,9 +200,7 @@ public class SegmentedButton extends View {
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
         final int drawableWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
-        final int drawableHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
         final int textWidth = hasText ? mStaticLayout.getWidth() : 0;
-        final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
 
         // Measured width & height
         int width = 0;
@@ -203,11 +211,11 @@ public class SegmentedButton extends View {
         int desiredWidth = getPaddingLeft() + getPaddingRight();
 
         if (Gravity.isHorizontal(drawableGravity)) {
-            // When drawable and text are inline horizontally, then the width is:
+            // When drawable and text are inline horizontally, then the total desired width is:
             //     padding left + text width (assume one line) + drawable padding + drawable width + padding right
             desiredWidth += textWidth + drawablePadding + drawableWidth;
         } else {
-            // When drawable and text are on top of each other, the is:
+            // When drawable and text are on top of each other, the total desired width is:
             //     padding left + max(text width, drawable width) + padding right
             desiredWidth += Math.max(textWidth, drawableWidth);
         }
@@ -229,10 +237,35 @@ public class SegmentedButton extends View {
                 break;
         }
 
-        // TODO Recalculate the height for text based on number of lines now since we know width
+        // With width calculated, recalculate the text layout to get new height (wrapping may occur)
+        if (hasText) {
+            if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+                mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, width).build();
+            } else {
+                mStaticLayout = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+                        false);
+            }
+        }
+
+        // Repeat measuring process for height now
+        final int drawableHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
+        final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
 
         int desiredHeight = getPaddingTop() + getPaddingBottom();
 
+        if (Gravity.isHorizontal(drawableGravity)) {
+            // When drawable and text are horizontal, the total desired height is:
+            //     padding left + max(text width, drawable width) + padding right
+            desiredHeight += Math.max(textHeight, drawableHeight);
+        } else {
+            // When drawable and text are vertical, then the total desired height is:
+            //     padding left + text width (assume one line) + drawable padding + drawable width + padding right
+            desiredHeight += textHeight + drawablePadding + drawableHeight;
+        }
+
+        // Set the measured height based on height mode
+        // EXACTLY means set it to exactly the given size, AT_MOST means to set it to the desired height but dont let
+        // it exceed the given size, and UNSPECIFIED means to set it to the desired height
         switch (heightMode) {
             case MeasureSpec.EXACTLY:
                 height = heightSize;
