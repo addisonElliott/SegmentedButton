@@ -37,6 +37,7 @@ public class SegmentedButton extends View {
 
     private TextPaint mTextPaint;
     private StaticLayout mStaticLayout;
+    private int mTextMaxWidth;
     private Rect mTextBounds = new Rect();
     private int mRadius, mBorderSize;
     private boolean hasBorderLeft, hasBorderRight;
@@ -168,13 +169,12 @@ public class SegmentedButton extends View {
         mTextPaint.setTypeface(textTypeface);
 
         // TODO Look into making this onMeasure probably
-        // default to a single line of text
-        int width = (int) mTextPaint.measureText(text);
-
+        // Initial kickstart to setup the text layout by assuming the text will be all in one line
+        mTextMaxWidth = (int) mTextPaint.measureText(text);
         if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-            mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, width).build();
+            mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, mTextMaxWidth).build();
         } else {
-            mStaticLayout = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+            mStaticLayout = new StaticLayout(text, mTextPaint, mTextMaxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
                     false);
         }
     }
@@ -205,8 +205,10 @@ public class SegmentedButton extends View {
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
+        // For the text width, assume that it is in a single line with no wrapping which would be mTextMaxWidth
+        // This variable is used to calculate the desired width and the desire is for it all to be in a single line
         final int drawableWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
-        final int textWidth = hasText ? mStaticLayout.getWidth() : 0;
+        final int textWidth = hasText ? mTextMaxWidth : 0;
 
         // Measured width & height
         int width = 0;
@@ -247,6 +249,7 @@ public class SegmentedButton extends View {
         measureTextWidth(width, drawableWidth);
 
         // Repeat measuring process for height now
+        // Note that the height is the static layout height which may or may not be multi-lined
         final int drawableHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
         final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
 
@@ -382,8 +385,9 @@ public class SegmentedButton extends View {
         // Set drawable width to be the drawable width if the drawable has horizontal gravity, otherwise the drawable
         // width doesnt matter
         // Text width is equal to the total width minus padding and drawable width
+        // But, if the maximum text width is smaller, just use that and we will manually pad it later
         int newDrawableWidth = Gravity.isHorizontal(drawableGravity) ? drawableWidth : 0;
-        int textWidth = width - getPaddingLeft() - getPaddingRight() - newDrawableWidth;
+        int textWidth = Math.min(width - getPaddingLeft() - getPaddingRight() - newDrawableWidth, mTextMaxWidth);
 
         // Odd case where there is not enough space for the padding and drawable width so we just return
         if (textWidth < 0) {

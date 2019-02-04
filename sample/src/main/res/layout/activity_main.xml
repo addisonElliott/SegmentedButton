@@ -460,23 +460,23 @@
             app:textColor="@color/red"
             app:textColor_onSelection="@color/white" />
 
-        <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="32dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:padding="12dp"-->
-            <!--app:text="Pickup"-->
-            <!--app:textColor="@color/black"-->
-            <!--app:textColor_onSelection="@color/white" />-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:padding="12dp"
+            app:text="Pickup"
+            app:textColor="@color/black"
+            app:textColor_onSelection="@color/white" />
 
-        <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="32dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:padding="4dp"-->
-            <!--app:text="Dropoff"-->
-            <!--app:textColor="@color/black"-->
-            <!--app:textColor_onSelection="@color/white" />-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:padding="4dp"
+            app:text="Dropoff"
+            app:textColor="@color/black"
+            app:textColor_onSelection="@color/white" />
 
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
