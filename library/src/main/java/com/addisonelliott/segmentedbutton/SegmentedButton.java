@@ -29,7 +29,7 @@ public class SegmentedButton extends View {
     private boolean clipLeftToRight;
 
     private TextPaint mTextPaint;
-    private StaticLayout mStaticLayout, mStaticLayoutOverlay;
+    private StaticLayout mStaticLayout;
     private Rect mTextBounds = new Rect();
     private int mRadius, mBorderSize;
     private boolean hasBorderLeft, hasBorderRight;
@@ -45,7 +45,7 @@ public class SegmentedButton extends View {
     private Drawable mDrawable;
 
     private boolean hasDrawable, hasText;
-    private DrawableGravity drawableGravity;
+    private int drawableGravity;
 
     // Custom attributes
     private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawable,
@@ -111,7 +111,7 @@ public class SegmentedButton extends View {
         drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
         drawableHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableHeight, -1);
         // TODO No drawable keep aspect ratio?
-        drawableGravity = DrawableGravity.getById(ta.getInteger(R.styleable.SegmentedButton_drawableGravity, 0));
+        drawableGravity = ta.getInteger(R.styleable.SegmentedButton_drawableGravity, Gravity.LEFT);
 
         hasText = ta.hasValue(R.styleable.SegmentedButton_text);
         text = ta.getString(R.styleable.SegmentedButton_text);
@@ -203,90 +203,148 @@ public class SegmentedButton extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int widthRequirement = MeasureSpec.getSize(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int heightRequirement = MeasureSpec.getSize(heightMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // TODO Custom implementation here...
+        final int drawableWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
+        final int drawableHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
+        final int textWidth = hasText ? mStaticLayout.getWidth() : 0;
+        final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
 
+        // Measured width & height
         int width = 0;
-        int bitmapWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
-        int textWidth = hasText ? mStaticLayout.getWidth() : 0;
+        int height = 0;
 
-        int height = getPaddingTop() + getPaddingBottom();
-        int bitmapHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
-        int textHeight = hasText ? mStaticLayout.getHeight() : 0;
+        // Desired width will always have left & right padding regardless of horizontal/vertical gravity for the
+        // drawable and text.
+        int desiredWidth = getPaddingLeft() + getPaddingRight();
 
+        if (Gravity.isHorizontal(drawableGravity)) {
+            // When drawable and text are inline horizontally, then the width is:
+            //     padding left + text width (assume one line) + drawable padding + drawable width + padding right
+            desiredWidth += textWidth + drawablePadding + drawableWidth;
+        } else {
+            // When drawable and text are on top of each other, the is:
+            //     padding left + max(text width, drawable width) + padding right
+            desiredWidth += Math.max(textWidth, drawableWidth);
+        }
+
+        // Set the measured width based on width mode
+        // EXACTLY means set it to exactly the given size, AT_MOST means to set it to the desired width but dont let
+        // it exceed the given size, and UNSPECIFIED means to set it to the desired width
         switch (widthMode) {
             case MeasureSpec.EXACTLY:
-                if (width < widthRequirement) {
-                    width = widthRequirement;
-                    measureTextWidth(width);
-                }
+                width = widthSize;
                 break;
 
             case MeasureSpec.AT_MOST:
-                if (drawableGravity.isHorizontal()) {
-                    width = textWidth + bitmapWidth + drawablePadding;
-                } else {
-                    width = Math.max(bitmapWidth, textWidth);
-                }
-                width += getPaddingLeft() * 2 + getPaddingRight() * 2;
-
-                /*
-                if (width > widthRequirement) {
-                    width = widthRequirement;
-                    measureTextWidth(width);
-                }*/
+                width = Math.min(desiredWidth, widthSize);
                 break;
 
             case MeasureSpec.UNSPECIFIED:
-                width = textWidth + bitmapWidth;
+                width = desiredWidth;
                 break;
         }
 
-        if (hasText) {
-            mTextPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-        }
+        // TODO Recalculate the height for text based on number of lines now since we know width
+
+        int desiredHeight = getPaddingTop() + getPaddingBottom();
 
         switch (heightMode) {
             case MeasureSpec.EXACTLY:
-
-                if (drawableGravity.isHorizontal()) {
-                    height = heightRequirement;
-                    int h = Math.max(textHeight, bitmapHeight) + getPaddingTop() + getPaddingBottom();
-                    if (heightRequirement < h) {
-                        height = h;
-                    }
-                } else {
-                    int h = textHeight + bitmapHeight + getPaddingTop() + getPaddingBottom();
-                    if (heightRequirement < h) {
-                        height = h;
-                    } else {
-                        height = heightRequirement + getPaddingTop() - getPaddingBottom();
-                    }
-                }
+                height = heightSize;
                 break;
 
             case MeasureSpec.AT_MOST:
-                int vHeight;
-                if (drawableGravity.isHorizontal()) {
-                    vHeight = Math.max(textHeight, bitmapHeight);
-                } else {
-                    vHeight = textHeight + bitmapHeight + drawablePadding;
-                }
-
-                height = vHeight + getPaddingTop() * 2 + getPaddingBottom() * 2;
-
+                height = Math.min(desiredHeight, widthSize);
                 break;
+
             case MeasureSpec.UNSPECIFIED:
-                // height = heightMeasureSpec;
+                height = desiredHeight;
                 break;
         }
 
-        calculate(width, height);
         setMeasuredDimension(width, height);
+
+//        int width = 0;
+//        int bitmapWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
+//        int textWidth = hasText ? mStaticLayout.getWidth() : 0;
+//
+//        int height = getPaddingTop() + getPaddingBottom();
+//        int bitmapHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
+//        int textHeight = hasText ? mStaticLayout.getHeight() : 0;
+//
+//        switch (widthMode) {
+//            case MeasureSpec.EXACTLY:
+//                if (width < widthRequirement) {
+//                    width = widthRequirement;
+//                    measureTextWidth(width);
+//                }
+//                break;
+//
+//            case MeasureSpec.AT_MOST:
+//                if (drawableGravity.isHorizontal()) {
+//                    width = textWidth + bitmapWidth + drawablePadding;
+//                } else {
+//                    width = Math.max(bitmapWidth, textWidth);
+//                }
+//                width += getPaddingLeft() * 2 + getPaddingRight() * 2;
+//
+//                /*
+//                if (width > widthRequirement) {
+//                    width = widthRequirement;
+//                    measureTextWidth(width);
+//                }*/
+//                break;
+//
+//            case MeasureSpec.UNSPECIFIED:
+//                width = textWidth + bitmapWidth;
+//                break;
+//        }
+//
+//        if (hasText) {
+//            mTextPaint.getTextBounds(text, 0, text.length(), mTextBounds);
+//        }
+//
+//        switch (heightMode) {
+//            case MeasureSpec.EXACTLY:
+//
+//                if (drawableGravity.isHorizontal()) {
+//                    height = heightRequirement;
+//                    int h = Math.max(textHeight, bitmapHeight) + getPaddingTop() + getPaddingBottom();
+//                    if (heightRequirement < h) {
+//                        height = h;
+//                    }
+//                } else {
+//                    int h = textHeight + bitmapHeight + getPaddingTop() + getPaddingBottom();
+//                    if (heightRequirement < h) {
+//                        height = h;
+//                    } else {
+//                        height = heightRequirement + getPaddingTop() - getPaddingBottom();
+//                    }
+//                }
+//                break;
+//
+//            case MeasureSpec.AT_MOST:
+//                int vHeight;
+//                if (drawableGravity.isHorizontal()) {
+//                    vHeight = Math.max(textHeight, bitmapHeight);
+//                } else {
+//                    vHeight = textHeight + bitmapHeight + drawablePadding;
+//                }
+//
+//                height = vHeight + getPaddingTop() * 2 + getPaddingBottom() * 2;
+//
+//                break;
+//            case MeasureSpec.UNSPECIFIED:
+//                // height = heightMeasureSpec;
+//                break;
+//        }
+//
+//        calculate(width, height);
+//        setMeasuredDimension(width, height);
     }
 
     private void measureTextWidth(int width) {
