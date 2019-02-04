@@ -20,6 +20,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import androidx.core.content.res.ResourcesCompat;
 public class SegmentedButton extends View {
 
     // region Variables & Constants
+    private static final String TAG = "SegmentedButton";
 
     private float mClipAmount;
     private boolean clipLeftToRight;
@@ -241,15 +243,8 @@ public class SegmentedButton extends View {
                 break;
         }
 
-        // With width calculated, recalculate the text layout to get new height (wrapping may occur)
-        if (hasText) {
-            if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-                mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, width).build();
-            } else {
-                mStaticLayout = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
-                        false);
-            }
-        }
+        // With width calculated, recalculate the text parameters to get new height (wrapping may occur)
+        measureTextWidth(width, drawableWidth);
 
         // Repeat measuring process for height now
         final int drawableHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
@@ -284,9 +279,16 @@ public class SegmentedButton extends View {
                 break;
         }
 
+        Log.d(TAG, String.format("onMeasure called with mode (%d, %d) and size (%d, %d). Desired size (%d, %d) "
+                        + "Resulting size (%d, %d).", widthMode, heightMode, widthSize, heightSize, desiredWidth,
+                desiredHeight, width, height));
+
         // Calculate the position for text & drawable now that we know width & height
-        calculatePositions(width, height, textWidth, textHeight, drawableWidth, drawableHeight, width == desiredWidth,
-                height == desiredHeight);
+        // useDesired[Width|Height] parameter is used to indicate whether there is extra space (excluding padding)
+        // between the drawable or text size and the measured size. If true, this will center the object(s)
+        // appropriately
+        calculatePositions(width, height, textWidth, textHeight, drawableWidth, drawableHeight, desiredWidth >= width,
+                desiredHeight >= height);
 
         // Required to be called to notify the View of the width & height decided
         setMeasuredDimension(width, height);
@@ -370,21 +372,34 @@ public class SegmentedButton extends View {
 //        setMeasuredDimension(width, height);
     }
 
-//    private void measureTextWidth(int width) {
-//        if (!hasText) {
-//            return;
-//        }
-//
-//        int bitmapWidth = hasDrawable && drawableGravity.isHorizontal() ? mDrawable.getIntrinsicWidth() : 0;
-//
-//        int textWidth = width - (bitmapWidth + getPaddingLeft() + getPaddingRight());
-//
-//        if (textWidth < 0) {
-//            return;
-//        }
-//
-//        mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-//    }
+    // Measures the text width given entire width of the segmented button
+    private void measureTextWidth(int width, int drawableWidth) {
+        // If there is no text, then we don't need to do anything
+        if (!hasText) {
+            return;
+        }
+
+        // Set drawable width to be the drawable width if the drawable has horizontal gravity, otherwise the drawable
+        // width doesnt matter
+        // Text width is equal to the total width minus padding and drawable width
+        int newDrawableWidth = Gravity.isHorizontal(drawableGravity) ? drawableWidth : 0;
+        int textWidth = width - getPaddingLeft() - getPaddingRight() - newDrawableWidth;
+
+        // Odd case where there is not enough space for the padding and drawable width so we just return
+        if (textWidth < 0) {
+            return;
+        }
+
+        // Create new static layout with width
+        // Old way of creating static layout was deprecated but I dont think there is any speed difference between
+        // the two
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+            mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, textWidth).build();
+        } else {
+            mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+                    false);
+        }
+    }
 
     private void calculatePositions(int measuredWidth, int measuredHeight, int textWidth, int textHeight,
             int drawableWidth, int drawableHeight, boolean useDesiredWidth, boolean useDesiredHeight) {
@@ -420,6 +435,13 @@ public class SegmentedButton extends View {
                 textPosition.x = remainingSpace;
                 drawablePosition.x = remainingSpace + textWidth + drawablePadding;
             }
+
+            Log.d(TAG, String.format("calculatePositions called with horizontal gravity. drawableSize: (%d, %d), "
+                            + "textSize: (%d, %d), padding (%d, %d, %d, %d), drawablePadding: %d, remainingSpace %f, "
+                            + "textPosition (%f, %f), drawablePosition (%f, %f)", drawableWidth, drawableHeight, textWidth,
+                    textHeight, getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom(),
+                    drawablePadding, remainingSpace, textPosition.x, textPosition.y, drawablePosition.x,
+                    drawablePosition.y));
         } else {
             // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
             // Fancy way of centering the two objects horizontally, the last 2 if statements are special cases where
