@@ -180,7 +180,6 @@ public class SegmentedButton extends View {
         // default to a single line of text
         int width = (int) mTextPaint.measureText(text);
         mStaticLayout = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-        mStaticLayoutOverlay = new StaticLayout(text, mTextPaint, width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
     }
 
     private void initDrawable(Context context) {
@@ -361,8 +360,6 @@ public class SegmentedButton extends View {
         }
 
         mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-        mStaticLayoutOverlay = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
-                false);
     }
 
     private void calculate(int width, int height) {
@@ -501,7 +498,7 @@ public class SegmentedButton extends View {
             if (hasTextColorOnSelection) {
                 mTextPaint.setColor(textColorOnSelection);
             }
-            mStaticLayoutOverlay.draw(canvas);
+            mStaticLayout.draw(canvas);
             canvas.restore();
         }
 
