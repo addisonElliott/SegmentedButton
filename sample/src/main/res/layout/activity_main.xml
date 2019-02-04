@@ -478,4 +478,11 @@
             app:textColor_onSelection="@color/white" />
 
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-thin"
+        android:textStyle="italic"
+        />
 </LinearLayout>

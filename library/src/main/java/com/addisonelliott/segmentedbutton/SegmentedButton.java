@@ -20,6 +20,7 @@ import android.view.Gravity;
 import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 public class SegmentedButton extends View {
 
@@ -51,9 +52,9 @@ public class SegmentedButton extends View {
     private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawable,
             drawableTint, drawableWidth, drawableHeight, drawablePadding;
     private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
-            hasDrawableWidth, hasDrawableHeight, hasDrawableTint, hasTextTypefacePath;
+            hasDrawableWidth, hasDrawableHeight, hasDrawableTint;
     private float buttonWeight, textSize;
-    private String textTypefacePath, text;
+    private String text;
     private Typeface textTypeface;
 
     // endregion
@@ -119,29 +120,15 @@ public class SegmentedButton extends View {
         hasTextColorOnSelection = ta.hasValue(R.styleable.SegmentedButton_textColor_onSelection);
         textColorOnSelection = ta.getColor(R.styleable.SegmentedButton_textColor_onSelection, Color.WHITE);
         textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
-        hasTextTypefacePath = ta.hasValue(R.styleable.SegmentedButton_textTypefacePath);
-        textTypefacePath = ta.getString(R.styleable.SegmentedButton_textTypefacePath);
 
-        int typeface = ta.getInt(R.styleable.SegmentedButton_textTypeface, 1);
-        switch (typeface) {
-            case 0:
-                textTypeface = Typeface.MONOSPACE;
-                break;
-
-            case 1:
-                textTypeface = Typeface.DEFAULT;
-                break;
-
-            case 2:
-                textTypeface = Typeface.SANS_SERIF;
-                break;
-
-            case 3:
-                textTypeface = Typeface.SERIF;
-                break;
+        boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_fontFamily);
+        int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_fontFamily, 0);
+        int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
+        if (hasFontFamily) {
+            textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
+        } else {
+            textTypeface = Typeface.create((Typeface) null, textStyle);
         }
-
-        // TODO Missing some more text parameters
 
         try {
             hasWeight = ta.hasValue(R.styleable.SegmentedButton_android_layout_weight);
@@ -169,12 +156,7 @@ public class SegmentedButton extends View {
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(textSize);
         mTextPaint.setColor(textColor);
-
-        if (hasTextTypefacePath) {
-            setTypeface(textTypefacePath);
-        } else if (null != textTypeface) {
-            setTypeface(textTypeface);
-        }
+        mTextPaint.setTypeface(textTypeface);
 
         // TODO Look into making this onMeasure probably
         // default to a single line of text

@@ -78,8 +78,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     private int lastPosition = 0;
     private float lastPositionOffset = 0;
 
-    private OnPositionChangedListener onPositionChangedListener;
-    private OnClickedButtonListener onClickedButtonListener;
+//    private OnPositionChangedListener onPositionChangedListener;
+//    private OnClickedButtonListener onClickedButtonListener;
 
     // endregion
 
@@ -156,7 +156,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //        dividerContainer.setFocusable(false);
 //        container.addView(dividerContainer);
 
-        initInterpolations();
+//        initInterpolations();
         setContainerAttrs();
 //        setDividerAttrs();
 
@@ -351,491 +351,491 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Untouched
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private class ButtonOutlineProvider extends ViewOutlineProvider {
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    private class ButtonOutlineProvider extends ViewOutlineProvider {
+//
+//        @Override
+//        public void getOutline(View view, Outline outline) {
+//            outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
+//        }
+//    }
+//
+//    private void setBackgroundColor(View v, Drawable d, int c) {
+//        if (null != d) {
+//            BackgroundHelper.setBackground(v, d);
+//        } else {
+//            v.setBackgroundColor(c);
+//        }
+//    }
+//
+//    private void setDividerAttrs() {
+//        if (!hasDivider) {
+//            return;
+//        }
+//        dividerContainer.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+//        // Divider Views
+//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//                dividerBackgroundDrawable);
+//    }
 
-        @Override
-        public void getOutline(View view, Outline outline) {
-            outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
-        }
-    }
-
-    private void setBackgroundColor(View v, Drawable d, int c) {
-        if (null != d) {
-            BackgroundHelper.setBackground(v, d);
-        } else {
-            v.setBackgroundColor(c);
-        }
-    }
-
-    private void setDividerAttrs() {
-        if (!hasDivider) {
-            return;
-        }
-        dividerContainer.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-        // Divider Views
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
-                dividerBackgroundDrawable);
-    }
-
-    private void setRipple(View v, boolean isClickable) {
-        if (isClickable) {
-            if (hasRippleColor) {
-                RippleHelper.setRipple(v, rippleColor, radius);
-            } else if (ripple) {
-                RippleHelper.setSelectableItemBackground(getContext(), v);
-            } else {
-                for (View button : buttons) {
-                    if (button instanceof SegmentedButton && ((SegmentedButton) button).hasRipple()) {
-                        RippleHelper.setRipple(v, ((SegmentedButton) button).getRippleColor(), radius);
-                    }
-                }
-            }
-        } else {
-            BackgroundHelper.setBackground(v, null);
-        }
-    }
-
+//    private void setRipple(View v, boolean isClickable) {
+//        if (isClickable) {
+//            if (hasRippleColor) {
+//                RippleHelper.setRipple(v, rippleColor, radius);
+//            } else if (ripple) {
+//                RippleHelper.setSelectableItemBackground(getContext(), v);
+//            } else {
+//                for (View button : buttons) {
+//                    if (button instanceof SegmentedButton && ((SegmentedButton) button).hasRipple()) {
+//                        RippleHelper.setRipple(v, ((SegmentedButton) button).getRippleColor(), radius);
+//                    }
+//                }
+//            }
+//        } else {
+//            BackgroundHelper.setBackground(v, null);
+//        }
+//    }
+//
     private void setContainerAttrs() {
         if (isInEditMode()) {
             mainGroup.setBackgroundColor(backgroundColor);
         }
     }
-
-    private void initInterpolations() {
-        ArrayList<Class> interpolatorList = new ArrayList<Class>() {{
-            add(FastOutSlowInInterpolator.class);
-            add(BounceInterpolator.class);
-            add(LinearInterpolator.class);
-            add(DecelerateInterpolator.class);
-            add(CycleInterpolator.class);
-            add(AnticipateInterpolator.class);
-            add(AccelerateDecelerateInterpolator.class);
-            add(AccelerateInterpolator.class);
-            add(AnticipateOvershootInterpolator.class);
-            add(FastOutLinearInInterpolator.class);
-            add(LinearOutSlowInInterpolator.class);
-            add(OvershootInterpolator.class);
-        }};
-
-        try {
-            interpolatorSelector = (Interpolator) interpolatorList.get(animateSelector).newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @param onPositionChangedListener set your instance that you have created to listen any position change
-     */
-    public void setOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener) {
-        this.onPositionChangedListener = onPositionChangedListener;
-    }
-
-    /**
-     * Use this listener if you want to know any position change.
-     * Listener is called when one of segmented button is clicked or setPosition is called.
-     */
-    public interface OnPositionChangedListener {
-
-        void onPositionChanged(int position);
-    }
-
-    /**
-     * @param onClickedButtonListener set your instance that you have created to listen clicked positions
-     */
-    public void setOnClickedButtonListener(OnClickedButtonListener onClickedButtonListener) {
-        this.onClickedButtonListener = onClickedButtonListener;
-    }
-
-    /**
-     * Use this listener if  you want to know which button is clicked.
-     * Listener is called when one of segmented button is clicked
-     */
-    public interface OnClickedButtonListener {
-
-        void onClickedButton(int position);
-    }
-
-    /**
-     * @param position is used to select one of segmented buttons
-     */
-    public void setPosition(int position) {
-        this.position = position;
-
-        if (null == buttons) {
-            lastPosition = toggledPosition = position;
-            lastPositionOffset = toggledPositionOffset = (float) position;
-        } else {
-            toggle(position, animateSelectorDuration, false);
-        }
-    }
-
-    /**
-     * @param position is used to select one of segmented buttons
-     * @param duration determines how long animation takes to finish
-     */
-    public void setPosition(int position, int duration) {
-        this.position = position;
-
-        if (null == buttons) {
-            lastPosition = toggledPosition = position;
-            lastPositionOffset = toggledPositionOffset = (float) position;
-        } else {
-            toggle(position, duration, false);
-        }
-    }
-
-    /**
-     * @param position      is used to select one of segmented buttons
-     * @param withAnimation if true default animation will perform
-     */
-    public void setPosition(int position, boolean withAnimation) {
-        this.position = position;
-
-        if (null == buttons) {
-            lastPosition = toggledPosition = position;
-            lastPositionOffset = toggledPositionOffset = (float) position;
-        } else {
-            if (withAnimation) {
-                toggle(position, animateSelectorDuration, false);
-            } else {
-                toggle(position, 1, false);
-            }
-        }
-    }
-
-    /**
-     * @param selectorColor sets color to selector
-     *                      default: Color.GRAY
-     */
-    public void setSelectorColor(int selectorColor) {
-        this.selectorColor = selectorColor;
-    }
-
-    /**
-     * @param backgroundColor sets background color of whole layout including buttons on top of it
-     *                        default: Color.WHITE
-     */
-    @Override
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
-
-    /**
-     * @param ripple applies android's default ripple on layout
-     */
-    public void setRipple(boolean ripple) {
-        this.ripple = ripple;
-    }
-
-    /**
-     * @param rippleColor sets ripple color and adds ripple when a button is hovered
-     *                    default: Color.GRAY
-     */
-    public void setRippleColor(int rippleColor) {
-        this.rippleColor = rippleColor;
-    }
-
-    /**
-     * @param hasRippleColor if true ripple will be shown.
-     *                       if setRipple(boolean) is also set to false, there will be no ripple
-     */
-    public void setRippleColor(boolean hasRippleColor) {
-        this.hasRippleColor = hasRippleColor;
-    }
-
-    /**
-     * @param radius determines how round layout's corners should be
-     */
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    /**
-     * @param dividerPadding adjusts divider's top and bottom distance to its container
-     */
-    public void setDividerPadding(int dividerPadding) {
-        this.dividerPadding = dividerPadding;
-    }
-
-    /**
-     * @param animateSelectorDuration sets how long selector animation should last
-     */
-    public void setSelectorAnimationDuration(int animateSelectorDuration) {
-        this.animateSelectorDuration = animateSelectorDuration;
-    }
-
-    /**
-     * @param animateSelector is used to give an animation to selector with the given interpolator constant
-     */
-    public void setSelectorAnimation(int animateSelector) {
-        this.animateSelector = animateSelector;
-    }
-
-    /**
-     * @param interpolatorSelector is used to give an animation to selector with the given one of android's
-     *                             interpolator.
-     *                             Ex: {@link FastOutSlowInInterpolator}, {@link BounceInterpolator}, {@link
-     *                             LinearInterpolator}
-     */
-    public void setInterpolatorSelector(Interpolator interpolatorSelector) {
-        this.interpolatorSelector = interpolatorSelector;
-    }
-
-    /**
-     * @param dividerColor changes divider's color with the given one
-     *                     default: Color.WHITE
-     */
-    public void setDividerColor(int dividerColor) {
-        this.dividerColor = dividerColor;
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
-                dividerBackgroundDrawable);
-    }
-
-    /**
-     * @param dividerSize sets thickness of divider
-     *                    default: 0
-     */
-    public void setDividerSize(int dividerSize) {
-        this.dividerSize = dividerSize;
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
-                dividerBackgroundDrawable);
-    }
-
-    /**
-     * @param dividerRadius determines how round divider should be
-     *                      default: 0
-     */
-    public void setDividerRadius(int dividerRadius) {
-        this.dividerRadius = dividerRadius;
-        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
-                dividerBackgroundDrawable);
-    }
-
-    /**
-     * @param hasDivider if true divider will be shown.
-     */
-    public void setDivider(boolean hasDivider) {
-        this.hasDivider = hasDivider;
-    }
-
-    /**
-     * @param borderSize sets thickness of border
-     *                   default: 0
-     */
-    public void setBorderSize(int borderSize) {
-        this.borderSize = borderSize;
-    }
-
-    /**
-     * @param borderColor sets border color to the given one
-     *                    default: Color.BLACK
-     */
-    public void setBorderColor(int borderColor) {
-        this.borderColor = borderColor;
-    }
-
-    public int getDividerSize() {
-        return dividerSize;
-    }
-
-    public int getRippleColor() {
-        return rippleColor;
-    }
-
-    public int getSelectorColor() {
-        return selectorColor;
-    }
-
-    public int getSelectorAnimation() {
-        return animateSelector;
-    }
-
-    public int getSelectorAnimationDuration() {
-        return animateSelectorDuration;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    public int getDividerColor() {
-        return dividerColor;
-    }
-
-    public float getRadius() {
-        return radius;
-    }
-
-    public int getDividerPadding() {
-        return dividerPadding;
-    }
-
-    public float getDividerRadius() {
-        return dividerRadius;
-    }
-
-    public boolean isHasDivider() {
-        return hasDivider;
-    }
-
-    public boolean isHasRippleColor() {
-        return hasRippleColor;
-    }
-
-    public boolean isRipple() {
-        return ripple;
-    }
-
-    public Interpolator getInterpolatorSelector() {
-        return interpolatorSelector;
-    }
-
-    private void setRippleState(boolean state) {
-        for (View v : ripples) {
-            setRipple(v, state);
-        }
-    }
-
-    private void setEnabledAlpha(boolean enabled) {
-        float alpha = 1f;
-        if (!enabled) {
-            alpha = 0.5f;
-        }
-
-        setAlpha(alpha);
-    }
-
-
-    /**
-     * @param enabled set it to:
-     *                false, if you want buttons to be unclickable and add grayish looking which gives disabled look,
-     *                true, if you want buttons to be clickable and remove grayish looking
-     */
-    @Override
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        setRippleState(enabled);
-        setEnabledAlpha(enabled);
-    }
-
-    /**
-     * @param clickable set it to:
-     *                  false for unclickable buttons,
-     *                  true for clickable buttons
-     */
-    @Override
-    public void setClickable(boolean clickable) {
-        this.clickable = clickable;
-        setRippleState(clickable);
-    }
-
-    @Override
-    public Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("state", super.onSaveInstanceState());
-        bundle.putInt("position", position);
-        return bundle;
-    }
-
-    @Override
-    public void onRestoreInstanceState(Parcelable state) {
-        if (state instanceof Bundle) {
-            Bundle bundle = (Bundle) state;
-            position = bundle.getInt("position");
-            state = bundle.getParcelable("state");
-
-            setPosition(position, false);
-        }
-        super.onRestoreInstanceState(state);
-    }
-
-    private void toggle(int position, int duration, boolean isToggledByTouch) {
-        if (!draggable && toggledPosition == position) {
-            return;
-        }
-
-        toggledPosition = position;
-
-        ValueAnimator animator = ValueAnimator.ofFloat(toggledPositionOffset, position);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float animatedValue = toggledPositionOffset = (float) animation.getAnimatedValue();
-
-                int position = (int) animatedValue;
-                float positionOffset = animatedValue - position;
-
-                animateViews(position, positionOffset);
-
-                invalidate();
-            }
-        });
-        animator.setInterpolator(interpolatorSelector);
-        animator.setDuration(duration);
-        animator.start();
-
-        if (null != onClickedButtonListener && isToggledByTouch) {
-            onClickedButtonListener.onClickedButton(position);
-        }
-
-        if (null != onPositionChangedListener) {
-            onPositionChangedListener.onPositionChanged(position);
-        }
-
-        this.position = position;
-    }
-
-    private void animateViews(int position, float positionOffset) {
-        float realPosition = position + positionOffset;
-        float lastRealPosition = lastPosition + lastPositionOffset;
-
-        if (realPosition == lastRealPosition) {
-            return;
-        }
-
-        int nextPosition = position + 1;
-        if (positionOffset == 0.0f) {
-            if (lastRealPosition <= realPosition) {
-                nextPosition = position - 1;
-            }
-        }
-
-        if (lastPosition > position) {
-            if (lastPositionOffset > 0f) {
-                toNextPosition(nextPosition + 1, 1);
-            }
-        }
-
-        if (lastPosition < position) {
-            if (lastPositionOffset < 1.0f) {
-                toPosition(position - 1, 0);
-            }
-        }
-
-        toNextPosition(nextPosition, 1.0f - positionOffset);
-        toPosition(position, 1.0f - positionOffset);
-
-        lastPosition = position;
-        lastPositionOffset = positionOffset;
-    }
-
-    private void toPosition(int position, float clip) {
-        if (position >= 0 && position < numberOfButtons) {
-            buttons.get(position).clipToRight(clip);
-        }
-    }
-
-    private void toNextPosition(int position, float clip) {
-        if (position >= 0 && position < numberOfButtons) {
-            buttons.get(position).clipToLeft(clip);
-        }
-    }
+//
+//    private void initInterpolations() {
+//        ArrayList<Class> interpolatorList = new ArrayList<Class>() {{
+//            add(FastOutSlowInInterpolator.class);
+//            add(BounceInterpolator.class);
+//            add(LinearInterpolator.class);
+//            add(DecelerateInterpolator.class);
+//            add(CycleInterpolator.class);
+//            add(AnticipateInterpolator.class);
+//            add(AccelerateDecelerateInterpolator.class);
+//            add(AccelerateInterpolator.class);
+//            add(AnticipateOvershootInterpolator.class);
+//            add(FastOutLinearInInterpolator.class);
+//            add(LinearOutSlowInInterpolator.class);
+//            add(OvershootInterpolator.class);
+//        }};
+//
+//        try {
+//            interpolatorSelector = (Interpolator) interpolatorList.get(animateSelector).newInstance();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    /**
+//     * @param onPositionChangedListener set your instance that you have created to listen any position change
+//     */
+//    public void setOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener) {
+//        this.onPositionChangedListener = onPositionChangedListener;
+//    }
+//
+//    /**
+//     * Use this listener if you want to know any position change.
+//     * Listener is called when one of segmented button is clicked or setPosition is called.
+//     */
+//    public interface OnPositionChangedListener {
+//
+//        void onPositionChanged(int position);
+//    }
+//
+//    /**
+//     * @param onClickedButtonListener set your instance that you have created to listen clicked positions
+//     */
+//    public void setOnClickedButtonListener(OnClickedButtonListener onClickedButtonListener) {
+//        this.onClickedButtonListener = onClickedButtonListener;
+//    }
+//
+//    /**
+//     * Use this listener if  you want to know which button is clicked.
+//     * Listener is called when one of segmented button is clicked
+//     */
+//    public interface OnClickedButtonListener {
+//
+//        void onClickedButton(int position);
+//    }
+//
+//    /**
+//     * @param position is used to select one of segmented buttons
+//     */
+//    public void setPosition(int position) {
+//        this.position = position;
+//
+//        if (null == buttons) {
+//            lastPosition = toggledPosition = position;
+//            lastPositionOffset = toggledPositionOffset = (float) position;
+//        } else {
+//            toggle(position, animateSelectorDuration, false);
+//        }
+//    }
+//
+//    /**
+//     * @param position is used to select one of segmented buttons
+//     * @param duration determines how long animation takes to finish
+//     */
+//    public void setPosition(int position, int duration) {
+//        this.position = position;
+//
+//        if (null == buttons) {
+//            lastPosition = toggledPosition = position;
+//            lastPositionOffset = toggledPositionOffset = (float) position;
+//        } else {
+//            toggle(position, duration, false);
+//        }
+//    }
+//
+//    /**
+//     * @param position      is used to select one of segmented buttons
+//     * @param withAnimation if true default animation will perform
+//     */
+//    public void setPosition(int position, boolean withAnimation) {
+//        this.position = position;
+//
+//        if (null == buttons) {
+//            lastPosition = toggledPosition = position;
+//            lastPositionOffset = toggledPositionOffset = (float) position;
+//        } else {
+//            if (withAnimation) {
+//                toggle(position, animateSelectorDuration, false);
+//            } else {
+//                toggle(position, 1, false);
+//            }
+//        }
+//    }
+//
+//    /**
+//     * @param selectorColor sets color to selector
+//     *                      default: Color.GRAY
+//     */
+//    public void setSelectorColor(int selectorColor) {
+//        this.selectorColor = selectorColor;
+//    }
+//
+//    /**
+//     * @param backgroundColor sets background color of whole layout including buttons on top of it
+//     *                        default: Color.WHITE
+//     */
+//    @Override
+//    public void setBackgroundColor(int backgroundColor) {
+//        this.backgroundColor = backgroundColor;
+//    }
+//
+//    /**
+//     * @param ripple applies android's default ripple on layout
+//     */
+//    public void setRipple(boolean ripple) {
+//        this.ripple = ripple;
+//    }
+//
+//    /**
+//     * @param rippleColor sets ripple color and adds ripple when a button is hovered
+//     *                    default: Color.GRAY
+//     */
+//    public void setRippleColor(int rippleColor) {
+//        this.rippleColor = rippleColor;
+//    }
+//
+//    /**
+//     * @param hasRippleColor if true ripple will be shown.
+//     *                       if setRipple(boolean) is also set to false, there will be no ripple
+//     */
+//    public void setRippleColor(boolean hasRippleColor) {
+//        this.hasRippleColor = hasRippleColor;
+//    }
+//
+//    /**
+//     * @param radius determines how round layout's corners should be
+//     */
+//    public void setRadius(int radius) {
+//        this.radius = radius;
+//    }
+//
+//    /**
+//     * @param dividerPadding adjusts divider's top and bottom distance to its container
+//     */
+//    public void setDividerPadding(int dividerPadding) {
+//        this.dividerPadding = dividerPadding;
+//    }
+//
+//    /**
+//     * @param animateSelectorDuration sets how long selector animation should last
+//     */
+//    public void setSelectorAnimationDuration(int animateSelectorDuration) {
+//        this.animateSelectorDuration = animateSelectorDuration;
+//    }
+//
+//    /**
+//     * @param animateSelector is used to give an animation to selector with the given interpolator constant
+//     */
+//    public void setSelectorAnimation(int animateSelector) {
+//        this.animateSelector = animateSelector;
+//    }
+//
+//    /**
+//     * @param interpolatorSelector is used to give an animation to selector with the given one of android's
+//     *                             interpolator.
+//     *                             Ex: {@link FastOutSlowInInterpolator}, {@link BounceInterpolator}, {@link
+//     *                             LinearInterpolator}
+//     */
+//    public void setInterpolatorSelector(Interpolator interpolatorSelector) {
+//        this.interpolatorSelector = interpolatorSelector;
+//    }
+//
+//    /**
+//     * @param dividerColor changes divider's color with the given one
+//     *                     default: Color.WHITE
+//     */
+//    public void setDividerColor(int dividerColor) {
+//        this.dividerColor = dividerColor;
+//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//                dividerBackgroundDrawable);
+//    }
+//
+//    /**
+//     * @param dividerSize sets thickness of divider
+//     *                    default: 0
+//     */
+//    public void setDividerSize(int dividerSize) {
+//        this.dividerSize = dividerSize;
+//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//                dividerBackgroundDrawable);
+//    }
+//
+//    /**
+//     * @param dividerRadius determines how round divider should be
+//     *                      default: 0
+//     */
+//    public void setDividerRadius(int dividerRadius) {
+//        this.dividerRadius = dividerRadius;
+//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//                dividerBackgroundDrawable);
+//    }
+//
+//    /**
+//     * @param hasDivider if true divider will be shown.
+//     */
+//    public void setDivider(boolean hasDivider) {
+//        this.hasDivider = hasDivider;
+//    }
+//
+//    /**
+//     * @param borderSize sets thickness of border
+//     *                   default: 0
+//     */
+//    public void setBorderSize(int borderSize) {
+//        this.borderSize = borderSize;
+//    }
+//
+//    /**
+//     * @param borderColor sets border color to the given one
+//     *                    default: Color.BLACK
+//     */
+//    public void setBorderColor(int borderColor) {
+//        this.borderColor = borderColor;
+//    }
+//
+//    public int getDividerSize() {
+//        return dividerSize;
+//    }
+//
+//    public int getRippleColor() {
+//        return rippleColor;
+//    }
+//
+//    public int getSelectorColor() {
+//        return selectorColor;
+//    }
+//
+//    public int getSelectorAnimation() {
+//        return animateSelector;
+//    }
+//
+//    public int getSelectorAnimationDuration() {
+//        return animateSelectorDuration;
+//    }
+//
+//    public int getPosition() {
+//        return position;
+//    }
+//
+//    public int getBackgroundColor() {
+//        return backgroundColor;
+//    }
+//
+//    public int getDividerColor() {
+//        return dividerColor;
+//    }
+//
+//    public float getRadius() {
+//        return radius;
+//    }
+//
+//    public int getDividerPadding() {
+//        return dividerPadding;
+//    }
+//
+//    public float getDividerRadius() {
+//        return dividerRadius;
+//    }
+//
+//    public boolean isHasDivider() {
+//        return hasDivider;
+//    }
+//
+//    public boolean isHasRippleColor() {
+//        return hasRippleColor;
+//    }
+//
+//    public boolean isRipple() {
+//        return ripple;
+//    }
+//
+//    public Interpolator getInterpolatorSelector() {
+//        return interpolatorSelector;
+//    }
+
+//    private void setRippleState(boolean state) {
+//        for (View v : ripples) {
+//            setRipple(v, state);
+//        }
+//    }
+//
+//    private void setEnabledAlpha(boolean enabled) {
+//        float alpha = 1f;
+//        if (!enabled) {
+//            alpha = 0.5f;
+//        }
+//
+//        setAlpha(alpha);
+//    }
+//
+//
+//    /**
+//     * @param enabled set it to:
+//     *                false, if you want buttons to be unclickable and add grayish looking which gives disabled look,
+//     *                true, if you want buttons to be clickable and remove grayish looking
+//     */
+//    @Override
+//    public void setEnabled(boolean enabled) {
+//        this.enabled = enabled;
+//        setRippleState(enabled);
+//        setEnabledAlpha(enabled);
+//    }
+//
+//    /**
+//     * @param clickable set it to:
+//     *                  false for unclickable buttons,
+//     *                  true for clickable buttons
+//     */
+//    @Override
+//    public void setClickable(boolean clickable) {
+//        this.clickable = clickable;
+//        setRippleState(clickable);
+//    }
+//
+//    @Override
+//    public Parcelable onSaveInstanceState() {
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable("state", super.onSaveInstanceState());
+//        bundle.putInt("position", position);
+//        return bundle;
+//    }
+//
+//    @Override
+//    public void onRestoreInstanceState(Parcelable state) {
+//        if (state instanceof Bundle) {
+//            Bundle bundle = (Bundle) state;
+//            position = bundle.getInt("position");
+//            state = bundle.getParcelable("state");
+//
+//            setPosition(position, false);
+//        }
+//        super.onRestoreInstanceState(state);
+//    }
+//
+//    private void toggle(int position, int duration, boolean isToggledByTouch) {
+//        if (!draggable && toggledPosition == position) {
+//            return;
+//        }
+//
+//        toggledPosition = position;
+//
+//        ValueAnimator animator = ValueAnimator.ofFloat(toggledPositionOffset, position);
+//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                float animatedValue = toggledPositionOffset = (float) animation.getAnimatedValue();
+//
+//                int position = (int) animatedValue;
+//                float positionOffset = animatedValue - position;
+//
+//                animateViews(position, positionOffset);
+//
+//                invalidate();
+//            }
+//        });
+//        animator.setInterpolator(interpolatorSelector);
+//        animator.setDuration(duration);
+//        animator.start();
+//
+//        if (null != onClickedButtonListener && isToggledByTouch) {
+//            onClickedButtonListener.onClickedButton(position);
+//        }
+//
+//        if (null != onPositionChangedListener) {
+//            onPositionChangedListener.onPositionChanged(position);
+//        }
+//
+//        this.position = position;
+//    }
+//
+//    private void animateViews(int position, float positionOffset) {
+//        float realPosition = position + positionOffset;
+//        float lastRealPosition = lastPosition + lastPositionOffset;
+//
+//        if (realPosition == lastRealPosition) {
+//            return;
+//        }
+//
+//        int nextPosition = position + 1;
+//        if (positionOffset == 0.0f) {
+//            if (lastRealPosition <= realPosition) {
+//                nextPosition = position - 1;
+//            }
+//        }
+//
+//        if (lastPosition > position) {
+//            if (lastPositionOffset > 0f) {
+//                toNextPosition(nextPosition + 1, 1);
+//            }
+//        }
+//
+//        if (lastPosition < position) {
+//            if (lastPositionOffset < 1.0f) {
+//                toPosition(position - 1, 0);
+//            }
+//        }
+//
+//        toNextPosition(nextPosition, 1.0f - positionOffset);
+//        toPosition(position, 1.0f - positionOffset);
+//
+//        lastPosition = position;
+//        lastPositionOffset = positionOffset;
+//    }
+//
+//    private void toPosition(int position, float clip) {
+//        if (position >= 0 && position < numberOfButtons) {
+//            buttons.get(position).clipToRight(clip);
+//        }
+//    }
+//
+//    private void toNextPosition(int position, float clip) {
+//        if (position >= 0 && position < numberOfButtons) {
+//            buttons.get(position).clipToLeft(clip);
+//        }
+//    }
 
     // endregion
 }
