@@ -581,6 +581,10 @@ public class SegmentedButton extends View {
             canvas.restore();
         }
 
+        if (hasDrawable) {
+            // TODO Draw drawable here with color filter
+        }
+
 //        int width = canvas.getWidth();
 //        int height = canvas.getHeight();
 //
@@ -710,21 +714,26 @@ public class SegmentedButton extends View {
 //        canvas.restore();
     }
 
-//    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
-//        int drawableX = (int) bitmap_X;
-//        int drawableY = (int) bitmap_Y;
-//        int drawableWidth = mDrawable.getIntrinsicWidth();
-//        if (hasDrawableWidth) {
-//            drawableWidth = this.drawableWidth;
-//        }
-//        int drawableHeight = mDrawable.getIntrinsicHeight();
-//        if (hasDrawableHeight) {
-//            drawableHeight = this.drawableHeight;
-//        }
-//        mDrawable.setColorFilter(colorFilter);
-//        mDrawable.setBounds(drawableX, drawableY, drawableX + drawableWidth, drawableY + drawableHeight);
-//        mDrawable.draw(canvas);
-//    }
+    private void drawDrawable(Canvas canvas, ColorFilter colorFilter) {
+        //        mDrawable.setBounds
+//        mDrawable.setBounds(drawablePosition.x, drawablePosition.y, 12, 12);
+    }
+
+    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
+        int drawableX = (int) bitmap_X;
+        int drawableY = (int) bitmap_Y;
+        int drawableWidth = mDrawable.getIntrinsicWidth();
+        if (hasDrawableWidth) {
+            drawableWidth = this.drawableWidth;
+        }
+        int drawableHeight = mDrawable.getIntrinsicHeight();
+        if (hasDrawableHeight) {
+            drawableHeight = this.drawableHeight;
+        }
+        mDrawable.setColorFilter(colorFilter);
+        mDrawable.setBounds(drawableX, drawableY, drawableX + drawableWidth, drawableY + drawableHeight);
+        mDrawable.draw(canvas);
+    }
 
     public void clipToLeft(float clip) {
         clipLeftToRight = false;
