@@ -12,31 +12,19 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import androidx.core.content.ContextCompat;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 public class SegmentedButton extends View {
 
+    // region Variables & Constants
+
     private Context context;
-
-    public SegmentedButton(Context context) {
-        super(context);
-        init(context, null);
-    }
-
-    public SegmentedButton(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-    }
-
-    public SegmentedButton(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
 
     private float mClipAmount;
     private boolean clipLeftToRight;
@@ -48,54 +36,143 @@ public class SegmentedButton extends View {
     private boolean hasBorderLeft, hasBorderRight;
 
     // private RectF rectF = new RectF();
+    private RectF mRectF;
+    private Paint mPaint;
 
-    private void init(Context context, AttributeSet attrs) {
+    private PorterDuffColorFilter mBitmapNormalColor, mBitmapClipColor;
+
+    private Drawable mDrawable;
+
+    private boolean hasDrawable, hasText;
+    private DrawableGravity drawableGravity;
+
+    // Custom attributes
+    private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawable,
+            drawableTint, drawableWidth, drawableHeight, drawablePadding;
+    private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
+            hasDrawableWidth, hasDrawableHeight, hasDrawableTint, hasTextTypefacePath;
+    private float buttonWeight, textSize;
+    private String textTypefacePath, text;
+    private Typeface textTypeface;
+
+    // endregion
+
+    // region Constructor
+
+    public SegmentedButton(Context context) {
+        super(context);
+
+        init(context, null);
+    }
+
+    public SegmentedButton(Context context, AttributeSet attrs) {
+        super(context, attrs);
+
+        init(context, attrs);
+    }
+
+    public SegmentedButton(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        init(context, attrs);
+    }
+
+    private void init(Context context, @Nullable AttributeSet attrs) {
+        // TODO Look into why this needs to be stored
         this.context = context;
-        getAttributes(attrs);
+
+        // Retrieve custom attributes
+        getAttributes(context, attrs);
 
         initText();
         initBitmap();
+
         mRectF = new RectF();
         mPaint = new Paint();
         mPaint.setColor(Color.BLACK);
         mPaint.setAntiAlias(true);
     }
 
-    void setSelectorColor(int color) {
-        mPaint.setColor(color);
-    }
+    private void getAttributes(Context context, @Nullable AttributeSet attrs) {
+        // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
+        // to the default
+        TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SegmentedButton);
 
-    void setSelectorRadius(int radius) {
-        mRadius = radius;
-    }
+        hasRipple = ta.hasValue(R.styleable.SegmentedButton_rippleColor);
+        rippleColor = ta.getColor(R.styleable.SegmentedButton_rippleColor, 0);
 
-    void setBorderSize(int borderSize) {
-        mBorderSize = borderSize;
-    }
+        hasDrawable = ta.hasValue(R.styleable.SegmentedButton_drawable);
+        drawable = ta.getResourceId(R.styleable.SegmentedButton_drawable, 0);
+        drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
+        hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
+        drawableTint = ta.getColor(R.styleable.SegmentedButton_drawableTint, -1);
+        hasDrawableTintOnSelection = ta.hasValue(R.styleable.SegmentedButton_drawableTint_onSelection);
+        drawableTintOnSelection = ta.getColor(R.styleable.SegmentedButton_drawableTint_onSelection, Color.WHITE);
+        hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_drawableWidth);
+        hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_drawableHeight);
+        drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
+        drawableHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableHeight, -1);
+        // TODO No drawable keep aspect ratio?
+        drawableGravity = DrawableGravity.getById(ta.getInteger(R.styleable.SegmentedButton_drawableGravity, 0));
 
-    void hasBorderLeft(boolean hasBorderLeft) {
-        this.hasBorderLeft = hasBorderLeft;
-    }
+        hasText = ta.hasValue(R.styleable.SegmentedButton_text);
+        text = ta.getString(R.styleable.SegmentedButton_text);
+        textColor = ta.getColor(R.styleable.SegmentedButton_textColor, Color.GRAY);
+        hasTextColorOnSelection = ta.hasValue(R.styleable.SegmentedButton_textColor_onSelection);
+        textColorOnSelection = ta.getColor(R.styleable.SegmentedButton_textColor_onSelection, Color.WHITE);
+        textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
+        hasTextTypefacePath = ta.hasValue(R.styleable.SegmentedButton_textTypefacePath);
+        textTypefacePath = ta.getString(R.styleable.SegmentedButton_textTypefacePath);
 
-    void hasBorderRight(boolean hasBorderRight) {
-        this.hasBorderRight = hasBorderRight;
-    }
+        int typeface = ta.getInt(R.styleable.SegmentedButton_textTypeface, 1);
+        switch (typeface) {
+            case 0:
+                textTypeface = Typeface.MONOSPACE;
+                break;
 
-    private RectF mRectF;
-    private Paint mPaint;
+            case 1:
+                textTypeface = Typeface.DEFAULT;
+                break;
+
+            case 2:
+                textTypeface = Typeface.SANS_SERIF;
+                break;
+
+            case 3:
+                textTypeface = Typeface.SERIF;
+                break;
+        }
+
+        // TODO Missing some more text parameters
+
+        try {
+            hasWeight = ta.hasValue(R.styleable.SegmentedButton_android_layout_weight);
+            buttonWeight = ta.getFloat(R.styleable.SegmentedButton_android_layout_weight, 0);
+            buttonWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_width, 0);
+
+        } catch (Exception ex) {
+            hasWeight = true;
+            buttonWeight = 1;
+        }
+
+        hasWidth = !hasWeight && buttonWidth > 0;
+
+        ta.recycle();
+    }
 
     private void initText() {
-        if (!hasText)
+        if (!hasText) {
             return;
+        }
 
         mTextPaint = new TextPaint();
         mTextPaint.setAntiAlias(true);
         mTextPaint.setTextSize(textSize);
         mTextPaint.setColor(textColor);
 
-        if (hasTextTypefacePath)
+        if (hasTextTypefacePath) {
             setTypeface(textTypefacePath);
-        else if (null != textTypeface) {
+        } else if (null != textTypeface) {
             setTypeface(textTypeface);
         }
 
@@ -114,23 +191,31 @@ public class SegmentedButton extends View {
             mBitmapNormalColor = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
         }
 
-        if (hasDrawableTintOnSelection)
+        if (hasDrawableTintOnSelection) {
             mBitmapClipColor = new PorterDuffColorFilter(drawableTintOnSelection, PorterDuff.Mode.SRC_IN);
+        }
     }
-    
+
+    // endregion
+
+    // region Layout & Measure
+
     private void measureTextWidth(int width) {
-        if (!hasText)
+        if (!hasText) {
             return;
+        }
 
         int bitmapWidth = hasDrawable && drawableGravity.isHorizontal() ? mDrawable.getIntrinsicWidth() : 0;
 
         int textWidth = width - (bitmapWidth + getPaddingLeft() + getPaddingRight());
 
-        if (textWidth < 0)
+        if (textWidth < 0) {
             return;
+        }
 
         mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-        mStaticLayoutOverlay = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+        mStaticLayoutOverlay = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+                false);
     }
 
     @Override
@@ -175,9 +260,9 @@ public class SegmentedButton extends View {
                 break;
         }
 
-        if (hasText)
+        if (hasText) {
             mTextPaint.getTextBounds(text, 0, text.length(), mTextBounds);
-
+        }
 
         switch (heightMode) {
             case MeasureSpec.EXACTLY:
@@ -190,10 +275,11 @@ public class SegmentedButton extends View {
                     }
                 } else {
                     int h = textHeight + bitmapHeight + getPaddingTop() + getPaddingBottom();
-                    if (heightRequirement < h)
+                    if (heightRequirement < h) {
                         height = h;
-                    else
+                    } else {
                         height = heightRequirement + getPaddingTop() - getPaddingBottom();
+                    }
                 }
                 break;
 
@@ -233,7 +319,6 @@ public class SegmentedButton extends View {
             bitmapWidth = mDrawable.getIntrinsicWidth();
         }
 
-
         if (drawableGravity.isHorizontal()) {
             if (height > Math.max(textHeight, bitmapHeight)) {
                 text_Y = height / 2f - textHeight / 2f + getPaddingTop() - getPaddingBottom();
@@ -263,14 +348,14 @@ public class SegmentedButton extends View {
             }
         } else {
 
-
             if (drawableGravity == DrawableGravity.TOP) {
                 bitmap_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
 
                 float vHeight = (height - (textHeight + bitmapHeight)) / 2f;
 
-                if (vHeight > 0)
+                if (vHeight > 0) {
                     bitmap_Y += vHeight;
+                }
 
                 text_Y = bitmap_Y + bitmapHeight + drawablePadding;
 
@@ -278,12 +363,12 @@ public class SegmentedButton extends View {
                 text_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
 
                 float vHeight = height - (textHeight + bitmapHeight);
-                if (vHeight > 0)
+                if (vHeight > 0) {
                     text_Y += vHeight / 2f;
+                }
 
                 bitmap_Y = text_Y + textHeight + drawablePadding;
             }
-
 
             if (width > Math.max(textBoundsWidth, bitmapWidth)) {
                 text_X = width / 2f - textBoundsWidth / 2f + getPaddingLeft() - getPaddingRight();
@@ -298,9 +383,7 @@ public class SegmentedButton extends View {
         }
     }
 
-    private PorterDuffColorFilter mBitmapNormalColor, mBitmapClipColor;
-
-    private Drawable mDrawable;
+    // endregion
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -311,13 +394,14 @@ public class SegmentedButton extends View {
 
         canvas.save();
 
-        if (clipLeftToRight)
+        if (clipLeftToRight) {
             canvas.translate(-width * (mClipAmount - 1), 0);
-        else
+        } else {
             canvas.translate(width * (mClipAmount - 1), 0);
+        }
 
-
-        mRectF.set(hasBorderLeft ? mBorderSize : 0, mBorderSize, hasBorderRight ? width - mBorderSize : width, height - mBorderSize);
+        mRectF.set(hasBorderLeft ? mBorderSize : 0, mBorderSize, hasBorderRight ? width - mBorderSize : width,
+                height - mBorderSize);
         canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
 
         canvas.restore();
@@ -326,8 +410,9 @@ public class SegmentedButton extends View {
 
         if (hasText) {
             canvas.translate(text_X, text_Y);
-            if (hasTextColorOnSelection)
+            if (hasTextColorOnSelection) {
                 mTextPaint.setColor(textColor);
+            }
             mStaticLayout.draw(canvas);
 
             canvas.restore();
@@ -339,7 +424,6 @@ public class SegmentedButton extends View {
             drawDrawableWithColorFilter(canvas, mBitmapNormalColor);
         }
         // NORMAL -end
-
 
         // CLIPPING
         if (clipLeftToRight) {
@@ -354,8 +438,9 @@ public class SegmentedButton extends View {
 
         if (hasText) {
             canvas.translate(text_X, text_Y);
-            if (hasTextColorOnSelection)
+            if (hasTextColorOnSelection) {
                 mTextPaint.setColor(textColorOnSelection);
+            }
             mStaticLayoutOverlay.draw(canvas);
             canvas.restore();
         }
@@ -369,9 +454,9 @@ public class SegmentedButton extends View {
         canvas.restore();
     }
 
-    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter){
-        int drawableX = (int)bitmap_X;
-        int drawableY = (int)bitmap_Y;
+    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
+        int drawableX = (int) bitmap_X;
+        int drawableY = (int) bitmap_Y;
         int drawableWidth = mDrawable.getIntrinsicWidth();
         if (hasDrawableWidth) {
             drawableWidth = this.drawableWidth;
@@ -395,78 +480,6 @@ public class SegmentedButton extends View {
         clipLeftToRight = true;
         mClipAmount = clip;
         invalidate();
-    }
-
-    private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth,
-            drawable, drawableTint, drawableWidth, drawableHeight, drawablePadding;
-    private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
-            hasDrawableWidth, hasDrawableHeight, hasDrawableTint, hasTextTypefacePath;
-    private float buttonWeight, textSize;
-    private String textTypefacePath, text;
-    private Typeface textTypeface;
-
-    private void getAttributes(AttributeSet attrs) {
-        TypedArray ta = getContext().obtainStyledAttributes(attrs, R.styleable.SegmentedButton);
-
-        drawableTintOnSelection = ta.getColor(R.styleable.SegmentedButton_sb_drawableTint_onSelection, Color.WHITE);
-        hasDrawableTintOnSelection = ta.hasValue(R.styleable.SegmentedButton_sb_drawableTint_onSelection);
-
-        textColorOnSelection = ta.getColor(R.styleable.SegmentedButton_sb_textColor_onSelection, Color.WHITE);
-        hasTextColorOnSelection = ta.hasValue(R.styleable.SegmentedButton_sb_textColor_onSelection);
-
-        rippleColor = ta.getColor(R.styleable.SegmentedButton_sb_rippleColor, 0);
-        hasRipple = ta.hasValue(R.styleable.SegmentedButton_sb_rippleColor);
-
-        text = ta.getString(R.styleable.SegmentedButton_sb_text);
-        hasText = ta.hasValue(R.styleable.SegmentedButton_sb_text);
-        textSize = ta.getDimension(R.styleable.SegmentedButton_sb_textSize, ConversionHelper.spToPx(getContext(), 14));
-        textColor = ta.getColor(R.styleable.SegmentedButton_sb_textColor, Color.GRAY);
-        textTypefacePath = ta.getString(R.styleable.SegmentedButton_sb_textTypefacePath);
-        hasTextTypefacePath = ta.hasValue(R.styleable.SegmentedButton_sb_textTypefacePath);
-        int typeface = ta.getInt(R.styleable.SegmentedButton_sb_textTypeface, 1);
-        switch (typeface) {
-            case 0:
-                textTypeface = Typeface.MONOSPACE;
-                break;
-            case 1:
-                textTypeface = Typeface.DEFAULT;
-                break;
-            case 2:
-                textTypeface = Typeface.SANS_SERIF;
-                break;
-            case 3:
-                textTypeface = Typeface.SERIF;
-                break;
-        }
-
-        try {
-            hasWeight = ta.hasValue(R.styleable.SegmentedButton_android_layout_weight);
-            buttonWeight = ta.getFloat(R.styleable.SegmentedButton_android_layout_weight, 0);
-
-            buttonWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_width, 0);
-
-        } catch (Exception ex) {
-            hasWeight = true;
-            buttonWeight = 1;
-        }
-        hasWidth = !hasWeight && buttonWidth > 0;
-
-
-        drawable = ta.getResourceId(R.styleable.SegmentedButton_sb_drawable, 0);
-        drawableTint = ta.getColor(R.styleable.SegmentedButton_sb_drawableTint, -1);
-        drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_sb_drawableWidth, -1);
-        drawableHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_sb_drawableHeight, -1);
-        drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_sb_drawablePadding, 0);
-
-        hasDrawable = ta.hasValue(R.styleable.SegmentedButton_sb_drawable);
-        hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_sb_drawableTint);
-        hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_sb_drawableWidth);
-        hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_sb_drawableHeight);
-
-        drawableGravity = DrawableGravity.getById(ta.getInteger(R.styleable.SegmentedButton_sb_drawableGravity, 0));
-
-
-        ta.recycle();
     }
 
     /**
@@ -495,8 +508,6 @@ public class SegmentedButton extends View {
      * GRAVITY
      */
 
-    private DrawableGravity drawableGravity;
-
     public enum DrawableGravity {
         LEFT(0),
         TOP(1),
@@ -515,7 +526,9 @@ public class SegmentedButton extends View {
 
         public static DrawableGravity getById(int id) {
             for (DrawableGravity e : values()) {
-                if (e.intValue == id) return e;
+                if (e.intValue == id) {
+                    return e;
+                }
             }
             return null;
         }
@@ -525,8 +538,25 @@ public class SegmentedButton extends View {
         }
     }
 
-    private boolean hasDrawable, hasText;
+    void setSelectorColor(int color) {
+        mPaint.setColor(color);
+    }
 
+    void setSelectorRadius(int radius) {
+        mRadius = radius;
+    }
+
+    void setBorderSize(int borderSize) {
+        mBorderSize = borderSize;
+    }
+
+    void hasBorderLeft(boolean hasBorderLeft) {
+        this.hasBorderLeft = hasBorderLeft;
+    }
+
+    void hasBorderRight(boolean hasBorderRight) {
+        this.hasBorderRight = hasBorderRight;
+    }
 
     /**
      * Sets button's drawable by given drawable object and its position
@@ -542,7 +572,7 @@ public class SegmentedButton extends View {
      *
      * @param drawable is your drawable object
      */
-    public void setDrawable(Drawable drawable){
+    public void setDrawable(Drawable drawable) {
         mDrawable = drawable;
         hasDrawable = true;
         requestLayout();
