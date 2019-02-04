@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -207,7 +208,8 @@ public class SegmentedButton extends View {
 
         // For the text width, assume that it is in a single line with no wrapping which would be mTextMaxWidth
         // This variable is used to calculate the desired width and the desire is for it all to be in a single line
-        final int drawableWidth = hasDrawable ? mDrawable.getIntrinsicWidth() : 0;
+        final int drawableWidth = hasDrawable ? hasDrawableWidth ? this.drawableWidth : mDrawable.getIntrinsicWidth()
+                : 0;
         final int textWidth = hasText ? mTextMaxWidth : 0;
 
         // Measured width & height
@@ -250,7 +252,8 @@ public class SegmentedButton extends View {
 
         // Repeat measuring process for height now
         // Note that the height is the static layout height which may or may not be multi-lined
-        final int drawableHeight = hasDrawable ? mDrawable.getIntrinsicHeight() : 0;
+        final int drawableHeight = hasDrawable ? hasDrawableHeight ? this.drawableHeight
+                : mDrawable.getIntrinsicHeight() : 0;
         final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
 
         int desiredHeight = getPaddingTop() + getPaddingBottom();
@@ -480,6 +483,11 @@ public class SegmentedButton extends View {
             }
         }
 
+        if (hasDrawable) {
+            mDrawable.setBounds((int) drawablePosition.x, (int) drawablePosition.y,
+                    (int) drawablePosition.x + drawableWidth, (int) drawablePosition.y + drawableHeight);
+        }
+
 //        float textHeight = 0, textWidth = 0, textBoundsWidth = 0;
 //        if (hasText) {
 //            textHeight = mStaticLayout.getHeight();
@@ -578,11 +586,15 @@ public class SegmentedButton extends View {
             canvas.translate(textPosition.x, textPosition.y);
             mTextPaint.setColor(textColor);
             mStaticLayout.draw(canvas);
+//            mStaticLayout.setB
             canvas.restore();
         }
 
         if (hasDrawable) {
-            // TODO Draw drawable here with color filter
+            canvas.save();
+            mDrawable.setColorFilter(mBitmapNormalColor);
+            mDrawable.draw(canvas);
+            canvas.restore();
         }
 
 //        int width = canvas.getWidth();
@@ -719,21 +731,21 @@ public class SegmentedButton extends View {
 //        mDrawable.setBounds(drawablePosition.x, drawablePosition.y, 12, 12);
     }
 
-    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
-        int drawableX = (int) bitmap_X;
-        int drawableY = (int) bitmap_Y;
-        int drawableWidth = mDrawable.getIntrinsicWidth();
-        if (hasDrawableWidth) {
-            drawableWidth = this.drawableWidth;
-        }
-        int drawableHeight = mDrawable.getIntrinsicHeight();
-        if (hasDrawableHeight) {
-            drawableHeight = this.drawableHeight;
-        }
-        mDrawable.setColorFilter(colorFilter);
-        mDrawable.setBounds(drawableX, drawableY, drawableX + drawableWidth, drawableY + drawableHeight);
-        mDrawable.draw(canvas);
-    }
+//    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
+//        int drawableX = (int) bitmap_X;
+//        int drawableY = (int) bitmap_Y;
+//        int drawableWidth = mDrawable.getIntrinsicWidth();
+//        if (hasDrawableWidth) {
+//            drawableWidth = this.drawableWidth;
+//        }
+//        int drawableHeight = mDrawable.getIntrinsicHeight();
+//        if (hasDrawableHeight) {
+//            drawableHeight = this.drawableHeight;
+//        }
+//        mDrawable.setColorFilter(colorFilter);
+//        mDrawable.setBounds(drawableX, drawableY, drawableX + drawableWidth, drawableY + drawableHeight);
+//        mDrawable.draw(canvas);
+//    }
 
     public void clipToLeft(float clip) {
         clipLeftToRight = false;
