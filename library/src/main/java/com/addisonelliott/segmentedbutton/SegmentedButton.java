@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
@@ -42,7 +43,7 @@ public class SegmentedButton extends View {
     private RectF mRectF;
     private Paint mPaint;
 
-    private float text_X = 0.0f, text_Y = 0.0f, bitmap_X = 0.0f, bitmap_Y = 0.0f;
+    private PointF textPosition, drawablePosition;
 
     private PorterDuffColorFilter mBitmapNormalColor, mBitmapClipColor;
 
@@ -88,6 +89,9 @@ public class SegmentedButton extends View {
 
         initText();
         initDrawable(context);
+
+        textPosition = new PointF();
+        drawablePosition = new PointF();
 
         mRectF = new RectF();
         mPaint = new Paint();
@@ -280,6 +284,11 @@ public class SegmentedButton extends View {
                 break;
         }
 
+        // Calculate the position for text & drawable now that we know width & height
+        calculatePositions(width, height, textWidth, textHeight, drawableWidth, drawableHeight, width == desiredWidth,
+                height == desiredHeight);
+
+        // Required to be called to notify the View of the width & height decided
         setMeasuredDimension(width, height);
 
 //        int width = 0;
@@ -361,98 +370,164 @@ public class SegmentedButton extends View {
 //        setMeasuredDimension(width, height);
     }
 
-    private void measureTextWidth(int width) {
-        if (!hasText) {
-            return;
-        }
+//    private void measureTextWidth(int width) {
+//        if (!hasText) {
+//            return;
+//        }
+//
+//        int bitmapWidth = hasDrawable && drawableGravity.isHorizontal() ? mDrawable.getIntrinsicWidth() : 0;
+//
+//        int textWidth = width - (bitmapWidth + getPaddingLeft() + getPaddingRight());
+//
+//        if (textWidth < 0) {
+//            return;
+//        }
+//
+//        mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
+//    }
 
-        int bitmapWidth = hasDrawable && drawableGravity.isHorizontal() ? mDrawable.getIntrinsicWidth() : 0;
-
-        int textWidth = width - (bitmapWidth + getPaddingLeft() + getPaddingRight());
-
-        if (textWidth < 0) {
-            return;
-        }
-
-        mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
-    }
-
-    private void calculate(int width, int height) {
-        float textHeight = 0, textWidth = 0, textBoundsWidth = 0;
-        if (hasText) {
-            textHeight = mStaticLayout.getHeight();
-            textWidth = mStaticLayout.getWidth();
-            textBoundsWidth = mTextBounds.width();
-        }
-
-        float bitmapHeight = 0, bitmapWidth = 0;
-        if (hasDrawable) {
-            bitmapHeight = mDrawable.getIntrinsicHeight();
-            bitmapWidth = mDrawable.getIntrinsicWidth();
-        }
-
-        if (drawableGravity.isHorizontal()) {
-            if (height > Math.max(textHeight, bitmapHeight)) {
-                text_Y = height / 2f - textHeight / 2f + getPaddingTop() - getPaddingBottom();
-                bitmap_Y = height / 2f - bitmapHeight / 2f + getPaddingTop() - getPaddingBottom();
-            } else if (textHeight > bitmapHeight) {
-                text_Y = getPaddingTop();
-                bitmap_Y = text_Y + textHeight / 2f - bitmapHeight / 2f;
+    private void calculatePositions(int measuredWidth, int measuredHeight, int textWidth, int textHeight,
+            int drawableWidth, int drawableHeight, boolean useDesiredWidth, boolean useDesiredHeight) {
+        if (Gravity.isHorizontal(drawableGravity)) {
+            // Calculate Y position for horizontal gravity, i.e. center the drawable and/or text if necessary
+            // Fancy way of centering the two objects vertically, the last 2 if statements are special cases where
+            // either the drawable or text is taking up the full height so there is no need to calculate the center
+            if (!useDesiredHeight) {
+                textPosition.y =
+                        getPaddingTop() + (measuredHeight - getPaddingTop() - getPaddingBottom() - textHeight) / 2.0f;
+                drawablePosition.y = getPaddingTop()
+                        + (measuredHeight - getPaddingTop() - getPaddingBottom() - drawableHeight) / 2.0f;
+            } else if (textHeight < drawableHeight) {
+                textPosition.y = getPaddingTop() + (drawableHeight - textHeight) / 2.0f;
+                drawablePosition.y = getPaddingTop();
             } else {
-                bitmap_Y = getPaddingTop();
-                text_Y = bitmap_Y + bitmapHeight / 2f - textHeight / 2f;
+                textPosition.y = getPaddingTop();
+                drawablePosition.y = getPaddingTop() + (textHeight - drawableHeight) / 2.0f;
             }
 
-            text_X = getPaddingLeft();
-            bitmap_X = textWidth;
+            // Calculate X position for horizontal gravity
+            // This gets the amount of remaining space between the text, drawable & drawable padding
+            // If the exact amount of width is used, then useDesiredWidth is true and the remaining space is set to 0
+            float remainingSpace = useDesiredWidth ? (measuredWidth - textWidth - drawableWidth - drawablePadding)
+                    / 2.0f : 0.0f;
 
-            float remainingSpace = width - (textBoundsWidth + bitmapWidth);
-            if (remainingSpace > 0) {
-                remainingSpace /= 2f;
-            }
-
-            if (drawableGravity == DrawableGravity.RIGHT) {
-                text_X = remainingSpace + getPaddingLeft() - getPaddingRight() - drawablePadding / 2f;
-                bitmap_X = text_X + textBoundsWidth + drawablePadding;
-            } else if (drawableGravity == DrawableGravity.LEFT) {
-                bitmap_X = remainingSpace + getPaddingLeft() - getPaddingRight() - drawablePadding / 2f;
-                text_X = bitmap_X + bitmapWidth + drawablePadding;
+            // Position the drawable & text based on the gravity
+            if (drawableGravity == Gravity.LEFT) {
+                textPosition.x = remainingSpace + drawableWidth + drawablePadding;
+                drawablePosition.x = remainingSpace;
+            } else if (drawableGravity == Gravity.RIGHT) {
+                textPosition.x = remainingSpace;
+                drawablePosition.x = remainingSpace + textWidth + drawablePadding;
             }
         } else {
-
-            if (drawableGravity == DrawableGravity.TOP) {
-                bitmap_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
-
-                float vHeight = (height - (textHeight + bitmapHeight)) / 2f;
-
-                if (vHeight > 0) {
-                    bitmap_Y += vHeight;
-                }
-
-                text_Y = bitmap_Y + bitmapHeight + drawablePadding;
-
-            } else if (drawableGravity == DrawableGravity.BOTTOM) {
-                text_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
-
-                float vHeight = height - (textHeight + bitmapHeight);
-                if (vHeight > 0) {
-                    text_Y += vHeight / 2f;
-                }
-
-                bitmap_Y = text_Y + textHeight + drawablePadding;
+            // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
+            // Fancy way of centering the two objects horizontally, the last 2 if statements are special cases where
+            // either the drawable or text is taking up the full height so there is no need to calculate the center
+            if (!useDesiredWidth) {
+                textPosition.x = getPaddingLeft()
+                        + (measuredWidth - getPaddingLeft() - getPaddingRight() - textWidth) / 2.0f;
+                drawablePosition.x = getPaddingLeft()
+                        + (measuredWidth - getPaddingLeft() - getPaddingRight() - drawableWidth) / 2.0f;
+            } else if (textWidth < drawableWidth) {
+                textPosition.x = getPaddingLeft() + (drawableWidth - textWidth) / 2.0f;
+                drawablePosition.x = getPaddingLeft();
+            } else {
+                textPosition.x = getPaddingLeft();
+                drawablePosition.x = getPaddingLeft() + (textWidth - drawableWidth) / 2.0f;
             }
 
-            if (width > Math.max(textBoundsWidth, bitmapWidth)) {
-                text_X = width / 2f - textBoundsWidth / 2f + getPaddingLeft() - getPaddingRight();
-                bitmap_X = width / 2f - bitmapWidth / 2f + getPaddingLeft() - getPaddingRight();
-            } else if (textBoundsWidth > bitmapWidth) {
-                text_X = getPaddingLeft();
-                bitmap_X = text_X + textBoundsWidth / 2f - bitmapWidth / 2f;
-            } else {
-                bitmap_X = getPaddingLeft();
-                text_X = bitmap_X + bitmapWidth / 2f - textBoundsWidth / 2f;
+            // Calculate Y position for vertical gravity
+            // This gets the amount of remaining space between the text, drawable & drawable padding
+            // If the exact amount of height is used, then useDesiredHeight is true and the remaining space is set
+            // to 0
+            float remainingSpace = useDesiredHeight ? (measuredHeight - textHeight - drawableHeight - drawablePadding)
+                    / 2.0f : 0.0f;
+
+            // Position the drawable & text based on the gravity
+            if (drawableGravity == Gravity.TOP) {
+                textPosition.y = remainingSpace + drawableHeight + drawablePadding;
+                drawablePosition.y = remainingSpace;
+            } else if (drawableGravity == Gravity.BOTTOM) {
+                textPosition.y = remainingSpace;
+                drawablePosition.y = remainingSpace + textHeight + drawablePadding;
             }
         }
+
+//        float textHeight = 0, textWidth = 0, textBoundsWidth = 0;
+//        if (hasText) {
+//            textHeight = mStaticLayout.getHeight();
+//            textWidth = mStaticLayout.getWidth();
+//            textBoundsWidth = mTextBounds.width(); // TODO ???
+//        }
+//
+//        float bitmapHeight = 0, bitmapWidth = 0;
+//        if (hasDrawable) {
+//            bitmapHeight = mDrawable.getIntrinsicHeight();
+//            bitmapWidth = mDrawable.getIntrinsicWidth();
+//        }
+//
+//        if (Gravity.isHorizontal(drawableGravity)) {
+//            if (height > Math.max(textHeight, bitmapHeight)) {
+//                text_Y = height / 2f - textHeight / 2f + getPaddingTop() - getPaddingBottom();
+//                bitmap_Y = height / 2f - bitmapHeight / 2f + getPaddingTop() - getPaddingBottom();
+//            } else if (textHeight > bitmapHeight) {
+//                text_Y = getPaddingTop();
+//                bitmap_Y = text_Y + textHeight / 2f - bitmapHeight / 2f;
+//            } else {
+//                bitmap_Y = getPaddingTop();
+//                text_Y = bitmap_Y + bitmapHeight / 2f - textHeight / 2f;
+//            }
+//
+//            text_X = getPaddingLeft();
+//            bitmap_X = textWidth;
+//
+//            float remainingSpace = width - (textBoundsWidth + bitmapWidth);
+//            if (remainingSpace > 0) {
+//                remainingSpace /= 2f;
+//            }
+//
+//            if (drawableGravity == DrawableGravity.RIGHT) {
+//                text_X = remainingSpace + getPaddingLeft() - getPaddingRight() - drawablePadding / 2f;
+//                bitmap_X = text_X + textBoundsWidth + drawablePadding;
+//            } else if (drawableGravity == DrawableGravity.LEFT) {
+//                bitmap_X = remainingSpace + getPaddingLeft() - getPaddingRight() - drawablePadding / 2f;
+//                text_X = bitmap_X + bitmapWidth + drawablePadding;
+//            }
+//        } else {
+//
+//            if (drawableGravity == DrawableGravity.TOP) {
+//                bitmap_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
+//
+//                float vHeight = (height - (textHeight + bitmapHeight)) / 2f;
+//
+//                if (vHeight > 0) {
+//                    bitmap_Y += vHeight;
+//                }
+//
+//                text_Y = bitmap_Y + bitmapHeight + drawablePadding;
+//
+//            } else if (drawableGravity == DrawableGravity.BOTTOM) {
+//                text_Y = getPaddingTop() - getPaddingBottom() - drawablePadding / 2f;
+//
+//                float vHeight = height - (textHeight + bitmapHeight);
+//                if (vHeight > 0) {
+//                    text_Y += vHeight / 2f;
+//                }
+//
+//                bitmap_Y = text_Y + textHeight + drawablePadding;
+//            }
+//
+//            if (width > Math.max(textBoundsWidth, bitmapWidth)) {
+//                text_X = width / 2f - textBoundsWidth / 2f + getPaddingLeft() - getPaddingRight();
+//                bitmap_X = width / 2f - bitmapWidth / 2f + getPaddingLeft() - getPaddingRight();
+//            } else if (textBoundsWidth > bitmapWidth) {
+//                text_X = getPaddingLeft();
+//                bitmap_X = text_X + textBoundsWidth / 2f - bitmapWidth / 2f;
+//            } else {
+//                bitmap_X = getPaddingLeft();
+//                text_X = bitmap_X + bitmapWidth / 2f - textBoundsWidth / 2f;
+//            }
+//        }
     }
 
     // endregion
