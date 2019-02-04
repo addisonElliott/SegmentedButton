@@ -388,6 +388,7 @@ public class SegmentedButton extends View {
 
     private void calculatePositions(int measuredWidth, int measuredHeight, int textWidth, int textHeight,
             int drawableWidth, int drawableHeight, boolean useDesiredWidth, boolean useDesiredHeight) {
+        // Calculates the X/Y positions of the text and drawable now that the measured size is known
         if (Gravity.isHorizontal(drawableGravity)) {
             // Calculate Y position for horizontal gravity, i.e. center the drawable and/or text if necessary
             // Fancy way of centering the two objects vertically, the last 2 if statements are special cases where
@@ -408,7 +409,7 @@ public class SegmentedButton extends View {
             // Calculate X position for horizontal gravity
             // This gets the amount of remaining space between the text, drawable & drawable padding
             // If the exact amount of width is used, then useDesiredWidth is true and the remaining space is set to 0
-            float remainingSpace = useDesiredWidth ? (measuredWidth - textWidth - drawableWidth - drawablePadding)
+            final float remainingSpace = useDesiredWidth ? (measuredWidth - textWidth - drawableWidth - drawablePadding)
                     / 2.0f : 0.0f;
 
             // Position the drawable & text based on the gravity
@@ -440,8 +441,8 @@ public class SegmentedButton extends View {
             // This gets the amount of remaining space between the text, drawable & drawable padding
             // If the exact amount of height is used, then useDesiredHeight is true and the remaining space is set
             // to 0
-            float remainingSpace = useDesiredHeight ? (measuredHeight - textHeight - drawableHeight - drawablePadding)
-                    / 2.0f : 0.0f;
+            final float remainingSpace = useDesiredHeight ?
+                    (measuredHeight - textHeight - drawableHeight - drawablePadding) / 2.0f : 0.0f;
 
             // Position the drawable & text based on the gravity
             if (drawableGravity == Gravity.TOP) {
@@ -536,86 +537,168 @@ public class SegmentedButton extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
+        final int width = getWidth();
+        final int height = getHeight();
 
+        // Draw background
         canvas.save();
-
-        if (clipLeftToRight) {
-            canvas.translate(-width * (mClipAmount - 1), 0);
-        } else {
-            canvas.translate(width * (mClipAmount - 1), 0);
-        }
-
-        mRectF.set(hasBorderLeft ? mBorderSize : 0, mBorderSize, hasBorderRight ? width - mBorderSize : width,
-                height - mBorderSize);
+        mRectF.set(0.0f, 0.0f, width, height);
         canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
-
         canvas.restore();
 
-        canvas.save();
-
+        // Draw text (non-selected)
         if (hasText) {
-            canvas.translate(text_X, text_Y);
-            if (hasTextColorOnSelection) {
-                mTextPaint.setColor(textColor);
-            }
-            mStaticLayout.draw(canvas);
-
-            canvas.restore();
-        }
-        canvas.save();
-
-        // Bitmap normal
-        if (hasDrawable) {
-            drawDrawableWithColorFilter(canvas, mBitmapNormalColor);
-        }
-        // NORMAL -end
-
-        // CLIPPING
-        if (clipLeftToRight) {
-            canvas.clipRect(width * (1 - mClipAmount), 0, width, height);
-        } else {
-            canvas.clipRect(0, 0, width * mClipAmount, height);
-        }
-
-        // CLIP -start
-        // Text clip
-        canvas.save();
-
-        if (hasText) {
-            canvas.translate(text_X, text_Y);
-            if (hasTextColorOnSelection) {
-                mTextPaint.setColor(textColorOnSelection);
-            }
+            canvas.save();
+            canvas.translate(textPosition.x, textPosition.y);
+            mTextPaint.setColor(textColor);
             mStaticLayout.draw(canvas);
             canvas.restore();
         }
 
-        // Bitmap clip
-        if (hasDrawable) {
-            drawDrawableWithColorFilter(canvas, mBitmapClipColor);
-        }
-        // CLIP -end
-
-        canvas.restore();
+//        int width = canvas.getWidth();
+//        int height = canvas.getHeight();
+//
+//        canvas.save();
+//
+//        if (clipLeftToRight) {
+//            canvas.translate(-width * (mClipAmount - 1), 0);
+//        } else {
+//            canvas.translate(width * (mClipAmount - 1), 0);
+//        }
+//
+//        mRectF.set(hasBorderLeft ? mBorderSize : 0, mBorderSize, hasBorderRight ? width - mBorderSize : width,
+//                height - mBorderSize);
+//        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
+//
+//        canvas.restore();
+//
+//        canvas.save();
+//
+//        if (hasText) {
+//            canvas.translate(text_X, text_Y);
+//            if (hasTextColorOnSelection) {
+//                mTextPaint.setColor(textColor);
+//            }
+//            mStaticLayout.draw(canvas);
+//
+//            canvas.restore();
+//        }
+//        canvas.save();
+//
+//        // Bitmap normal
+//        if (hasDrawable) {
+//            drawDrawableWithColorFilter(canvas, mBitmapNormalColor);
+//        }
+//        // NORMAL -end
+//
+//        // CLIPPING
+//        if (clipLeftToRight) {
+//            canvas.clipRect(width * (1 - mClipAmount), 0, width, height);
+//        } else {
+//            canvas.clipRect(0, 0, width * mClipAmount, height);
+//        }
+//
+//        // CLIP -start
+//        // Text clip
+//        canvas.save();
+//
+//        if (hasText) {
+//            canvas.translate(text_X, text_Y);
+//            if (hasTextColorOnSelection) {
+//                mTextPaint.setColor(textColorOnSelection);
+//            }
+//            mStaticLayout.draw(canvas);
+//            canvas.restore();
+//        }
+//
+//        // Bitmap clip
+//        if (hasDrawable) {
+//            drawDrawableWithColorFilter(canvas, mBitmapClipColor);
+//        }
+//        // CLIP -end
+//
+//        canvas.restore();
+//
+//        int width = canvas.getWidth();
+//        int height = canvas.getHeight();
+//
+//        canvas.save();
+//
+//        if (clipLeftToRight) {
+//            canvas.translate(-width * (mClipAmount - 1), 0);
+//        } else {
+//            canvas.translate(width * (mClipAmount - 1), 0);
+//        }
+//
+//        mRectF.set(hasBorderLeft ? mBorderSize : 0, mBorderSize, hasBorderRight ? width - mBorderSize : width,
+//                height - mBorderSize);
+//        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
+//
+//        canvas.restore();
+//
+//        canvas.save();
+//
+//        if (hasText) {
+//            canvas.translate(text_X, text_Y);
+//            if (hasTextColorOnSelection) {
+//                mTextPaint.setColor(textColor);
+//            }
+//            mStaticLayout.draw(canvas);
+//
+//            canvas.restore();
+//        }
+//        canvas.save();
+//
+//        // Bitmap normal
+//        if (hasDrawable) {
+//            drawDrawableWithColorFilter(canvas, mBitmapNormalColor);
+//        }
+//        // NORMAL -end
+//
+//        // CLIPPING
+//        if (clipLeftToRight) {
+//            canvas.clipRect(width * (1 - mClipAmount), 0, width, height);
+//        } else {
+//            canvas.clipRect(0, 0, width * mClipAmount, height);
+//        }
+//
+//        // CLIP -start
+//        // Text clip
+//        canvas.save();
+//
+//        if (hasText) {
+//            canvas.translate(text_X, text_Y);
+//            if (hasTextColorOnSelection) {
+//                mTextPaint.setColor(textColorOnSelection);
+//            }
+//            mStaticLayout.draw(canvas);
+//            canvas.restore();
+//        }
+//
+//        // Bitmap clip
+//        if (hasDrawable) {
+//            drawDrawableWithColorFilter(canvas, mBitmapClipColor);
+//        }
+//        // CLIP -end
+//
+//        canvas.restore();
     }
 
-    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
-        int drawableX = (int) bitmap_X;
-        int drawableY = (int) bitmap_Y;
-        int drawableWidth = mDrawable.getIntrinsicWidth();
-        if (hasDrawableWidth) {
-            drawableWidth = this.drawableWidth;
-        }
-        int drawableHeight = mDrawable.getIntrinsicHeight();
-        if (hasDrawableHeight) {
-            drawableHeight = this.drawableHeight;
-        }
-        mDrawable.setColorFilter(colorFilter);
-        mDrawable.setBounds(drawableX, drawableY, drawableX + drawableWidth, drawableY + drawableHeight);
-        mDrawable.draw(canvas);
-    }
+//    private void drawDrawableWithColorFilter(Canvas canvas, ColorFilter colorFilter) {
+//        int drawableX = (int) bitmap_X;
+//        int drawableY = (int) bitmap_Y;
+//        int drawableWidth = mDrawable.getIntrinsicWidth();
+//        if (hasDrawableWidth) {
+//            drawableWidth = this.drawableWidth;
+//        }
+//        int drawableHeight = mDrawable.getIntrinsicHeight();
+//        if (hasDrawableHeight) {
+//            drawableHeight = this.drawableHeight;
+//        }
+//        mDrawable.setColorFilter(colorFilter);
+//        mDrawable.setBounds(drawableX, drawableY, drawableX + drawableWidth, drawableY + drawableHeight);
+//        mDrawable.draw(canvas);
+//    }
 
     public void clipToLeft(float clip) {
         clipLeftToRight = false;
