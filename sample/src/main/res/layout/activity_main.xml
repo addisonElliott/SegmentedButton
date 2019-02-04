@@ -282,60 +282,60 @@
 
     <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="4dp"-->
-        <!--android:elevation="2dp"-->
-        <!--app:sbg_animateSelector="fastOutSlowIn"-->
-        <!--app:sbg_animateSelectorDuration="1000"-->
-        <!--app:sbg_backgroundColor="@color/black"-->
-        <!--app:sbg_position="2"-->
-        <!--app:sbg_radius="2dp"-->
-        <!--app:sbg_rippleColor="@color/white"-->
-        <!--app:sbg_selectorColor="@color/white">-->
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:elevation="2dp"
+        app:animateSelector="fastOutSlowIn"
+        app:animateSelectorDuration="1000"
+        app:backgroundColor="@color/black"
+        app:position="2"
+        app:radius="2dp"
+        app:rippleColor="@color/white"
+        app:selectorColor="@color/white">
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawable="@drawable/ic_b7"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:drawable="@drawable/ic_b7"
+            app:drawableTint="@color/white"
+            app:drawableTint_onSelection="@color/black"/>
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1.5"-->
-            <!--app:sb_drawable="@drawable/ic_b7"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            app:drawable="@drawable/ic_b7"
+            app:drawableTint="@color/white"
+            app:drawableTint_onSelection="@color/black"/>
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="2"-->
-            <!--app:sb_drawable="@drawable/ic_b7"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            app:drawable="@drawable/ic_b7"
+            app:drawableTint="@color/white"
+            app:drawableTint_onSelection="@color/black"/>
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1.5"-->
-            <!--app:sb_drawable="@drawable/ic_b7"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            app:drawable="@drawable/ic_b7"
+            app:drawableTint="@color/white"
+            app:drawableTint_onSelection="@color/black"/>
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawable="@drawable/ic_b7"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:drawable="@drawable/ic_b7"
+            app:drawableTint="@color/white"
+            app:drawableTint_onSelection="@color/black"/>
 
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
 
     <!--<TextView-->
