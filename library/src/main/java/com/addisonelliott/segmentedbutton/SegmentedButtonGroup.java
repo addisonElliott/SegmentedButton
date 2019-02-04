@@ -13,10 +13,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import androidx.annotation.Nullable;
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -35,7 +31,10 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
+import androidx.annotation.Nullable;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import java.util.ArrayList;
 
 public class SegmentedButtonGroup extends LinearLayout {
@@ -66,10 +65,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     private ArrayList<SegmentedButton> buttons;
     private ArrayList<BackgroundView> ripples = new ArrayList<>();
 
+    // Custom attributes
     private int selectorColor, animateSelector, animateSelectorDuration, position, backgroundColor, dividerColor,
             radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderSize, borderColor;
     private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
-
     private Drawable backgroundDrawable, selectorBackgroundDrawable, dividerBackgroundDrawable;
 
     private Interpolator interpolatorSelector;
@@ -115,6 +114,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Retrieve custom attributes
         getAttributes(context, attrs);
 
+        // TODO Analyze these parts below to see what is necessary
         setWillNotDraw(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setOutlineProvider(new ButtonOutlineProvider());
@@ -159,10 +159,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
-    /**
-     * Get attributes
-     **/
-    private void getAttributes(Context context, AttributeSet attrs) {
+    private void getAttributes(Context context, @Nullable AttributeSet attrs) {
+        // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
+        // to the default
         TypedArray typedArray = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
@@ -197,12 +196,14 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         draggable = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
 
+        // TODO Why is clickable needed and why is it in a try/catch?
         try {
             clickable = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true);
         } catch (Exception ex) {
             Log.d("SegmentedButtonGroup", ex.toString());
         }
 
+        // Recycle the typed array, required once done using it
         typedArray.recycle();
     }
 
