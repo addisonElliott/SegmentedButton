@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_300"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="0dp">
 
     <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->
@@ -463,7 +464,7 @@
             android:layout_width="0dp"
             android:layout_height="32dp"
             android:layout_weight="1"
-            android:padding="4dp"
+            android:padding="12dp"
             app:text="Pickup"
             app:textColor="@color/black"
             app:textColor_onSelection="@color/white" />

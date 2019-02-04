@@ -409,8 +409,8 @@ public class SegmentedButton extends View {
             // Calculate X position for horizontal gravity
             // This gets the amount of remaining space between the text, drawable & drawable padding
             // If the exact amount of width is used, then useDesiredWidth is true and the remaining space is set to 0
-            final float remainingSpace = useDesiredWidth ? (measuredWidth - textWidth - drawableWidth - drawablePadding)
-                    / 2.0f : 0.0f;
+            final float remainingSpace = useDesiredWidth ? 0.0f
+                    : (measuredWidth - textWidth - drawableWidth - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
             if (drawableGravity == Gravity.LEFT) {
@@ -441,8 +441,8 @@ public class SegmentedButton extends View {
             // This gets the amount of remaining space between the text, drawable & drawable padding
             // If the exact amount of height is used, then useDesiredHeight is true and the remaining space is set
             // to 0
-            final float remainingSpace = useDesiredHeight ?
-                    (measuredHeight - textHeight - drawableHeight - drawablePadding) / 2.0f : 0.0f;
+            final float remainingSpace = useDesiredHeight ? 0.0f
+                    : (measuredHeight - textHeight - drawableHeight - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
             if (drawableGravity == Gravity.TOP) {
@@ -541,10 +541,10 @@ public class SegmentedButton extends View {
         final int height = getHeight();
 
         // Draw background
-        canvas.save();
-        mRectF.set(0.0f, 0.0f, width, height);
-        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
-        canvas.restore();
+//        canvas.save();
+//        mRectF.set(0.0f, 0.0f, width, height);
+//        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
+//        canvas.restore();
 
         // Draw text (non-selected)
         if (hasText) {
