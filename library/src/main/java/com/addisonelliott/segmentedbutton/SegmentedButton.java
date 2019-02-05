@@ -2,6 +2,8 @@ package com.addisonelliott.segmentedbutton;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,6 +18,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -133,10 +136,21 @@ public class SegmentedButton extends View {
         textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
 
         boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
-        int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
         int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
+
+        // If a font family is present then load typeface with textstyle from that
         if (hasFontFamily) {
-            textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
+            // Note: TypedArray.getFont is used for Android O & above while ResourcesCompat.getFont is used for below
+            // Experienced an odd bug in the design viewer of Android Studio where it would not work with only using
+            // the ResourcesCompat.getFont function. Unsure of the reason but this fixes it
+            if (VERSION.SDK_INT >= VERSION_CODES.O) {
+                textTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily),
+                        textStyle);
+            } else {
+                int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
+
+                textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
+            }
         } else {
             textTypeface = Typeface.create((Typeface) null, textStyle);
         }

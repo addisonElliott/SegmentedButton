@@ -108,7 +108,7 @@ These animations can be set using the attribute noted above like so: `app:sbg_an
 ##### In Xml Layout
 
 ```xml
-    <co.ceryle.segmentedbutton.SegmentedButtonGroup
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -150,7 +150,7 @@ These animations can be set using the attribute noted above like so: `app:sbg_an
             android:text="Button 3"
             android:textAllCaps="false" />
 
-    </co.ceryle.segmentedbutton.SegmentedButtonGroup>
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 ```
 
 ##### Listener Example

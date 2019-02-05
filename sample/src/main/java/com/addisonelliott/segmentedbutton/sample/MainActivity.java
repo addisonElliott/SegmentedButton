@@ -1,12 +1,16 @@
 package com.addisonelliott.segmentedbutton.sample;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.core.content.res.ResourcesCompat;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
@@ -20,6 +24,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TextView test;
+
+        Typeface face = ResourcesCompat.getFont(getApplicationContext(), 0x7f070000);
+        Log.v("SegmentedButton", "this went fine");
+
+        // What main layout thinks it is 0x7f070001
+        // R.font = -800001
+//        R.font.shaka_pow
+//        R.attr.actionBarDivider
 
 //        group = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
 //        button = (Button) findViewById(R.id.button);

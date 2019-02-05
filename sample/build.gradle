@@ -5,7 +5,7 @@ android {
     buildToolsVersion rootProject.buildToolsVersion
 
     defaultConfig {
-        applicationId "co.ceryle.segmentedbutton.sample"
+        applicationId "com.addisonelliott.segmentedbutton.sample"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.compileSdkVersion
         versionCode 1

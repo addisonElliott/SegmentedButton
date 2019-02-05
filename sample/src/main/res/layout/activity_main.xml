@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_300"
@@ -23,7 +24,7 @@
     <!--android:layout_marginRight="10dp"-->
     <!--android:text="Position: 1"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButtonGroup-->
     <!--android:id="@+id/segmentedButtonGroup"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
@@ -45,24 +46,24 @@
     <!--app:sbg_selectorBackgroundDrawable="@drawable/gradient_drawable_selector"-->
     <!--app:sbg_selectorColor="@color/grey_500">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
     <!--app:sb_text="Button 1"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
     <!--app:sb_text="Button 2"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
     <!--app:sb_text="Button 3"/>-->
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>-->
 
     <!--</LinearLayout>-->
 
@@ -86,11 +87,11 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="8dp"
+            android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             app:drawable="@drawable/ic_aragorn"
             app:drawableGravity="top"
-            app:fontFamily="@font/aniron"
             app:text="Aragorn"
             app:textColor_onSelection="@color/orange_700" />
 
@@ -98,28 +99,29 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="8dp"
+            android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             app:drawable="@drawable/ic_gimli"
             app:drawableGravity="top"
-            app:fontFamily="@font/aniron"
             app:text="Gimli"
-            app:textColor_onSelection="@color/grey_600" />
+            app:textColor_onSelection="@color/grey_600"
+            app:textStyle="normal" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingTop="8dp"
+            android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             app:drawable="@drawable/ic_legolas"
             app:drawableGravity="top"
-            app:fontFamily="@font/aniron"
             app:text="Legolas"
             app:textColor_onSelection="@color/yellow_200" />
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButtonGroup-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_margin="10dp"-->
@@ -136,7 +138,7 @@
     <!--app:sbg_radius="2dp"-->
     <!--app:sbg_selectorColor="@color/black">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
     <!--android:layout_weight="1"-->
@@ -150,7 +152,7 @@
     <!--app:sb_textColor_onSelection="@color/red_500"-->
     <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
     <!--android:layout_weight="1"-->
@@ -165,7 +167,7 @@
     <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
 
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
     <!--android:layout_weight="1"-->
@@ -180,14 +182,14 @@
     <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
 
 
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>-->
 
     <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:orientation="horizontal">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButtonGroup-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_margin="4dp"-->
@@ -201,7 +203,7 @@
     <!--app:sbg_rippleColor="@color/blue_300"-->
     <!--app:sbg_selectorColor="@color/yellow_600">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -209,7 +211,7 @@
     <!--app:sb_drawableTint="@color/yellow_600"-->
     <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -217,7 +219,7 @@
     <!--app:sb_drawableTint="@color/DarkRed"-->
     <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>-->
 
     <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:layout_width="match_parent"
@@ -234,22 +236,22 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             app:drawable="@drawable/ic_b17" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="8dp"
             android:paddingBottom="8dp"
+            android:paddingTop="8dp"
             app:drawable="@drawable/ic_b6" />
 
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     <!--</LinearLayout>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButtonGroup-->
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_gravity="center_horizontal"-->
@@ -265,7 +267,7 @@
     <!--app:sbg_rippleColor="@color/red_200"-->
     <!--app:sbg_selectorColor="@color/green_200">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -273,7 +275,7 @@
     <!--android:paddingRight="10dp"-->
     <!--app:sb_drawable="@drawable/ic_b8"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -281,7 +283,7 @@
     <!--android:paddingRight="10dp"-->
     <!--app:sb_drawable="@drawable/ic_b9"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -289,7 +291,7 @@
     <!--android:paddingRight="10dp"-->
     <!--app:sb_drawable="@drawable/ic_b11"/>-->
 
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>-->
 
     <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:layout_width="match_parent"
@@ -356,7 +358,7 @@
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content" />-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButtonGroup-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_margin="4dp"-->
@@ -371,7 +373,7 @@
     <!--app:sbg_rippleColor="@color/black"-->
     <!--app:sbg_selectorColor="@color/green_800">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -381,7 +383,7 @@
     <!--app:sb_textColor_onSelection="@color/white"-->
     <!--app:sb_textTypeface="serif"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -391,7 +393,7 @@
     <!--app:sb_textColor_onSelection="@color/white"-->
     <!--app:sb_textTypeface="serif"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_weight="1"-->
@@ -401,7 +403,7 @@
     <!--app:sb_textColor_onSelection="@color/white"-->
     <!--app:sb_textTypeface="serif"/>-->
 
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>-->
 
     <!--<TextView-->
     <!--android:layout_marginStart="10dp"-->
@@ -412,7 +414,7 @@
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content" />-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButtonGroup-->
     <!--android:id="@+id/dynamic_drawable_group"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
@@ -426,7 +428,7 @@
     <!--app:sbg_rippleColor="@color/white"-->
     <!--app:sbg_selectorColor="@color/white">-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:id="@+id/left_button"-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
@@ -437,7 +439,7 @@
     <!--app:sb_drawableTint="@color/white"-->
     <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:id="@+id/right_button"-->
     <!--android:layout_width="0dp"-->
     <!--android:layout_height="match_parent"-->
@@ -447,7 +449,7 @@
     <!--app:sb_drawableTint="@color/white"-->
     <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>-->
 
     <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:id="@+id/buttonGroup_pickupDropoffBoth"
@@ -491,9 +493,9 @@
 
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-thin"
-        android:textStyle="italic" />
+    <!--<TextView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:fontFamily="sans-serif-thin"-->
+    <!--android:textStyle="italic" />-->
 </LinearLayout>
