@@ -365,26 +365,26 @@ public class SegmentedButton extends View {
                 drawablePosition.y = getPaddingTop() + (textHeight - drawableHeight) / 2.0f;
             }
 
-            // Calculate X position for horizontal gravity
-            // This gets the amount of remaining space between the text, drawable & drawable padding
-            // If the exact amount of width is used, then useDesiredWidth is true and the remaining space is set to 0
-            final float remainingSpace = useDesiredWidth ? 0.0f
-                    : (measuredWidth - textWidth - drawableWidth - drawablePadding) / 2.0f;
+            // Calculate the starting X position with horizontal gravity
+            // If the exact amount of width is used (meaning useDesiredWidth is true), then the start position is set
+            // to be the left padding. Otherwise, the start position is half of the remaining space to center it
+            final float startPosition = useDesiredWidth ? getPaddingLeft() :
+                    (measuredWidth - textWidth - drawableWidth - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
             if (drawableGravity == Gravity.LEFT) {
-                textPosition.x = remainingSpace + drawableWidth + drawablePadding;
-                drawablePosition.x = remainingSpace;
+                textPosition.x = startPosition + drawableWidth + drawablePadding;
+                drawablePosition.x = startPosition;
             } else if (drawableGravity == Gravity.RIGHT) {
-                textPosition.x = remainingSpace;
-                drawablePosition.x = remainingSpace + textWidth + drawablePadding;
+                textPosition.x = startPosition;
+                drawablePosition.x = startPosition + textWidth + drawablePadding;
             }
 
             Log.d(TAG, String.format("calculatePositions called with horizontal gravity. drawableSize: (%d, %d), "
                             + "textSize: (%d, %d), padding (%d, %d, %d, %d), drawablePadding: %d, remainingSpace %f, "
                             + "textPosition (%f, %f), drawablePosition (%f, %f)", drawableWidth, drawableHeight, textWidth,
                     textHeight, getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom(),
-                    drawablePadding, remainingSpace, textPosition.x, textPosition.y, drawablePosition.x,
+                    drawablePadding, startPosition, textPosition.x, textPosition.y, drawablePosition.x,
                     drawablePosition.y));
         } else {
             // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
@@ -403,21 +403,27 @@ public class SegmentedButton extends View {
                 drawablePosition.x = getPaddingLeft() + (textWidth - drawableWidth) / 2.0f;
             }
 
-            // Calculate Y position for vertical gravity
-            // This gets the amount of remaining space between the text, drawable & drawable padding
-            // If the exact amount of height is used, then useDesiredHeight is true and the remaining space is set
-            // to 0
-            final float remainingSpace = useDesiredHeight ? 0.0f
+            // Calculate the starting Y position with vertical gravity
+            // If the exact amount of height is used (meaning useDesiredHeight is true), then the start position is set
+            // to be the top padding. Otherwise, the start position is half of the remaining space to center it
+            final float startPosition = useDesiredHeight ? getPaddingTop()
                     : (measuredHeight - textHeight - drawableHeight - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
             if (drawableGravity == Gravity.TOP) {
-                textPosition.y = remainingSpace + drawableHeight + drawablePadding;
-                drawablePosition.y = remainingSpace;
+                textPosition.y = startPosition + drawableHeight + drawablePadding;
+                drawablePosition.y = startPosition;
             } else if (drawableGravity == Gravity.BOTTOM) {
-                textPosition.y = remainingSpace;
-                drawablePosition.y = remainingSpace + textHeight + drawablePadding;
+                textPosition.y = startPosition;
+                drawablePosition.y = startPosition + textHeight + drawablePadding;
             }
+
+            Log.d(TAG, String.format("calculatePositions called with vertical gravity. drawableSize: (%d, %d), "
+                            + "textSize: (%d, %d), padding (%d, %d, %d, %d), drawablePadding: %d, remainingSpace %f, "
+                            + "textPosition (%f, %f), drawablePosition (%f, %f)", drawableWidth, drawableHeight, textWidth,
+                    textHeight, getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom(),
+                    drawablePadding, startPosition, textPosition.x, textPosition.y, drawablePosition.x,
+                    drawablePosition.y));
         }
 
         if (hasDrawable) {
