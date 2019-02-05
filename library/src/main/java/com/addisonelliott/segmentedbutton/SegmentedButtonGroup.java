@@ -885,14 +885,5 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    private class ButtonOutlineProvider extends ViewOutlineProvider {
-//
-//        @Override
-//        public void getOutline(View view, Outline outline) {
-//            outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
-//        }
-//    }
-
     // endregion
 }
