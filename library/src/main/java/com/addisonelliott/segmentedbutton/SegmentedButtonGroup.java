@@ -126,12 +126,10 @@ public class SegmentedButtonGroup extends LinearLayout {
         // with the outline provider
         setWillNotDraw(false);
 
-//        this.setBackground
-//        ShapeDrawable x = new ShapeDrawable();
-//        x.set
-
-
-
+        // Create and set outline provider for the segmented button group
+        // This is used to provide an outline for the layout because it may have rounded corners
+        // The primary benefit to using this is that shadows will follow the contour of the outline rather than the
+        // rectangular bounds
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             setOutlineProvider(new OutlineProvider());
         }
@@ -175,7 +173,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         // General purpose float rectangle, used in layout or draw calls to prevent allocation of new objects
         rectF = new RectF();
 
-        // Paint
+        // TODO Document me Paint
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
@@ -877,7 +875,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     private class OutlineProvider extends ViewOutlineProvider {
-        // TODO Document me, there is no clipToOutline set is there?
+        // This class is used to define an outline for this view
+        // This is necessary because the view may have rounded corners
+        // Primary benefit is that shadows will follow contours of the outline rather than rectangular bounds
 
         @Override
         public void getOutline(final View view, final Outline outline) {

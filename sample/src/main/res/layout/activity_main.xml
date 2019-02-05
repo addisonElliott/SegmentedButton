@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_300"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="0dp">
 
@@ -71,9 +71,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="4dp"
-        android:elevation="2dp"
-        android:background="@color/red"
+        android:layout_margin="8dp"
+        android:elevation="8dp"
         app:backgroundColor="@color/white"
         app:borderColor="@color/orange_700"
         app:borderSize="1dp"
@@ -458,12 +457,11 @@
         android:id="@+id/buttonGroup_pickupDropoffBoth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@color/green_500"
-        android:elevation="3dp"
+        android:layout_margin="64dp"
+        android:elevation="64dp"
         app:backgroundColor="@color/white"
         app:position="0"
-        app:radius="2dp"
+        app:radius="20dp"
         app:selectorColor="@color/blue_600">
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
