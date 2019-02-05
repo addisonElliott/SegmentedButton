@@ -25,16 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView test;
-
-        Typeface face = ResourcesCompat.getFont(getApplicationContext(), 0x7f070000);
-        Log.v("SegmentedButton", "this went fine");
-
-        // What main layout thinks it is 0x7f070001
-        // R.font = -800001
-//        R.font.shaka_pow
-//        R.attr.actionBarDivider
-
 //        group = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
 //        button = (Button) findViewById(R.id.button);
 //
