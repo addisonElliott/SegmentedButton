@@ -117,7 +117,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         // TODO Analyze these parts below to see what is necessary
         // Typically ViewGroups's do not have their onDraw method called but rather just draw all of their children
         // Set this to false to allow drawing this view group
-//        setWillNotDraw(false);
+        // Drawing is used to draw the background in case it has a radius, something that cannot be done until API 21
+        // with the outline provider
+        setWillNotDraw(false);
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            setOutlineProvider(new ButtonOutlineProvider());
@@ -160,8 +162,11 @@ public class SegmentedButtonGroup extends LinearLayout {
         setContainerAttrs();
 //        setDividerAttrs();
 
-//        rectF = new RectF();
-//        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        // General purpose float rectangle, used in layout or draw calls to prevent allocation of new objects
+        rectF = new RectF();
+
+        // Paint
+        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -263,10 +268,31 @@ public class SegmentedButtonGroup extends LinearLayout {
         return true;
     }
 
-//    @Override
-//    protected void onDraw(Canvas canvas) {
-//        super.onDraw(canvas);
-//
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        final float width = getWidth();
+        final float height = getHeight();
+
+        // Draw background with rounded edges if desired
+        // Setup the rectangle to draw on the entire view, setup paint to fill to the background
+        rectF.set(0, 0, width, height);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(backgroundColor);
+        canvas.drawRoundRect(rectF, radius, radius, paint);
+
+//        backgroundDrawable.
+
+        if (borderSize > 0) {
+            float bSize = borderSize / 2f;
+            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(borderColor);
+            paint.setStrokeWidth(borderSize);
+            canvas.drawRoundRect(rectF, radius, radius, paint);
+        }
+
 //        float width = canvas.getWidth();
 //        float height = canvas.getHeight();
 //
@@ -283,7 +309,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //            paint.setStrokeWidth(borderSize);
 //            canvas.drawRoundRect(rectF, radius, radius, paint);
 //        }
-//    }
+    }
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {

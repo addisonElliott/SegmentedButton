@@ -330,6 +330,7 @@ public class SegmentedButton extends View {
         }
     }
 
+    // Calculate X/Y positions of the drawable and text objects
     private void calculatePositions(int measuredWidth, int measuredHeight, int textWidth, int textHeight,
             int drawableWidth, int drawableHeight, boolean useDesiredWidth, boolean useDesiredHeight) {
         // Calculates the X/Y positions of the text and drawable now that the measured size is known

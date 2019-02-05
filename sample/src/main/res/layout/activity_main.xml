@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,276 +8,286 @@
     android:padding="0dp">
 
     <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:layout_marginRight="10dp"-->
-        <!--android:orientation="horizontal">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:layout_marginRight="10dp"-->
+    <!--android:orientation="horizontal">-->
 
-        <!--<Button-->
-            <!--android:id="@+id/button"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:layout_marginEnd="10dp"-->
-            <!--android:layout_marginRight="10dp"-->
-            <!--android:text="Position: 1"/>-->
+    <!--<Button-->
+    <!--android:id="@+id/button"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:layout_marginEnd="10dp"-->
+    <!--android:layout_marginRight="10dp"-->
+    <!--android:text="Position: 1"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-            <!--android:id="@+id/segmentedButtonGroup"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:elevation="2dp"-->
-            <!--app:sbg_animateSelector="fastOutSlowIn"-->
-            <!--app:sbg_animateSelectorDuration="1000"-->
-            <!--app:sbg_backgroundColor="@color/white"-->
-            <!--app:sbg_backgroundDrawable="@drawable/gradient_drawable"-->
-            <!--app:sbg_dividerBackgroundDrawable="@drawable/gradient_drawable_divider"-->
-            <!--app:sbg_dividerColor="@color/grey_500"-->
-            <!--app:sbg_dividerPadding="10dp"-->
-            <!--app:sbg_dividerRadius="10dp"-->
-            <!--app:sbg_dividerSize="4dp"-->
-            <!--app:sbg_position="1"-->
-            <!--app:sbg_radius="2dp"-->
-            <!--app:sbg_ripple="true"-->
-            <!--app:sbg_rippleColor="@color/blue_300"-->
-            <!--app:sbg_selectorBackgroundDrawable="@drawable/gradient_drawable_selector"-->
-            <!--app:sbg_selectorColor="@color/grey_500">-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--android:id="@+id/segmentedButtonGroup"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_vertical"-->
+    <!--android:elevation="2dp"-->
+    <!--app:sbg_animateSelector="fastOutSlowIn"-->
+    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:sbg_backgroundColor="@color/white"-->
+    <!--app:sbg_backgroundDrawable="@drawable/gradient_drawable"-->
+    <!--app:sbg_dividerBackgroundDrawable="@drawable/gradient_drawable_divider"-->
+    <!--app:sbg_dividerColor="@color/grey_500"-->
+    <!--app:sbg_dividerPadding="10dp"-->
+    <!--app:sbg_dividerRadius="10dp"-->
+    <!--app:sbg_dividerSize="4dp"-->
+    <!--app:sbg_position="1"-->
+    <!--app:sbg_radius="2dp"-->
+    <!--app:sbg_ripple="true"-->
+    <!--app:sbg_rippleColor="@color/blue_300"-->
+    <!--app:sbg_selectorBackgroundDrawable="@drawable/gradient_drawable_selector"-->
+    <!--app:sbg_selectorColor="@color/grey_500">-->
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_text="Button 1"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_text="Button 1"/>-->
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_text="Button 2"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_text="Button 2"/>-->
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_text="Button 3"/>-->
-        <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_text="Button 3"/>-->
+    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
     <!--</LinearLayout>-->
 
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="4dp"
+        android:elevation="2dp"
+        app:backgroundColor="@color/white"
+        app:borderColor="@color/orange_700"
+        app:borderSize="1dp"
+        app:dividerColor="@color/orange_700"
+        app:dividerPadding="10dp"
+        app:dividerSize="1dp"
+        app:position="0"
+        app:rippleColor="@color/green_800"
+        app:selectorColor="@color/green_900">
+
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:drawable="@drawable/ic_aragorn"
+            app:drawableGravity="top"
+            app:fontFamily="@font/aniron"
+            app:text="Aragorn"
+            app:textColor_onSelection="@color/orange_700" />
+
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:drawable="@drawable/ic_gimli"
+            app:drawableGravity="top"
+            app:fontFamily="@font/aniron"
+            app:text="Gimli"
+            app:textColor_onSelection="@color/grey_600" />
+
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:drawable="@drawable/ic_legolas"
+            app:drawableGravity="top"
+            app:fontFamily="@font/aniron"
+            app:text="Legolas"
+            app:textColor_onSelection="@color/yellow_200" />
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+
     <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:layout_margin="4dp"-->
-        <!--android:elevation="2dp"-->
-        <!--app:sbg_borderColor="@color/orange_700"-->
-        <!--app:sbg_borderSize="1dp"-->
-        <!--app:sbg_dividerColor="@color/orange_700"-->
-        <!--app:sbg_dividerPadding="10dp"-->
-        <!--app:sbg_dividerSize="1dp"-->
-        <!--app:sbg_position="0"-->
-        <!--app:sbg_rippleColor="@color/green_800"-->
-        <!--app:sbg_selectorColor="@color/green_900">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="10dp"-->
+    <!--android:elevation="2dp"-->
+    <!--app:sbg_animateSelector="bounce"-->
+    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:sbg_backgroundColor="@color/red_700"-->
+    <!--app:sbg_borderColor="@color/black"-->
+    <!--app:sbg_borderSize="1dp"-->
+    <!--app:sbg_dividerColor="@color/black"-->
+    <!--app:sbg_dividerPadding="10dp"-->
+    <!--app:sbg_dividerRadius="10dp"-->
+    <!--app:sbg_dividerSize="1dp"-->
+    <!--app:sbg_radius="2dp"-->
+    <!--app:sbg_selectorColor="@color/black">-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawable="@drawable/ic_aragorn"-->
-            <!--app:sb_drawableGravity="top"-->
-            <!--app:sb_text="Aragorn"-->
-            <!--app:sb_textColor_onSelection="@color/orange_700"-->
-            <!--app:sb_textTypefacePath="fonts/aniron.ttf"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:drawablePadding="4dp"-->
+    <!--app:sb_drawable="@drawable/ic_b5"-->
+    <!--app:sb_drawableGravity="left"-->
+    <!--app:sb_drawableTint_onSelection="@color/yellow_500"-->
+    <!--app:sb_rippleColor="@color/blue_500"-->
+    <!--app:sb_text="Diana"-->
+    <!--app:sb_textColor="@color/black"-->
+    <!--app:sb_textColor_onSelection="@color/red_500"-->
+    <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawable="@drawable/ic_gimli"-->
-            <!--app:sb_drawableGravity="top"-->
-            <!--app:sb_text="Gimli"-->
-            <!--app:sb_textColor_onSelection="@color/grey_600"-->
-            <!--app:sb_textTypefacePath="fonts/aniron.ttf"/>-->
-
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawable="@drawable/ic_legolas"-->
-            <!--app:sb_drawableGravity="top"-->
-            <!--app:sb_text="Legolas"-->
-            <!--app:sb_textColor_onSelection="@color/yellow_200"-->
-            <!--app:sb_textTypefacePath="fonts/aniron.ttf"/>-->
-    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
-
-    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="10dp"-->
-        <!--android:elevation="2dp"-->
-        <!--app:sbg_animateSelector="bounce"-->
-        <!--app:sbg_animateSelectorDuration="1000"-->
-        <!--app:sbg_backgroundColor="@color/red_700"-->
-        <!--app:sbg_borderColor="@color/black"-->
-        <!--app:sbg_borderSize="1dp"-->
-        <!--app:sbg_dividerColor="@color/black"-->
-        <!--app:sbg_dividerPadding="10dp"-->
-        <!--app:sbg_dividerRadius="10dp"-->
-        <!--app:sbg_dividerSize="1dp"-->
-        <!--app:sbg_radius="2dp"-->
-        <!--app:sbg_selectorColor="@color/black">-->
-
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:drawablePadding="4dp"-->
-            <!--app:sb_drawable="@drawable/ic_b5"-->
-            <!--app:sb_drawableGravity="left"-->
-            <!--app:sb_drawableTint_onSelection="@color/yellow_500"-->
-            <!--app:sb_rippleColor="@color/blue_500"-->
-            <!--app:sb_text="Diana"-->
-            <!--app:sb_textColor="@color/black"-->
-            <!--app:sb_textColor_onSelection="@color/red_500"-->
-            <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
-
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:drawablePadding="4dp"-->
-            <!--app:sb_drawable="@drawable/ic_b4"-->
-            <!--app:sb_drawableGravity="top"-->
-            <!--app:sb_drawableTint_onSelection="@color/grey_500"-->
-            <!--app:sb_rippleColor="@color/black"-->
-            <!--app:sb_text="Batman"-->
-            <!--app:sb_textColor="@color/black"-->
-            <!--app:sb_textColor_onSelection="@color/yellow_500"-->
-            <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:drawablePadding="4dp"-->
+    <!--app:sb_drawable="@drawable/ic_b4"-->
+    <!--app:sb_drawableGravity="top"-->
+    <!--app:sb_drawableTint_onSelection="@color/grey_500"-->
+    <!--app:sb_rippleColor="@color/black"-->
+    <!--app:sb_text="Batman"-->
+    <!--app:sb_textColor="@color/black"-->
+    <!--app:sb_textColor_onSelection="@color/yellow_500"-->
+    <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
 
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--android:drawablePadding="4dp"-->
-            <!--app:sb_drawable="@drawable/ic_b3"-->
-            <!--app:sb_drawableGravity="right"-->
-            <!--app:sb_drawableTint_onSelection="@color/blue_500"-->
-            <!--app:sb_rippleColor="@color/yellow_500"-->
-            <!--app:sb_text="Clark"-->
-            <!--app:sb_textColor="@color/black"-->
-            <!--app:sb_textColor_onSelection="@color/red_500"-->
-            <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--android:drawablePadding="4dp"-->
+    <!--app:sb_drawable="@drawable/ic_b3"-->
+    <!--app:sb_drawableGravity="right"-->
+    <!--app:sb_drawableTint_onSelection="@color/blue_500"-->
+    <!--app:sb_rippleColor="@color/yellow_500"-->
+    <!--app:sb_text="Clark"-->
+    <!--app:sb_textColor="@color/black"-->
+    <!--app:sb_textColor_onSelection="@color/red_500"-->
+    <!--app:sb_textTypefacePath="fonts/shaka_pow.ttf"/>-->
 
 
     <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
     <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="horizontal">-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="4dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:elevation="2dp"-->
-            <!--app:sbg_backgroundColor="@color/white"-->
-            <!--app:sbg_borderColor="@color/black"-->
-            <!--app:sbg_borderSize="1dp"-->
-            <!--app:sbg_position="0"-->
-            <!--app:sbg_radius="30dp"-->
-            <!--app:sbg_rippleColor="@color/blue_300"-->
-            <!--app:sbg_selectorColor="@color/yellow_600">-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="4dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:elevation="2dp"-->
+    <!--app:sbg_backgroundColor="@color/white"-->
+    <!--app:sbg_borderColor="@color/black"-->
+    <!--app:sbg_borderSize="1dp"-->
+    <!--app:sbg_position="0"-->
+    <!--app:sbg_radius="30dp"-->
+    <!--app:sbg_rippleColor="@color/blue_300"-->
+    <!--app:sbg_selectorColor="@color/yellow_600">-->
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_drawable="@drawable/ic_b1"-->
-                <!--app:sb_drawableTint="@color/yellow_600"-->
-                <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_drawable="@drawable/ic_b1"-->
+    <!--app:sb_drawableTint="@color/yellow_600"-->
+    <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_drawable="@drawable/ic_b2"-->
-                <!--app:sb_drawableTint="@color/DarkRed"-->
-                <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_drawable="@drawable/ic_b2"-->
+    <!--app:sb_drawableTint="@color/DarkRed"-->
+    <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-        <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="4dp"-->
-            <!--android:layout_weight="1"-->
-            <!--android:elevation="2dp"-->
-            <!--app:sbg_backgroundColor="@color/white"-->
-            <!--app:sbg_position="0"-->
-            <!--app:sbg_radius="30dp"-->
-            <!--app:sbg_rippleColor="@color/black"-->
-            <!--app:sbg_selectorColor="@color/DarkRed">-->
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:elevation="2dp"
+        app:backgroundColor="@color/blue_400"
+        app:position="0"
+        app:radius="30dp"
+        app:rippleColor="@color/black"
+        app:selectorColor="@color/DarkRed">
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_drawable="@drawable/ic_b17"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:drawable="@drawable/ic_b17" />
 
-            <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_weight="1"-->
-                <!--app:sb_drawable="@drawable/ic_b6"/>-->
+        <com.addisonelliott.segmentedbutton.SegmentedButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            app:drawable="@drawable/ic_b6" />
 
-        <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     <!--</LinearLayout>-->
 
     <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center_horizontal"-->
-        <!--android:layout_margin="4dp"-->
-        <!--android:elevation="2dp"-->
-        <!--app:sbg_backgroundColor="@color/red_400"-->
-        <!--app:sbg_dividerColor="@color/white"-->
-        <!--app:sbg_dividerPadding="10dp"-->
-        <!--app:sbg_dividerRadius="10dp"-->
-        <!--app:sbg_dividerSize="12dp"-->
-        <!--app:sbg_position="0"-->
-        <!--app:sbg_radius="2dp"-->
-        <!--app:sbg_rippleColor="@color/red_200"-->
-        <!--app:sbg_selectorColor="@color/green_200">-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="center_horizontal"-->
+    <!--android:layout_margin="4dp"-->
+    <!--android:elevation="2dp"-->
+    <!--app:sbg_backgroundColor="@color/red_400"-->
+    <!--app:sbg_dividerColor="@color/white"-->
+    <!--app:sbg_dividerPadding="10dp"-->
+    <!--app:sbg_dividerRadius="10dp"-->
+    <!--app:sbg_dividerSize="12dp"-->
+    <!--app:sbg_position="0"-->
+    <!--app:sbg_radius="2dp"-->
+    <!--app:sbg_rippleColor="@color/red_200"-->
+    <!--app:sbg_selectorColor="@color/green_200">-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:paddingLeft="10dp"-->
-            <!--android:paddingRight="10dp"-->
-            <!--app:sb_drawable="@drawable/ic_b8"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:paddingLeft="10dp"-->
+    <!--android:paddingRight="10dp"-->
+    <!--app:sb_drawable="@drawable/ic_b8"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:paddingLeft="10dp"-->
-            <!--android:paddingRight="10dp"-->
-            <!--app:sb_drawable="@drawable/ic_b9"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:paddingLeft="10dp"-->
+    <!--android:paddingRight="10dp"-->
+    <!--app:sb_drawable="@drawable/ic_b9"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:paddingLeft="10dp"-->
-            <!--android:paddingRight="10dp"-->
-            <!--app:sb_drawable="@drawable/ic_b11"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:paddingLeft="10dp"-->
+    <!--android:paddingRight="10dp"-->
+    <!--app:sb_drawable="@drawable/ic_b11"/>-->
 
     <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
@@ -301,7 +310,7 @@
             android:layout_weight="1"
             app:drawable="@drawable/ic_b7"
             app:drawableTint="@color/white"
-            app:drawableTint_onSelection="@color/black"/>
+            app:drawableTint_onSelection="@color/black" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -309,7 +318,7 @@
             android:layout_weight="1.5"
             app:drawable="@drawable/ic_b7"
             app:drawableTint="@color/white"
-            app:drawableTint_onSelection="@color/black"/>
+            app:drawableTint_onSelection="@color/black" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -317,7 +326,7 @@
             android:layout_weight="2"
             app:drawable="@drawable/ic_b7"
             app:drawableTint="@color/white"
-            app:drawableTint_onSelection="@color/black"/>
+            app:drawableTint_onSelection="@color/black" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -325,7 +334,7 @@
             android:layout_weight="1.5"
             app:drawable="@drawable/ic_b7"
             app:drawableTint="@color/white"
-            app:drawableTint_onSelection="@color/black"/>
+            app:drawableTint_onSelection="@color/black" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -333,110 +342,110 @@
             android:layout_weight="1"
             app:drawable="@drawable/ic_b7"
             app:drawableTint="@color/white"
-            app:drawableTint_onSelection="@color/black"/>
+            app:drawableTint_onSelection="@color/black" />
 
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
 
     <!--<TextView-->
-        <!--android:layout_marginStart="10dp"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:textSize="12sp"-->
-        <!--android:text="Draggable Segmented Group:"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+    <!--android:layout_marginStart="10dp"-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:textSize="12sp"-->
+    <!--android:text="Draggable Segmented Group:"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
 
     <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="4dp"-->
-        <!--android:elevation="2dp"-->
-        <!--app:sbg_backgroundColor="@color/white"-->
-        <!--app:sbg_borderColor="@color/black"-->
-        <!--app:sbg_borderSize="1dp"-->
-        <!--app:sbg_position="0"-->
-        <!--app:sbg_radius="30dp"-->
-        <!--app:sbg_draggable="true"-->
-        <!--app:sbg_animateSelectorDuration="1000"-->
-        <!--app:sbg_rippleColor="@color/black"-->
-        <!--app:sbg_selectorColor="@color/green_800">-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="4dp"-->
+    <!--android:elevation="2dp"-->
+    <!--app:sbg_backgroundColor="@color/white"-->
+    <!--app:sbg_borderColor="@color/black"-->
+    <!--app:sbg_borderSize="1dp"-->
+    <!--app:sbg_position="0"-->
+    <!--app:sbg_radius="30dp"-->
+    <!--app:sbg_draggable="true"-->
+    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:sbg_rippleColor="@color/black"-->
+    <!--app:sbg_selectorColor="@color/green_800">-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:padding="5dp"-->
-            <!--app:sb_text="YES"-->
-            <!--app:sb_textColor="@color/black"-->
-            <!--app:sb_textColor_onSelection="@color/white"-->
-            <!--app:sb_textTypeface="serif"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:padding="5dp"-->
+    <!--app:sb_text="YES"-->
+    <!--app:sb_textColor="@color/black"-->
+    <!--app:sb_textColor_onSelection="@color/white"-->
+    <!--app:sb_textTypeface="serif"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:padding="5dp"-->
-            <!--app:sb_text="Maybe"-->
-            <!--app:sb_textColor="@color/black"-->
-            <!--app:sb_textColor_onSelection="@color/white"-->
-            <!--app:sb_textTypeface="serif"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:padding="5dp"-->
+    <!--app:sb_text="Maybe"-->
+    <!--app:sb_textColor="@color/black"-->
+    <!--app:sb_textColor_onSelection="@color/white"-->
+    <!--app:sb_textTypeface="serif"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:padding="5dp"-->
-            <!--app:sb_text="NO"-->
-            <!--app:sb_textColor="@color/black"-->
-            <!--app:sb_textColor_onSelection="@color/white"-->
-            <!--app:sb_textTypeface="serif"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:padding="5dp"-->
+    <!--app:sb_text="NO"-->
+    <!--app:sb_textColor="@color/black"-->
+    <!--app:sb_textColor_onSelection="@color/white"-->
+    <!--app:sb_textTypeface="serif"/>-->
 
     <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
     <!--<TextView-->
-        <!--android:layout_marginStart="10dp"-->
-        <!--android:layout_marginLeft="10dp"-->
-        <!--android:layout_marginTop="10dp"-->
-        <!--android:textSize="12sp"-->
-        <!--android:text="Using dynamic drawable:"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content" />-->
+    <!--android:layout_marginStart="10dp"-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:textSize="12sp"-->
+    <!--android:text="Using dynamic drawable:"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content" />-->
 
     <!--<co.ceryle.segmentedbutton.SegmentedButtonGroup-->
-        <!--android:id="@+id/dynamic_drawable_group"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_margin="4dp"-->
-        <!--android:elevation="2dp"-->
-        <!--app:sbg_animateSelector="fastOutSlowIn"-->
-        <!--app:sbg_animateSelectorDuration="1000"-->
-        <!--app:sbg_backgroundColor="@color/black"-->
-        <!--app:sbg_position="0"-->
-        <!--app:sbg_radius="2dp"-->
-        <!--app:sbg_rippleColor="@color/white"-->
-        <!--app:sbg_selectorColor="@color/white">-->
+    <!--android:id="@+id/dynamic_drawable_group"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_margin="4dp"-->
+    <!--android:elevation="2dp"-->
+    <!--app:sbg_animateSelector="fastOutSlowIn"-->
+    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:sbg_backgroundColor="@color/black"-->
+    <!--app:sbg_position="0"-->
+    <!--app:sbg_radius="2dp"-->
+    <!--app:sbg_rippleColor="@color/white"-->
+    <!--app:sbg_selectorColor="@color/white">-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:id="@+id/left_button"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawablePadding="8dp"-->
-            <!--app:sb_drawableGravity="right"-->
-            <!--app:sb_text="Left"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:id="@+id/left_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_drawablePadding="8dp"-->
+    <!--app:sb_drawableGravity="right"-->
+    <!--app:sb_text="Left"-->
+    <!--app:sb_drawableTint="@color/white"-->
+    <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
-        <!--<co.ceryle.segmentedbutton.SegmentedButton-->
-            <!--android:id="@+id/right_button"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight="1"-->
-            <!--app:sb_drawableGravity="right"-->
-            <!--app:sb_text="Right"-->
-            <!--app:sb_drawableTint="@color/white"-->
-            <!--app:sb_drawableTint_onSelection="@color/black"/>-->
+    <!--<co.ceryle.segmentedbutton.SegmentedButton-->
+    <!--android:id="@+id/right_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_weight="1"-->
+    <!--app:sb_drawableGravity="right"-->
+    <!--app:sb_text="Right"-->
+    <!--app:sb_drawableTint="@color/white"-->
+    <!--app:sb_drawableTint_onSelection="@color/black"/>-->
 
     <!--</co.ceryle.segmentedbutton.SegmentedButtonGroup>-->
 
@@ -445,6 +454,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
+        android:background="@color/green_500"
         android:elevation="3dp"
         app:backgroundColor="@color/white"
         app:position="0"
@@ -453,8 +463,9 @@
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
-            android:layout_height="32dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@color/blue_100"
             android:padding="4dp"
             app:text="Both"
             app:textColor="@color/red"
@@ -462,16 +473,16 @@
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
-            android:layout_height="32dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="12dp"
+            android:padding="8dp"
             app:text="Pickup"
             app:textColor="@color/black"
             app:textColor_onSelection="@color/white" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
-            android:layout_height="32dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:padding="4dp"
             app:text="Dropoff"
@@ -484,6 +495,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-thin"
-        android:textStyle="italic"
-        />
+        android:textStyle="italic" />
 </LinearLayout>
