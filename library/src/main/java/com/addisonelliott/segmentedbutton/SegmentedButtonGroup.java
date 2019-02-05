@@ -10,7 +10,10 @@ import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -18,6 +21,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewOutlineProvider;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -32,6 +36,7 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
@@ -121,9 +126,15 @@ public class SegmentedButtonGroup extends LinearLayout {
         // with the outline provider
         setWillNotDraw(false);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            setOutlineProvider(new ButtonOutlineProvider());
-//        }
+//        this.setBackground
+//        ShapeDrawable x = new ShapeDrawable();
+//        x.set
+
+
+
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            setOutlineProvider(new OutlineProvider());
+        }
 
 //        setClickable(true);
 
@@ -159,7 +170,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //        container.addView(dividerContainer);
 
 //        initInterpolations();
-        setContainerAttrs();
 //        setDividerAttrs();
 
         // General purpose float rectangle, used in layout or draw calls to prevent allocation of new objects
@@ -219,97 +229,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // endregion
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-//        float selectorWidth, offsetX;
-//        int position = 0;
-//
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_UP:
-//
-//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
-//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
-//                position = (int) Math.floor(offsetX + 0.5);
-//
-//                toggledPositionOffset = lastPositionOffset = offsetX;
-//
-//                toggle(position, animateSelectorDuration, true);
-//
-//                break;
-//            case MotionEvent.ACTION_DOWN:
-//                break;
-//            case MotionEvent.ACTION_MOVE:
-//
-//                if (!draggable) {
-//                    break;
-//                }
-//
-//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
-//
-//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / (float) getWidth();
-//                position = (int) Math.floor(offsetX);
-//                offsetX -= position;
-//
-//                if (event.getRawX() - selectorWidth < getLeft()) {
-//                    offsetX = 0;
-//                    animateViews(position + 1, offsetX);
-//                    break;
-//                }
-//                if (event.getRawX() + selectorWidth > getRight()) {
-//                    offsetX = 1;
-//                    animateViews(position - 1, offsetX);
-//                    break;
-//                }
-//
-//                animateViews(position, offsetX);
-//
-//                break;
-//        }
-        return true;
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        final float width = getWidth();
-        final float height = getHeight();
-
-        // Draw background with rounded edges if desired
-        // Setup the rectangle to draw on the entire view, setup paint to fill to the background
-        rectF.set(0, 0, width, height);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(backgroundColor);
-        canvas.drawRoundRect(rectF, radius, radius, paint);
-
-//        backgroundDrawable.
-
-        if (borderSize > 0) {
-            float bSize = borderSize / 2f;
-            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(borderColor);
-            paint.setStrokeWidth(borderSize);
-            canvas.drawRoundRect(rectF, radius, radius, paint);
-        }
-
-//        float width = canvas.getWidth();
-//        float height = canvas.getHeight();
-//
-//        rectF.set(0, 0, width, height);
-//        paint.setStyle(Paint.Style.FILL);
-//        paint.setColor(backgroundColor);
-//        canvas.drawRoundRect(rectF, radius, radius, paint);
-//
-//        if (borderSize > 0) {
-//            float bSize = borderSize / 2f;
-//            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
-//            paint.setStyle(Paint.Style.STROKE);
-//            paint.setColor(borderColor);
-//            paint.setStrokeWidth(borderSize);
-//            canvas.drawRoundRect(rectF, radius, radius, paint);
-//        }
-    }
+    // region Layout & Measure
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
@@ -375,17 +295,110 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
+    // endregion
+
+    // region Drawing
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+
+        final float width = getWidth();
+        final float height = getHeight();
+
+        // Draw background with rounded edges if desired
+        // Setup the rectangle to draw on the entire view, setup paint to fill to the background
+        rectF.set(0, 0, width, height);
+        paint.setStyle(Paint.Style.FILL);
+        paint.setColor(backgroundColor);
+        canvas.drawRoundRect(rectF, radius, radius, paint);
+
+//        backgroundDrawable.
+        // TODO Clean this up
+        if (borderSize > 0) {
+            float bSize = borderSize / 2f;
+            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(borderColor);
+            paint.setStrokeWidth(borderSize);
+            canvas.drawRoundRect(rectF, radius, radius, paint);
+        }
+
+//        float width = canvas.getWidth();
+//        float height = canvas.getHeight();
+//
+//        rectF.set(0, 0, width, height);
+//        paint.setStyle(Paint.Style.FILL);
+//        paint.setColor(backgroundColor);
+//        canvas.drawRoundRect(rectF, radius, radius, paint);
+//
+//        if (borderSize > 0) {
+//            float bSize = borderSize / 2f;
+//            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
+//            paint.setStyle(Paint.Style.STROKE);
+//            paint.setColor(borderColor);
+//            paint.setStrokeWidth(borderSize);
+//            canvas.drawRoundRect(rectF, radius, radius, paint);
+//        }
+    }
+
+    // endregion
+
+    // region Events
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+//        float selectorWidth, offsetX;
+//        int position = 0;
+//
+//        switch (event.getAction()) {
+//            case MotionEvent.ACTION_UP:
+//
+//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
+//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
+//                position = (int) Math.floor(offsetX + 0.5);
+//
+//                toggledPositionOffset = lastPositionOffset = offsetX;
+//
+//                toggle(position, animateSelectorDuration, true);
+//
+//                break;
+//            case MotionEvent.ACTION_DOWN:
+//                break;
+//            case MotionEvent.ACTION_MOVE:
+//
+//                if (!draggable) {
+//                    break;
+//                }
+//
+//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
+//
+//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / (float) getWidth();
+//                position = (int) Math.floor(offsetX);
+//                offsetX -= position;
+//
+//                if (event.getRawX() - selectorWidth < getLeft()) {
+//                    offsetX = 0;
+//                    animateViews(position + 1, offsetX);
+//                    break;
+//                }
+//                if (event.getRawX() + selectorWidth > getRight()) {
+//                    offsetX = 1;
+//                    animateViews(position - 1, offsetX);
+//                    break;
+//                }
+//
+//                animateViews(position, offsetX);
+//
+//                break;
+//        }
+        return true;
+    }
+
+    // endregion
+
     // region Untouched
 
-//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-//    private class ButtonOutlineProvider extends ViewOutlineProvider {
-//
-//        @Override
-//        public void getOutline(View view, Outline outline) {
-//            outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
-//        }
-//    }
-//
 //    private void setBackgroundColor(View v, Drawable d, int c) {
 //        if (null != d) {
 //            BackgroundHelper.setBackground(v, d);
@@ -422,11 +435,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //        }
 //    }
 //
-    private void setContainerAttrs() {
-        if (isInEditMode()) {
-            mainGroup.setBackgroundColor(backgroundColor);
-        }
-    }
 //
 //    private void initInterpolations() {
 //        ArrayList<Class> interpolatorList = new ArrayList<Class>() {{
@@ -860,6 +868,29 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    private void toNextPosition(int position, float clip) {
 //        if (position >= 0 && position < numberOfButtons) {
 //            buttons.get(position).clipToLeft(clip);
+//        }
+//    }
+
+    // endregion
+
+    // region Classes
+
+    @RequiresApi(api = VERSION_CODES.LOLLIPOP)
+    private class OutlineProvider extends ViewOutlineProvider {
+        // TODO Document me, there is no clipToOutline set is there?
+
+        @Override
+        public void getOutline(final View view, final Outline outline) {
+            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
+        }
+    }
+
+//    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    private class ButtonOutlineProvider extends ViewOutlineProvider {
+//
+//        @Override
+//        public void getOutline(View view, Outline outline) {
+//            outline.setRoundRect(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight(), radius);
 //        }
 //    }
 

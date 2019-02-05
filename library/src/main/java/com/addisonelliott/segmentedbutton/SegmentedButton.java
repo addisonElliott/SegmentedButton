@@ -434,6 +434,8 @@ public class SegmentedButton extends View {
 
     // endregion
 
+    // region Drawing
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -540,6 +542,8 @@ public class SegmentedButton extends View {
         mClipAmount = clip;
         invalidate();
     }
+
+    // endregion
 
     // region Unused
 
