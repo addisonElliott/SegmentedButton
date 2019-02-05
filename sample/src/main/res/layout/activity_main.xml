@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:orientation="vertical"
     android:padding="0dp">
 
@@ -72,16 +74,16 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_margin="8dp"
+        android:clipChildren="false"
         android:elevation="8dp"
         app:backgroundColor="@color/white"
         app:borderColor="@color/orange_700"
         app:borderSize="1dp"
-        app:radius="30dp"
         app:dividerColor="@color/orange_700"
         app:dividerPadding="10dp"
         app:dividerSize="1dp"
-        android:clipChildren="true"
         app:position="0"
+        app:radius="30dp"
         app:rippleColor="@color/green_800"
         app:selectorColor="@color/green_900">
 
@@ -458,6 +460,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="64dp"
+        android:clipToPadding="false"
         android:elevation="64dp"
         app:backgroundColor="@color/white"
         app:position="0"
