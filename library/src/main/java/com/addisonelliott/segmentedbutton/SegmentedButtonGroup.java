@@ -311,7 +311,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         paint.setColor(backgroundColor);
         canvas.drawRoundRect(rectF, radius, radius, paint);
 
-//        backgroundDrawable.
         // TODO Clean this up
         if (borderSize > 0) {
             float bSize = borderSize / 2f;
