@@ -74,8 +74,15 @@ public class SegmentedButton extends View {
     private boolean hasText;
     private int drawableGravity;
 
+    // Text color and selected text color
+    // Keep a boolean of whether there is a selected text color so we know if we dont need to draw anything
+    // TODO Wrong, no need for hasSelectedTextColor, should just use same selectedTextColor
+    // TODO Look into null type value for Color, -1 maybe?
+    private int textColor, selectedTextColor;
+    private boolean hasSelectedTextColor;
+
     // Custom attributes
-    private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawableTint,
+    private int drawableTintOnSelection, rippleColor, buttonWidth, drawableTint,
             drawableWidth, drawableHeight, drawablePadding;
     private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
             hasDrawableWidth, hasDrawableHeight, hasDrawableTint;
@@ -111,6 +118,11 @@ public class SegmentedButton extends View {
 
         initText();
         initDrawable();
+
+        // Setup default values for clip position
+        // By default, set to clip from left and have none of the selected view shown
+        relativeClipPosition = 0.0f;
+        isClippingLeft = true;
 
         // Setup background clip path parameters
         // This should be changed before onDraw is ever called but they are initialized to be safe
@@ -165,8 +177,8 @@ public class SegmentedButton extends View {
         hasText = ta.hasValue(R.styleable.SegmentedButton_text);
         text = ta.getString(R.styleable.SegmentedButton_text);
         textColor = ta.getColor(R.styleable.SegmentedButton_textColor, Color.GRAY);
-        hasTextColorOnSelection = ta.hasValue(R.styleable.SegmentedButton_textColor_onSelection);
-        textColorOnSelection = ta.getColor(R.styleable.SegmentedButton_textColor_onSelection, Color.WHITE);
+        hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_textColor_onSelection);
+        selectedTextColor = ta.getColor(R.styleable.SegmentedButton_textColor_onSelection, Color.WHITE);
         textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
 
         boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
@@ -522,6 +534,15 @@ public class SegmentedButton extends View {
         // Draw background
         if (mSelectedBackgroundDrawable != null) {
             mSelectedBackgroundDrawable.draw(canvas);
+        }
+
+        // Draw text (unselected)
+        if (hasSelectedTextColor) {
+            canvas.save();
+            canvas.translate(textPosition.x, textPosition.y);
+            mTextPaint.setColor(selectedTextColor);
+            mStaticLayout.draw(canvas);
+            canvas.restore();
         }
 
         canvas.restore();

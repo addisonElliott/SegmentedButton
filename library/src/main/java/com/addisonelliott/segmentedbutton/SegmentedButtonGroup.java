@@ -257,6 +257,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             // Give radius to the button so it knows how to clip the background appropriately
             button.setBackgroundRadius(radius);
+            // TODO Maybe instead of drawing background here, we just pass it to buttons? Easier that way right?
+            // That removes the onDraw too! Plus it won't be ugly if both are specified, that's not possible then!
+            // TODO pass along background default drawable, etc anything else
 //            button.setSelectorColor(selectorColor);
 
             // If this is the first item, set it as left-most button
@@ -281,7 +284,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             // If the given position to start at is this button, select it
             if (this.position == position) {
                 // Disabled clipping for button to display entire selected view
-                button.clipRight(0.75f);
+                button.clipRight(0.0f);
             }
 
             // TODO Ensure that padding is set to 0 for this class, otherwise it messes stuff up
