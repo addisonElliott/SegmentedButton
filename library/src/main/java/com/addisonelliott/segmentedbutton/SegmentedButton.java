@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.PointF;
@@ -32,42 +31,59 @@ public class SegmentedButton extends View {
     // region Variables & Constants
     private static final String TAG = "SegmentedButton";
 
-    // Horizontal relative clip position from 0.0f to 1.0f. This value is scaled by views width to get a value from
+    // General purpose rectangle to prevent memory allocation in onDraw
+    private RectF mRectF;
+
+    // Text paint variables contains paint info for unselected and selected text
+    private TextPaint textPaint;
+    // Static layout used for positioning and drawing unselected and selected text
+    private StaticLayout textStaticLayout;
+    // Maximum text width assuming all text is on one line, this is used in onMeasure to calculate the desired width
+    private int textMaxWidth;
+
+    // Position (X/Y) of the text and drawable
+    private PointF textPosition, drawablePosition;
+
+    // Clip path used to round background drawable edges to match segmented button group radius
+    private Path backgroundClipPath;
+    // Radius of the segmented button group used for creating background clip path
+    private int backgroundRadius;
+    // Whether this button is on the left or right side of the segmented group, determines which side to round out
+    private boolean isLeftButton, isRightButton;
+
+    // Horizontal relative clip position from 0.0f to 1.0f. This value is scaled by this views width to get a value from
     // 0.0f to the width of the view
     private float relativeClipPosition;
     // Whether or not the clipping is occurring from the left (true) or right (false). In simpler terms, if true,
     // then the start clipping relative position is 0.0f, otherwise, if clipping from the right, the position is 1.0f
     private boolean isClippingLeft;
 
-    // Clip path used to round background drawable edges to match parent radius
-    private Path backgroundClipPath;
-    // Radius of the background segmented button group used for creating background clip path
-    private int backgroundRadius;
-    // Whether this button is on the left or right side of the segmented group, determines which side to round out
-    private boolean isLeftButton, isRightButton;
-
-    private TextPaint mTextPaint;
-    private StaticLayout mStaticLayout;
-    private int mTextMaxWidth;
-
-    // General purpose rectangle to prevent memory allocation in onDraw
-    private RectF mRectF;
-
-    // Position (X/Y) of the text and drawable
-    private PointF textPosition, drawablePosition;
-
-    private PorterDuffColorFilter mDrawableNormalColor, mDrawableSelectedColor;
-
-    // Drawable is the icon or image to draw. This can be drawn beside text or without text
-    private Drawable mDrawable;
     // Drawable for the background, this will be a ColorDrawable in case a solid color is given
     private Drawable mBackgroundDrawable;
     // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
     private Drawable mSelectedBackgroundDrawable;
 
-    // Text and boolean which indicates whether we have text
+    // Color filters used for tinting the button drawable in normal and when button is selected, will be null for no
+    // tint
+    private PorterDuffColorFilter mDrawableNormalColor, mDrawableSelectedColor;
+
+    // Drawable is the icon or image to draw. This can be drawn beside text or without text
+    private Drawable mDrawable;
+    private int drawableGravity;
+    private boolean hasDrawableTint, hasSelectedDrawableTint;
+    private int drawableTint, selectedDrawableTint;
+    private boolean hasDrawableWidth, hasDrawableHeight;
+    private int drawableWidth, drawableHeight;
+    private int drawablePadding;
+
+    // Whether or not we have text, false indicates text should be empty
     private boolean hasText;
+    // Text to display for button
     private String text;
+    // Font size in pixels of the text
+    private float textSize;
+    // Typeface (font) to use for displaying the text
+    private Typeface textTypeface;
 
     // Text color and selected text color
     // Keep a boolean of whether there is a selected text color so we know if we dont need to draw anything
@@ -76,15 +92,9 @@ public class SegmentedButton extends View {
     private int textColor, selectedTextColor;
     private boolean hasSelectedTextColor;
 
-    private int drawableGravity;
-
     // Custom attributes
-    private int selectedDrawableTint, rippleColor, drawableTint,
-            drawableWidth, drawableHeight, drawablePadding;
-    private boolean hasRipple, hasSelectedDrawableTint,
-            hasDrawableWidth, hasDrawableHeight, hasDrawableTint;
-    private float textSize;
-    private Typeface textTypeface;
+    private int rippleColor;
+    private boolean hasRipple;
 
     // endregion
 
@@ -205,19 +215,19 @@ public class SegmentedButton extends View {
         }
 
         // Create text paint that will be used to draw the text on the canvas
-        mTextPaint = new TextPaint();
-        mTextPaint.setAntiAlias(true);
-        mTextPaint.setTextSize(textSize);
-        mTextPaint.setColor(textColor);
-        mTextPaint.setTypeface(textTypeface);
+        textPaint = new TextPaint();
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(textSize);
+        textPaint.setColor(textColor);
+        textPaint.setTypeface(textTypeface);
 
         // TODO Look into making this onMeasure probably
         // Initial kickstart to setup the text layout by assuming the text will be all in one line
-        mTextMaxWidth = (int) mTextPaint.measureText(text);
+        textMaxWidth = (int) textPaint.measureText(text);
         if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-            mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, mTextMaxWidth).build();
+            textStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, textMaxWidth).build();
         } else {
-            mStaticLayout = new StaticLayout(text, mTextPaint, mTextMaxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+            textStaticLayout = new StaticLayout(text, textPaint, textMaxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
                     false);
         }
     }
@@ -253,11 +263,11 @@ public class SegmentedButton extends View {
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // For the text width, assume that it is in a single line with no wrapping which would be mTextMaxWidth
+        // For the text width, assume that it is in a single line with no wrapping which would be textMaxWidth
         // This variable is used to calculate the desired width and the desire is for it all to be in a single line
         final int drawableWidth = mDrawable != null ? hasDrawableWidth ? this.drawableWidth
                 : mDrawable.getIntrinsicWidth() : 0;
-        final int textWidth = hasText ? mTextMaxWidth : 0;
+        final int textWidth = hasText ? textMaxWidth : 0;
 
         // Measured width & height
         int width, height;
@@ -290,7 +300,7 @@ public class SegmentedButton extends View {
         // Note that the height is the static layout height which may or may not be multi-lined
         final int drawableHeight = mDrawable != null ? hasDrawableHeight ? this.drawableHeight
                 : mDrawable.getIntrinsicHeight() : 0;
-        final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
+        final int textHeight = hasText ? textStaticLayout.getHeight() : 0;
 
         int desiredHeight = getPaddingTop() + getPaddingBottom();
 
@@ -347,7 +357,7 @@ public class SegmentedButton extends View {
         // Text width is equal to the total width minus padding and drawable width
         // But, if the maximum text width is smaller, just use that and we will manually pad it later
         int newDrawableWidth = Gravity.isHorizontal(drawableGravity) ? drawableWidth : 0;
-        int textWidth = Math.min(width - getPaddingLeft() - getPaddingRight() - newDrawableWidth, mTextMaxWidth);
+        int textWidth = Math.min(width - getPaddingLeft() - getPaddingRight() - newDrawableWidth, textMaxWidth);
 
         // Odd case where there is not enough space for the padding and drawable width so we just return
         if (textWidth < 0) {
@@ -358,9 +368,9 @@ public class SegmentedButton extends View {
         // Old way of creating static layout was deprecated but I dont think there is any speed difference between
         // the two
         if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-            mStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), mTextPaint, textWidth).build();
+            textStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, textWidth).build();
         } else {
-            mStaticLayout = new StaticLayout(text, mTextPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
+            textStaticLayout = new StaticLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
                     false);
         }
     }
@@ -488,8 +498,8 @@ public class SegmentedButton extends View {
         if (hasText) {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
-            mTextPaint.setColor(textColor);
-            mStaticLayout.draw(canvas);
+            textPaint.setColor(textColor);
+            textStaticLayout.draw(canvas);
             canvas.restore();
         }
 
@@ -520,8 +530,8 @@ public class SegmentedButton extends View {
         if (hasSelectedTextColor) {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
-            mTextPaint.setColor(selectedTextColor);
-            mStaticLayout.draw(canvas);
+            textPaint.setColor(selectedTextColor);
+            textStaticLayout.draw(canvas);
             canvas.restore();
         }
 
@@ -658,7 +668,7 @@ public class SegmentedButton extends View {
 //     * @param typeface you can use above variations using the bitwise OR operator
 //     */
 //    public void setTypeface(Typeface typeface) {
-//        mTextPaint.setTypeface(typeface);
+//        textPaint.setTypeface(typeface);
 //    }
 //
 //    /**
@@ -667,7 +677,7 @@ public class SegmentedButton extends View {
 //    public void setTypeface(String location) {
 //        if (null != location && !location.equals("")) {
 //            Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), location);
-//            mTextPaint.setTypeface(typeface);
+//            textPaint.setTypeface(typeface);
 //        }
 //    }
 //
