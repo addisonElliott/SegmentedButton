@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray"
-    android:padding="10dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
@@ -74,7 +74,6 @@
         android:layout_margin="8dp"
         android:clipChildren="false"
         android:elevation="8dp"
-        app:backgroundColor="@color/white"
         app:borderColor="@color/orange_700"
         app:borderWidth="2dp"
         app:dividerColor="@color/orange_700"
@@ -105,6 +104,7 @@
             android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
+            app:background="@color/white"
             app:drawable="@drawable/ic_gimli"
             app:drawableGravity="top"
             app:text="Gimli"
@@ -118,10 +118,10 @@
             android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
+            app:background="@color/blue"
             app:drawable="@drawable/ic_legolas"
             app:drawableGravity="top"
             app:text="Legolas"
-            app:background="@color/blue"
             app:textColor_onSelection="@color/yellow_200" />
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 

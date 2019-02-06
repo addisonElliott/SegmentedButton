@@ -47,8 +47,6 @@ public class SegmentedButton extends View {
     private StaticLayout mStaticLayout;
     private int mTextMaxWidth;
     private Rect mTextBounds = new Rect();
-    private int mRadius, mBorderSize;
-    private boolean hasBorderLeft, hasBorderRight;
 
     private RectF mRectF;
     private Paint mPaint;
@@ -606,23 +604,30 @@ public class SegmentedButton extends View {
     // region Getters & Setters
 
     void setupBackgroundClipPath() {
-        mRectF.set(0.0f, 0.0f, getWidth(), getHeight());
+        // Set rectangle to take up entire view, used to create clip path
+        mRectF.set(0, 0, getWidth(), getHeight());
+
+        // Background radius, shorthand variable to make code cleaner
+        // Note: In Android Studio previewer, some of the background color a rounded segmented button group along
+        // with a background color in individual buttons may appear. Does not appear when running on actual devices
+        // however.
+        // Recommended approach is to treat button group background and button background as being mutually exclusive.
+        // That is use one or the other but not both.
+        final float br = backgroundRadius;
 
         if (isLeftButton && isRightButton) {
+            // Add radius on all sides, left & right
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(mRectF,
-                    new float[]{backgroundRadius, backgroundRadius, backgroundRadius, backgroundRadius,
-                            backgroundRadius, backgroundRadius, backgroundRadius, backgroundRadius}, Direction.CW);
+                    new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
         } else if (isLeftButton) {
+            // Add radius on left side only
             backgroundClipPath = new Path();
-            backgroundClipPath.addRoundRect(mRectF,
-                    new float[]{backgroundRadius, backgroundRadius, 0, 0, 0, 0, backgroundRadius, backgroundRadius},
-                    Direction.CW);
+            backgroundClipPath.addRoundRect(mRectF, new float[]{br, br, 0, 0, 0, 0, br, br}, Direction.CW);
         } else if (isRightButton) {
+            // Add radius on right side only
             backgroundClipPath = new Path();
-            backgroundClipPath.addRoundRect(mRectF,
-                    new float[]{0, 0, backgroundRadius, backgroundRadius, backgroundRadius, backgroundRadius, 0, 0},
-                    Direction.CW);
+            backgroundClipPath.addRoundRect(mRectF, new float[]{0, 0, br, br, br, br, 0, 0}, Direction.CW);
         } else {
             backgroundClipPath = null;
         }
@@ -631,6 +636,7 @@ public class SegmentedButton extends View {
     void setIsLeftButton(boolean isLeftButton) {
         this.isLeftButton = isLeftButton;
 
+        // TODO Not sure this is best way to handle it
         setupBackgroundClipPath();
     }
 

@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -19,6 +20,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewOutlineProvider;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
@@ -136,6 +138,15 @@ public class SegmentedButtonGroup extends LinearLayout {
         mainGroup.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(mainGroup);
 
+        BackgroundView v = new BackgroundView(context);
+////        BackgroundView
+        GradientDrawable x = new GradientDrawable();
+        x.setCornerRadius(radius - borderWidth / 2.0f);
+        x.setStroke(borderWidth, borderColor, borderDashWidth, borderDashGap);
+        v.setBackground(x);
+        v.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(v);
+
 //        rippleContainer = new LinearLayout(getContext());
 //        rippleContainer
 //                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -238,6 +249,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             // Give radius to the button so it knows how to clip the background appropriately
             button.setBackgroundRadius(radius);
+//            button.setSelectorColor(selectorColor);
+//            button.setSelectorRadius(radius);
+//            button.setBorderSize(borderSize);
 
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
@@ -251,7 +265,12 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setIsRightButton(true);
 
             // Sets up the background clip path in order to correctly round background to match the radius
+            // TODO Not working, need to do position - 1 button too!
             button.setupBackgroundClipPath();
+
+//            button.setSelectorColor(selectorColor);
+//            button.setSelectorRadius(radius);
+//            button.setBorderSize(borderSize);
 
             // Add the button to the main group instead and store the button in our buttons list
             mainGroup.addView(button, params);
@@ -316,30 +335,30 @@ public class SegmentedButtonGroup extends LinearLayout {
         paint.setColor(backgroundColor);
         canvas.drawRoundRect(rectF, radius, radius, paint);
 
-        // Draw the border if width is greater than zero
-        if (borderWidth > 0) {
-            // Half of the border width
-            // This is used because drawing stroke is done from the center thus we need to set the left/top/right/bottom
-            // to halfway between the border width
-            final float halfBorderWidth = borderWidth / 2.0f;
-
-            // Setup rectangle for drawing stroked path
-            // Stroke paths are drawn with the rectangle set to the center of the stroke, thus half of the border
-            // width is used to subtract from the entire view
-            rectF.set(halfBorderWidth, halfBorderWidth, width - halfBorderWidth, height - halfBorderWidth);
-
-            // Set style to stroke, set color, stroke width
-            // Path effect is set to null if a solid line is to be shown, otherwise this will make a dashed line
-            paint.setStyle(Style.STROKE);
-            paint.setColor(borderColor);
-            paint.setStrokeWidth(borderWidth);
-            paint.setPathEffect(borderDashEffect);
-
-            // The radius is reduced by the amount of halfBorderWidth because this will ensure the radius is the same
-            // between the background and border
-            // The radius changes because the rectangles are different XXX
-            canvas.drawRoundRect(rectF, radius - halfBorderWidth, radius - halfBorderWidth, paint);
-        }
+//        // Draw the border if width is greater than zero
+//        if (borderWidth > 0) {
+//            // Half of the border width
+//            // This is used because drawing stroke is done from the center thus we need to set the left/top/right/bottom
+//            // to halfway between the border width
+//            final float halfBorderWidth = borderWidth / 2.0f;
+//
+//            // Setup rectangle for drawing stroked path
+//            // Stroke paths are drawn with the rectangle set to the center of the stroke, thus half of the border
+//            // width is used to subtract from the entire view
+//            rectF.set(halfBorderWidth, halfBorderWidth, width - halfBorderWidth, height - halfBorderWidth);
+//
+//            // Set style to stroke, set color, stroke width
+//            // Path effect is set to null if a solid line is to be shown, otherwise this will make a dashed line
+//            paint.setStyle(Style.STROKE);
+//            paint.setColor(borderColor);
+//            paint.setStrokeWidth(borderWidth);
+//            paint.setPathEffect(borderDashEffect);
+//
+//            // The radius is reduced by the amount of halfBorderWidth because this will ensure the radius is the same
+//            // between the background and border
+//            // The radius changes because the rectangles are different XXX
+//            canvas.drawRoundRect(rectF, radius - halfBorderWidth, radius - halfBorderWidth, paint);
+//        }
     }
 
     // endregion
