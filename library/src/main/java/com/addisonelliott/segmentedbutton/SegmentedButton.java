@@ -14,6 +14,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -32,6 +33,13 @@ public class SegmentedButton extends View {
 
     // region Variables & Constants
     private static final String TAG = "SegmentedButton";
+
+    // Horizontal relative clip position from 0.0f to 1.0f. This value is scaled by views width to get a value from
+    // 0.0f to the width of the view
+    private float relativeClipPosition;
+    // Whether or not the clipping is occurring from the left (true) or right (false). In simpler terms, if true,
+    // then the start clipping relative position is 0.0f, otherwise, if clipping from the right, the position is 1.0f
+    private boolean isClippingLeft;
 
     private float mClipAmount;
     private boolean clipLeftToRight;
@@ -60,6 +68,8 @@ public class SegmentedButton extends View {
     private Drawable mDrawable;
     // Drawable for the background, this will be a ColorDrawable in case a solid color is given
     private Drawable mBackgroundDrawable;
+    // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
+    private Drawable mSelectedBackgroundDrawable;
 
     private boolean hasText;
     private int drawableGravity;
@@ -129,6 +139,11 @@ public class SegmentedButton extends View {
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
         if (ta.hasValue(R.styleable.SegmentedButton_background)) {
             mBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_background);
+        }
+
+        // Load background on selection if available, can be drawable or color
+        if (ta.hasValue(R.styleable.SegmentedButton_background_onSelection)) {
+            mSelectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_background_onSelection);
         }
 
         // Load drawable if available, otherwise variable will be null
@@ -315,6 +330,7 @@ public class SegmentedButton extends View {
         // useDesired[Width|Height] parameter is used to indicate whether there is extra space (excluding padding)
         // between the drawable or text size and the measured size. If true, this will center the object(s)
         // appropriately
+        // TODO Move to onSizeChanged, more appropriate right?
         calculatePositions(width, height, textWidth, textHeight, drawableWidth, drawableHeight, desiredWidth >= width,
                 desiredHeight >= height);
 
@@ -451,6 +467,10 @@ public class SegmentedButton extends View {
         if (mBackgroundDrawable != null) {
             mBackgroundDrawable.setBounds(0, 0, measuredWidth, measuredHeight);
         }
+
+        if (mSelectedBackgroundDrawable != null) {
+            mSelectedBackgroundDrawable.setBounds(0, 0, measuredWidth, measuredHeight);
+        }
     }
 
     // endregion
@@ -472,10 +492,9 @@ public class SegmentedButton extends View {
 
         // Draw background
         if (mBackgroundDrawable != null) {
-            canvas.save();
             mBackgroundDrawable.draw(canvas);
-            canvas.restore();
         }
+
         // Draw text (unselected)
         if (hasText) {
             canvas.save();
@@ -487,11 +506,25 @@ public class SegmentedButton extends View {
 
         // Draw drawable (unselected)
         if (mDrawable != null) {
-            canvas.save();
             mDrawable.setColorFilter(mDrawableNormalColor);
             mDrawable.draw(canvas);
-            canvas.restore();
         }
+
+        canvas.save();
+
+        // TODO Explain me
+        if (isClippingLeft) {
+            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
+        } else {
+            canvas.clipRect(relativeClipPosition * width, 0.0f, width, height);
+        }
+
+        // Draw background
+        if (mSelectedBackgroundDrawable != null) {
+            mSelectedBackgroundDrawable.draw(canvas);
+        }
+
+        canvas.restore();
 
 //        int width = canvas.getWidth();
 //        int height = canvas.getHeight();
@@ -558,17 +591,69 @@ public class SegmentedButton extends View {
 //        canvas.restore();
     }
 
-    public void clipToLeft(float clip) {
-        clipLeftToRight = false;
-        mClipAmount = 1.0f - clip;
+    /**
+     * Horizontally clips selected button view from the left side (0.0f) to relativePosition
+     *
+     * For example, a relativePosition of 0.0f would mean the entire selected button view would be available and no
+     * clipping would occur.
+     *
+     * However, a relative position of 1.0f would mean the entire selected button view is clipped and the normal
+     * button view is entirely visible.
+     *
+     * This can be thought of as the selected button view being clipped from 0.0f on the left to the relativePosition
+     * with 1.0f being all the way on the right.
+     *
+     * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 0.0f
+     *                         would represent no clipping and 1.0f would represent clipping the entire view
+     */
+    public void clipLeft(float relativePosition) {
+        // Clipping from the left side, set to true
+        isClippingLeft = true;
+
+        // Update relative clip position
+        relativeClipPosition = relativePosition;
+
+        // Redraw
         invalidate();
     }
 
-    public void clipToRight(float clip) {
-        clipLeftToRight = true;
-        mClipAmount = clip;
+    /**
+     * Horizontally clips selected button view from the right side (1.0f) to relativePosition
+     *
+     * For example, a relativePosition of 1.0f would mean the entire selected button view would be available and no
+     * clipping would occur.
+     *
+     * However, a relative position of 0.0f would mean the entire selected button view is clipped and the normal
+     * button view is entirely visible.
+     *
+     * This can be thought of as the selected button view being clipped from 0.0f on the left to the relativePosition
+     * with 1.0f being all the way on the right.
+     *
+     * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 1.0f
+     *                         would represent no clipping and 0.0f would represent clipping the entire view
+     */
+    public void clipRight(float relativePosition) {
+        // Clipping from the right side, set to false
+        isClippingLeft = false;
+
+        // Update relative clip position
+        relativeClipPosition = relativePosition;
+
+        // Redraw
         invalidate();
     }
+
+//    public void clipToLeft(float clip) {
+//        clipLeftToRight = false;
+//        mClipAmount = 1.0f - clip;
+//        invalidate();
+//    }
+//
+//    public void clipToRight(float clip) {
+//        clipLeftToRight = true;
+//        mClipAmount = clip;
+//        invalidate();
+//    }
 
     // endregion
 

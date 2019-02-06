@@ -2,13 +2,15 @@
 <resources>
     <declare-styleable name="GlobalAttrs">
         <attr name="rippleColor" format="color" />
+
+        <attr name="background_onSelection" format="reference|color" />
     </declare-styleable>
 
     <declare-styleable name="SegmentedButton">
         <attr name="rippleColor" />
 
         <attr name="background" />
-        <attr name="background_onSelection" format="reference|color" />
+        <attr name="background_onSelection" />
 
         <attr name="drawable" format="reference" />
         <attr name="drawablePadding" format="dimension" />

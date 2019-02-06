@@ -30,8 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:elevation="2dp"
-        app:sbg_animateSelector="fastOutSlowIn"
-        app:sbg_animateSelectorDuration="1000"
+        app:animateSelector="fastOutSlowIn"
+        app:animateSelectorDuration="1000"
         app:background="@drawable/gradient_drawable"
         app:dividerBackgroundDrawable="@drawable/gradient_drawable_divider"
         app:dividerColor="@color/grey_500"
@@ -39,7 +39,6 @@
         app:dividerRadius="10dp"
         app:dividerSize="4dp"
         app:position="1"
-        android:padding="4dp"
         app:radius="10dp"
         app:ripple="true"
         app:rippleColor="@color/blue_300"
@@ -50,6 +49,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:padding="4dp"
             app:textColor="@color/white"
             app:text="Button 1" />
 
@@ -57,13 +57,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:padding="4dp"
             app:textColor="@color/white"
+            app:background_onSelection="@color/black"
             app:text="Button 2" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:padding="4dp"
             app:textColor="@color/white"
             app:text="Button 3" />
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>

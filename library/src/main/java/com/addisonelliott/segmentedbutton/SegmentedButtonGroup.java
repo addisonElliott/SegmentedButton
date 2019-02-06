@@ -59,8 +59,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Clip path used to round background drawable edges to match parent radius
     private Path backgroundClipPath;
 
+    // General purpose rectangle to prevent allocation in onDraw
     private RectF rectF;
-    private Paint paint;
 
     private boolean draggable = false;
     private int numberOfButtons = 0;
@@ -187,9 +187,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // General purpose float rectangle, used in layout or draw calls to prevent allocation of new objects
         rectF = new RectF();
-
-        // TODO Document me Paint
-        paint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -281,6 +278,14 @@ public class SegmentedButtonGroup extends LinearLayout {
             mainGroup.addView(button, params);
             buttons.add(button);
 
+            // If the given position to start at is this button, select it
+            if (this.position == position) {
+                // Disabled clipping for button to display entire selected view
+                button.clipRight(0.75f);
+            }
+
+            // TODO Ensure that padding is set to 0 for this class, otherwise it messes stuff up
+
 //            if (this.position == position) {
 //                button.clipToRight(1);
 //
@@ -350,7 +355,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Draw background with rounded edges if desired, radius of zero means regular rectangle
         // Setup rectangle to draw entire view
-        // TODO Consider moving background drawing to the buttons themselves?
+        // This background can be used to set the background for ALL buttons while the individual button backgrounds
+        // are for personalization
+        // Recommended not to use both of these at once
         if (backgroundDrawable != null) {
             backgroundDrawable.draw(canvas);
         }
@@ -393,7 +400,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //
 //        switch (event.getAction()) {
 //            case MotionEvent.ACTION_UP:
-//
+        // offsetX = (getX / width() * numberofButtons - 0.5
 //                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
 //                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
 //                position = (int) Math.floor(offsetX + 0.5);
