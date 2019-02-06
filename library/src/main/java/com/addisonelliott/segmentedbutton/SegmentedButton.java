@@ -93,6 +93,7 @@ public class SegmentedButton extends View {
     private boolean hasSelectedTextColor;
 
     // Custom attributes
+    // TODO Individualized ripple color? That would be cool, not sure I wanna do that though
     private int rippleColor;
     private boolean hasRipple;
 
@@ -145,6 +146,7 @@ public class SegmentedButton extends View {
         // to the default
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SegmentedButton);
 
+        // TODO Look into removing this
         hasRipple = ta.hasValue(R.styleable.SegmentedButton_rippleColor);
         rippleColor = ta.getColor(R.styleable.SegmentedButton_rippleColor, 0);
 
@@ -242,10 +244,12 @@ public class SegmentedButton extends View {
             return;
         }
 
+        // If drawable has a tint color, then create a color filter that will be applied to it
         if (hasDrawableTint) {
             mDrawableNormalColor = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
         }
 
+        // If selected drawable has a tint color, then create a color filter that will be applied to it
         if (hasSelectedDrawableTint) {
             mDrawableSelectedColor = new PorterDuffColorFilter(selectedDrawableTint, PorterDuff.Mode.SRC_IN);
         }
@@ -410,13 +414,6 @@ public class SegmentedButton extends View {
                 textPosition.x = startPosition;
                 drawablePosition.x = startPosition + textWidth + drawablePadding;
             }
-
-            Log.d(TAG, String.format("calculatePositions called with horizontal gravity. drawableSize: (%d, %d), "
-                            + "textSize: (%d, %d), padding (%d, %d, %d, %d), drawablePadding: %d, remainingSpace %f, "
-                            + "textPosition (%f, %f), drawablePosition (%f, %f)", drawableWidth, drawableHeight, textWidth,
-                    textHeight, getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom(),
-                    drawablePadding, startPosition, textPosition.x, textPosition.y, drawablePosition.x,
-                    drawablePosition.y));
         } else {
             // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
             // Fancy way of centering the two objects horizontally, the last 2 if statements are special cases where
@@ -448,13 +445,6 @@ public class SegmentedButton extends View {
                 textPosition.y = startPosition;
                 drawablePosition.y = startPosition + textHeight + drawablePadding;
             }
-
-            Log.d(TAG, String.format("calculatePositions called with vertical gravity. drawableSize: (%d, %d), "
-                            + "textSize: (%d, %d), padding (%d, %d, %d, %d), drawablePadding: %d, remainingSpace %f, "
-                            + "textPosition (%f, %f), drawablePosition (%f, %f)", drawableWidth, drawableHeight, textWidth,
-                    textHeight, getPaddingLeft(), getPaddingRight(), getPaddingTop(), getPaddingBottom(),
-                    drawablePadding, startPosition, textPosition.x, textPosition.y, drawablePosition.x,
-                    drawablePosition.y));
         }
 
         if (mDrawable != null) {
@@ -636,6 +626,7 @@ public class SegmentedButton extends View {
         }
     }
 
+    @SuppressWarnings("SameParameterValue")
     void setIsLeftButton(boolean isLeftButton) {
         this.isLeftButton = isLeftButton;
 
@@ -685,21 +676,7 @@ public class SegmentedButton extends View {
 //        mPaint.setColor(color);
 //    }
 //
-//    void setSelectorRadius(int radius) {
-//        mRadius = radius;
-//    }
 //
-//    void setBorderSize(int borderSize) {
-//        mBorderSize = borderSize;
-//    }
-//
-//    void hasBorderLeft(boolean hasBorderLeft) {
-//        this.hasBorderLeft = hasBorderLeft;
-//    }
-//
-//    void hasBorderRight(boolean hasBorderRight) {
-//        this.hasBorderRight = hasBorderRight;
-//    }
 //
 //    /**
 //     * Sets button's drawable by given drawable object and its position
@@ -759,19 +736,6 @@ public class SegmentedButton extends View {
 //        drawableTint = color;
 //    }
 //
-//    /**
-//     * @return button's current ripple color
-//     */
-//    public int getRippleColor() {
-//        return rippleColor;
-//    }
-//
-//    /**
-//     * @return true if the button has a ripple effect
-//     */
-//    public boolean hasRipple() {
-//        return hasRipple;
-//    }
 //
 //    /**
 //     * @return button's text color when selector is on the button
@@ -813,25 +777,6 @@ public class SegmentedButton extends View {
 //     */
 //    public boolean hasSelectedDrawableTint() {
 //        return hasSelectedDrawableTint;
-//    }
-//
-//    /**
-//     *
-//     */
-//    boolean hasWeight() {
-//        return hasWeight;
-//    }
-//
-//    float getWeight() {
-//        return buttonWeight;
-//    }
-//
-//    int getButtonWidth() {
-//        return buttonWidth;
-//    }
-//
-//    boolean hasWidth() {
-//        return hasWidth;
 //    }
 //
 //    boolean hasTextColorOnSelection() {
