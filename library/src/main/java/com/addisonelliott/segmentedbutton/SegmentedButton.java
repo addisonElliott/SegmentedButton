@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
@@ -16,6 +17,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -25,6 +27,7 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import androidx.annotation.Nullable;
@@ -46,15 +49,18 @@ public class SegmentedButton extends View {
     private int mRadius, mBorderSize;
     private boolean hasBorderLeft, hasBorderRight;
 
-    // private RectF rectF = new RectF();
     private RectF mRectF;
     private Paint mPaint;
 
+    // Position (X/Y) of the text and drawable
     private PointF textPosition, drawablePosition;
 
     private PorterDuffColorFilter mBitmapNormalColor, mBitmapClipColor;
 
+    // Drawable is the icon or image to draw. This can be drawn beside text or without text
     private Drawable mDrawable;
+    // Drawable for the background, this will be a ColorDrawable in case a solid color is given
+    private Drawable mBackgroundDrawable;
 
     private boolean hasDrawable, hasText;
     private int drawableGravity;
@@ -63,7 +69,7 @@ public class SegmentedButton extends View {
     private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawable,
             drawableTint, drawableWidth, drawableHeight, drawablePadding;
     private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
-            hasDrawableWidth, hasDrawableHeight, hasDrawableTint;
+            hasDrawableWidth, hasDrawableHeight, hasDrawableTint, hasBackgroundDrawable;
     private float buttonWeight, textSize;
     private String text;
     private Typeface textTypeface;
@@ -113,6 +119,14 @@ public class SegmentedButton extends View {
 
         hasRipple = ta.hasValue(R.styleable.SegmentedButton_rippleColor);
         rippleColor = ta.getColor(R.styleable.SegmentedButton_rippleColor, 0);
+
+        // Load background if available, this can be a drawable or a color
+        // In the instance of a color, a ColorDrawable is created and used instead
+        // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
+        hasBackgroundDrawable = ta.hasValue(R.styleable.SegmentedButton_background);
+        if (hasBackgroundDrawable) {
+            mBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_background);
+        }
 
         hasDrawable = ta.hasValue(R.styleable.SegmentedButton_drawable);
         drawable = ta.getResourceId(R.styleable.SegmentedButton_drawable, 0);
@@ -430,6 +444,11 @@ public class SegmentedButton extends View {
             mDrawable.setBounds((int) drawablePosition.x, (int) drawablePosition.y,
                     (int) drawablePosition.x + drawableWidth, (int) drawablePosition.y + drawableHeight);
         }
+
+        // TODO Move somewhere better
+        if (hasBackgroundDrawable) {
+            mBackgroundDrawable.setBounds(0, 0, measuredWidth, measuredHeight);
+        }
     }
 
     // endregion
@@ -443,7 +462,14 @@ public class SegmentedButton extends View {
         final int width = getWidth();
         final int height = getHeight();
 
+//        canvas.clipOutPath();
+
         // Draw background
+        if (hasBackgroundDrawable) {
+            canvas.save();
+            mBackgroundDrawable.draw(canvas);
+            canvas.restore();
+        }
 //        canvas.save();
 //        mRectF.set(0.0f, 0.0f, width, height);
 //        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);

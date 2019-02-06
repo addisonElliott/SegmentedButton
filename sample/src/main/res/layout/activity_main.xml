@@ -92,6 +92,7 @@
             android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
+            app:background="@color/red"
             app:drawable="@drawable/ic_aragorn"
             app:drawableGravity="top"
             app:text="Aragorn"
