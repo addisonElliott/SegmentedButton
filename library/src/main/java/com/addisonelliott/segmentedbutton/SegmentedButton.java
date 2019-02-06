@@ -11,10 +11,8 @@ import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -41,9 +39,6 @@ public class SegmentedButton extends View {
     // then the start clipping relative position is 0.0f, otherwise, if clipping from the right, the position is 1.0f
     private boolean isClippingLeft;
 
-    private float mClipAmount;
-    private boolean clipLeftToRight;
-
     // Clip path used to round background drawable edges to match parent radius
     private Path backgroundClipPath;
     // Radius of the background segmented button group used for creating background clip path
@@ -54,7 +49,6 @@ public class SegmentedButton extends View {
     private TextPaint mTextPaint;
     private StaticLayout mStaticLayout;
     private int mTextMaxWidth;
-    private Rect mTextBounds = new Rect();
 
     private RectF mRectF;
     private Paint mPaint;
@@ -62,7 +56,7 @@ public class SegmentedButton extends View {
     // Position (X/Y) of the text and drawable
     private PointF textPosition, drawablePosition;
 
-    private PorterDuffColorFilter mDrawableNormalColor, mBitmapClipColor;
+    private PorterDuffColorFilter mDrawableNormalColor, mDrawableSelectedColor;
 
     // Drawable is the icon or image to draw. This can be drawn beside text or without text
     private Drawable mDrawable;
@@ -71,8 +65,9 @@ public class SegmentedButton extends View {
     // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
     private Drawable mSelectedBackgroundDrawable;
 
+    // Text and boolean which indicates whether we have text
     private boolean hasText;
-    private int drawableGravity;
+    private String text;
 
     // Text color and selected text color
     // Keep a boolean of whether there is a selected text color so we know if we dont need to draw anything
@@ -81,13 +76,14 @@ public class SegmentedButton extends View {
     private int textColor, selectedTextColor;
     private boolean hasSelectedTextColor;
 
+    private int drawableGravity;
+
     // Custom attributes
-    private int drawableTintOnSelection, rippleColor, buttonWidth, drawableTint,
+    private int selectedDrawableTint, rippleColor, drawableTint,
             drawableWidth, drawableHeight, drawablePadding;
-    private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
+    private boolean hasRipple, hasSelectedDrawableTint,
             hasDrawableWidth, hasDrawableHeight, hasDrawableTint;
-    private float buttonWeight, textSize;
-    private String text;
+    private float textSize;
     private Typeface textTypeface;
 
     // endregion
@@ -154,8 +150,8 @@ public class SegmentedButton extends View {
         }
 
         // Load background on selection if available, can be drawable or color
-        if (ta.hasValue(R.styleable.SegmentedButton_background_onSelection)) {
-            mSelectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_background_onSelection);
+        if (ta.hasValue(R.styleable.SegmentedButton_selectedBackground)) {
+            mSelectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_selectedBackground);
         }
 
         // Load drawable if available, otherwise variable will be null
@@ -165,8 +161,9 @@ public class SegmentedButton extends View {
         drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
         drawableTint = ta.getColor(R.styleable.SegmentedButton_drawableTint, -1);
-        hasDrawableTintOnSelection = ta.hasValue(R.styleable.SegmentedButton_drawableTint_onSelection);
-        drawableTintOnSelection = ta.getColor(R.styleable.SegmentedButton_drawableTint_onSelection, Color.WHITE);
+        hasSelectedDrawableTint = ta.hasValue(R.styleable.SegmentedButton_selectedDrawableTint);
+        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_selectedDrawableTint,
+                Color.WHITE);
         hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_drawableWidth);
         hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_drawableHeight);
         drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
@@ -177,14 +174,14 @@ public class SegmentedButton extends View {
         hasText = ta.hasValue(R.styleable.SegmentedButton_text);
         text = ta.getString(R.styleable.SegmentedButton_text);
         textColor = ta.getColor(R.styleable.SegmentedButton_textColor, Color.GRAY);
-        hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_textColor_onSelection);
-        selectedTextColor = ta.getColor(R.styleable.SegmentedButton_textColor_onSelection, Color.WHITE);
+        hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_selectedTextColor);
+        selectedTextColor = ta.getColor(R.styleable.SegmentedButton_selectedTextColor, Color.WHITE);
         textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
 
         boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
         int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
 
-        // If a font family is present then load typeface with textstyle from that
+        // If a font family is present then load typeface with text style from that
         if (hasFontFamily) {
             // Note: TypedArray.getFont is used for Android O & above while ResourcesCompat.getFont is used for below
             // Experienced an odd bug in the design viewer of Android Studio where it would not work with only using
@@ -200,18 +197,6 @@ public class SegmentedButton extends View {
         } else {
             textTypeface = Typeface.create((Typeface) null, textStyle);
         }
-
-        try {
-            hasWeight = ta.hasValue(R.styleable.SegmentedButton_android_layout_weight);
-            buttonWeight = ta.getFloat(R.styleable.SegmentedButton_android_layout_weight, 0);
-            buttonWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_width, 0);
-
-        } catch (Exception ex) {
-            hasWeight = true;
-            buttonWeight = 1;
-        }
-
-        hasWidth = !hasWeight && buttonWidth > 0;
 
         ta.recycle();
     }
@@ -258,8 +243,8 @@ public class SegmentedButton extends View {
             mDrawableNormalColor = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
         }
 
-        if (hasDrawableTintOnSelection) {
-            mBitmapClipColor = new PorterDuffColorFilter(drawableTintOnSelection, PorterDuff.Mode.SRC_IN);
+        if (hasSelectedDrawableTint) {
+            mDrawableSelectedColor = new PorterDuffColorFilter(selectedDrawableTint, PorterDuff.Mode.SRC_IN);
         }
     }
 
@@ -282,8 +267,7 @@ public class SegmentedButton extends View {
         final int textWidth = hasText ? mTextMaxWidth : 0;
 
         // Measured width & height
-        int width = 0;
-        int height = 0;
+        int width, height;
 
         // Desired width will always have left & right padding regardless of horizontal/vertical gravity for the
         // drawable and text.
@@ -522,21 +506,24 @@ public class SegmentedButton extends View {
             mDrawable.draw(canvas);
         }
 
+        // Begin drawing selected button view
         canvas.save();
 
-        // TODO Explain me
+        // Clip canvas for drawing the selected button view
         if (isClippingLeft) {
+            // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
             canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
         } else {
+            // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
             canvas.clipRect(relativeClipPosition * width, 0.0f, width, height);
         }
 
-        // Draw background
+        // Draw background (selected)
         if (mSelectedBackgroundDrawable != null) {
             mSelectedBackgroundDrawable.draw(canvas);
         }
 
-        // Draw text (unselected)
+        // Draw text (selected)
         if (hasSelectedTextColor) {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
@@ -663,18 +650,6 @@ public class SegmentedButton extends View {
         // Redraw
         invalidate();
     }
-
-//    public void clipToLeft(float clip) {
-//        clipLeftToRight = false;
-//        mClipAmount = 1.0f - clip;
-//        invalidate();
-//    }
-//
-//    public void clipToRight(float clip) {
-//        clipLeftToRight = true;
-//        mClipAmount = clip;
-//        invalidate();
-//    }
 
     // endregion
 
@@ -823,7 +798,7 @@ public class SegmentedButton extends View {
 //    }
 //
 //    public void removeDrawableTintOnSelection() {
-//        hasDrawableTintOnSelection = false;
+//        hasSelectedDrawableTint = false;
 //    }
 //
 //    public void removeTextColorOnSelection() {
@@ -871,7 +846,7 @@ public class SegmentedButton extends View {
 //     * @return drawable's tint color when selector is on the button
 //     */
 //    public int getDrawableTintOnSelection() {
-//        return drawableTintOnSelection;
+//        return selectedDrawableTint;
 //    }
 //
 //    /**
@@ -891,8 +866,8 @@ public class SegmentedButton extends View {
 //    /**
 //     * @return true if button's drawable has tint when selector is on the button
 //     */
-//    public boolean hasDrawableTintOnSelection() {
-//        return hasDrawableTintOnSelection;
+//    public boolean hasSelectedDrawableTint() {
+//        return hasSelectedDrawableTint;
 //    }
 //
 //    /**
