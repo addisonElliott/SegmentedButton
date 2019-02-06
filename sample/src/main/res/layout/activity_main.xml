@@ -304,7 +304,7 @@
         android:elevation="2dp"
         app:animateSelector="fastOutSlowIn"
         app:animateSelectorDuration="1000"
-        app:backgroundColor="@color/black"
+        app:background="@color/black"
         app:position="2"
         app:radius="2dp"
         app:rippleColor="@color/white"
@@ -461,7 +461,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:elevation="3dp"
-        app:backgroundColor="@color/white"
+        app:background="@color/white"
         app:position="0"
         app:radius="20dp"
         app:selectorColor="@color/blue_600">

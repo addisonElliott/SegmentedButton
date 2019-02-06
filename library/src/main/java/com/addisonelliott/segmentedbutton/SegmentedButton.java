@@ -476,11 +476,6 @@ public class SegmentedButton extends View {
             mBackgroundDrawable.draw(canvas);
             canvas.restore();
         }
-//        canvas.save();
-//        mRectF.set(0.0f, 0.0f, width, height);
-//        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
-//        canvas.restore();
-
         // Draw text (unselected)
         if (hasText) {
             canvas.save();
@@ -580,6 +575,12 @@ public class SegmentedButton extends View {
     // region Getters & Setters
 
     void setupBackgroundClipPath() {
+        // If there is no background radius then skip
+        if (backgroundRadius == 0) {
+            backgroundClipPath = null;
+            return;
+        }
+
         // Set rectangle to take up entire view, used to create clip path
         mRectF.set(0, 0, getWidth(), getHeight());
 

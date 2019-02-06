@@ -48,8 +48,7 @@
     </declare-styleable>
 
     <declare-styleable name="SegmentedButtonGroup">
-        <attr name="backgroundDrawable" format="reference" />
-        <attr name="backgroundColor" format="color" />
+        <attr name="background" />
 
         <attr name="selectorColor" format="color" />
         <attr name="selectorBackgroundDrawable" format="reference" />

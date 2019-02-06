@@ -9,7 +9,10 @@ import android.graphics.DashPathEffect;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.Path.Direction;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -53,10 +56,11 @@ public class SegmentedButtonGroup extends LinearLayout {
     private BackgroundView borderView;
     private GradientDrawable borderDrawable;
 
+    // Clip path used to round background drawable edges to match parent radius
+    private Path backgroundClipPath;
+
     private RectF rectF;
     private Paint paint;
-    // Object used for creating dashed effect on border
-    private DashPathEffect borderDashEffect;
 
     private boolean draggable = false;
     private int numberOfButtons = 0;
@@ -64,7 +68,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     private ArrayList<BackgroundView> ripples = new ArrayList<>();
 
     // Custom attributes
-    private int selectorColor, animateSelector, animateSelectorDuration, position, backgroundColor, dividerColor,
+    private int selectorColor, animateSelector, animateSelectorDuration, position, dividerColor,
             radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderWidth, borderColor,
             borderDashWidth, borderDashGap;
     private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
@@ -186,12 +190,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // TODO Document me Paint
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-
-        if (borderDashWidth > 0) {
-            borderDashEffect = new DashPathEffect(new float[]{borderDashWidth, borderDashGap}, 0);
-        } else {
-            borderDashEffect = null;
-        }
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -200,8 +198,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         TypedArray typedArray = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
-        backgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_backgroundDrawable);
-        backgroundColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_backgroundColor, Color.TRANSPARENT);
+        if (typedArray.hasValue(R.styleable.SegmentedButtonGroup_background)) {
+            backgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_background);
+        }
 
         selectorBackgroundDrawable = typedArray
                 .getDrawable(R.styleable.SegmentedButtonGroup_selectorBackgroundDrawable);
@@ -321,6 +320,19 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
+    @Override
+    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        // Recalculate the background clip path since width & height have changed
+        setupBackgroundClipPath();
+
+        // Update the drawable bounds with the new size change
+        if (backgroundDrawable != null) {
+            backgroundDrawable.setBounds(0, 0, w, h);
+        }
+    }
+
     // endregion
 
     // region Drawing
@@ -330,41 +342,44 @@ public class SegmentedButtonGroup extends LinearLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        final float width = getWidth();
-        final float height = getHeight();
+        // Apply background clip path if available
+        // This will clip the background drawable to round the corners if applicable
+        if (backgroundClipPath != null) {
+            canvas.clipPath(backgroundClipPath);
+        }
 
         // Draw background with rounded edges if desired, radius of zero means regular rectangle
         // Setup rectangle to draw entire view
         // TODO Consider moving background drawing to the buttons themselves?
-        rectF.set(0, 0, width, height);
-        paint.setStyle(Paint.Style.FILL);
-        paint.setColor(backgroundColor);
-        canvas.drawRoundRect(rectF, radius, radius, paint);
+        if (backgroundDrawable != null) {
+            backgroundDrawable.draw(canvas);
+        }
+    }
 
-//        // Draw the border if width is greater than zero
-//        if (borderWidth > 0) {
-//            // Half of the border width
-//            // This is used because drawing stroke is done from the center thus we need to set the left/top/right/bottom
-//            // to halfway between the border width
-//            final float halfBorderWidth = borderWidth / 2.0f;
-//
-//            // Setup rectangle for drawing stroked path
-//            // Stroke paths are drawn with the rectangle set to the center of the stroke, thus half of the border
-//            // width is used to subtract from the entire view
-//            rectF.set(halfBorderWidth, halfBorderWidth, width - halfBorderWidth, height - halfBorderWidth);
-//
-//            // Set style to stroke, set color, stroke width
-//            // Path effect is set to null if a solid line is to be shown, otherwise this will make a dashed line
-//            paint.setStyle(Style.STROKE);
-//            paint.setColor(borderColor);
-//            paint.setStrokeWidth(borderWidth);
-//            paint.setPathEffect(borderDashEffect);
-//
-//            // The radius is reduced by the amount of halfBorderWidth because this will ensure the radius is the same
-//            // between the background and border
-//            // The radius changes because the rectangles are different XXX
-//            canvas.drawRoundRect(rectF, radius - halfBorderWidth, radius - halfBorderWidth, paint);
-//        }
+    // endregion
+
+    // region XXX
+
+    // TODO Rename this section?
+
+    void setupBackgroundClipPath() {
+        // If there is no radius then skip
+        if (radius == 0) {
+            backgroundClipPath = null;
+            return;
+        }
+
+        // Set rectangle to take up entire view, used to create clip path
+        rectF.set(0, 0, getWidth(), getHeight());
+
+        // Note: In Android Studio previewer, some of the background color a rounded segmented button group along
+        // with a background color in individual buttons may appear. Does not appear when running on actual devices
+        // however.
+        // Recommended approach is to treat button group background and button background as being mutually exclusive.
+        // That is use one or the other but not both.
+        backgroundClipPath = new Path();
+        backgroundClipPath.addRoundRect(rectF,
+                new float[]{radius, radius, radius, radius, radius, radius, radius, radius}, Direction.CW);
     }
 
     // endregion
