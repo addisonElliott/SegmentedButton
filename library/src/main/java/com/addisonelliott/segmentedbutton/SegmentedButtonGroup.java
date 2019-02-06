@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Outline;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.PathDashPathEffect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -64,6 +67,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     private RectF rectF;
     private Paint paint;
+    // Object used for creating dashed effect on border
+    private DashPathEffect borderDashEffect;
 
     private boolean draggable = false;
     private int numberOfButtons = 0;
@@ -72,7 +77,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // Custom attributes
     private int selectorColor, animateSelector, animateSelectorDuration, position, backgroundColor, dividerColor,
-            radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderSize, borderColor;
+            radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderWidth, borderColor,
+            borderDashWidth, borderDashGap;
     private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
     private Drawable backgroundDrawable, selectorBackgroundDrawable, dividerBackgroundDrawable;
 
@@ -175,6 +181,12 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // TODO Document me Paint
         paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        if (borderDashWidth > 0) {
+            borderDashEffect = new DashPathEffect(new float[]{borderDashWidth, borderDashGap}, 0);
+        } else {
+            borderDashEffect = null;
+        }
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -190,8 +202,14 @@ public class SegmentedButtonGroup extends LinearLayout {
                 .getDrawable(R.styleable.SegmentedButtonGroup_selectorBackgroundDrawable);
         selectorColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_selectorColor, Color.GRAY);
 
-        borderSize = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderSize, 0);
+        // Setup border for button group
+        // Width is the thickness of the border, color is the color of the border
+        // Dash width and gap, if the dash width is not zero will make the border dashed with a ratio between dash
+        // width and gap
+        borderWidth = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderWidth, 0);
         borderColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
+        borderDashWidth = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
+        borderDashGap = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
 
         radius = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
         position = typedArray.getInt(R.styleable.SegmentedButtonGroup_position, 0);
@@ -297,6 +315,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Drawing
 
+    @SuppressWarnings("SuspiciousNameCombination")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -304,39 +323,38 @@ public class SegmentedButtonGroup extends LinearLayout {
         final float width = getWidth();
         final float height = getHeight();
 
-        // Draw background with rounded edges if desired
-        // Setup the rectangle to draw on the entire view, setup paint to fill to the background
+        // Draw background with rounded edges if desired, radius of zero means regular rectangle
+        // Setup rectangle to draw entire view
+        // TODO Consider moving background drawing to the buttons themselves?
         rectF.set(0, 0, width, height);
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(backgroundColor);
         canvas.drawRoundRect(rectF, radius, radius, paint);
 
-        // TODO Clean this up
-        if (borderSize > 0) {
-            float bSize = borderSize / 2f;
-            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(borderColor);
-            paint.setStrokeWidth(borderSize);
-            canvas.drawRoundRect(rectF, radius, radius, paint);
-        }
+        // Draw the border if width is greater than zero
+        if (borderWidth > 0) {
+            // Half of the border width
+            // This is used because drawing stroke is done from the center thus we need to set the left/top/right/bottom
+            // to halfway between the border width
+            final float halfBorderWidth = borderWidth / 2.0f;
 
-//        float width = canvas.getWidth();
-//        float height = canvas.getHeight();
-//
-//        rectF.set(0, 0, width, height);
-//        paint.setStyle(Paint.Style.FILL);
-//        paint.setColor(backgroundColor);
-//        canvas.drawRoundRect(rectF, radius, radius, paint);
-//
-//        if (borderSize > 0) {
-//            float bSize = borderSize / 2f;
-//            rectF.set(0 + bSize, 0 + bSize, width - bSize, height - bSize);
-//            paint.setStyle(Paint.Style.STROKE);
-//            paint.setColor(borderColor);
-//            paint.setStrokeWidth(borderSize);
-//            canvas.drawRoundRect(rectF, radius, radius, paint);
-//        }
+            // Setup rectangle for drawing stroked path
+            // Stroke paths are drawn with the rectangle set to the center of the stroke, thus half of the border
+            // width is used to subtract from the entire view
+            rectF.set(halfBorderWidth, halfBorderWidth, width - halfBorderWidth, height - halfBorderWidth);
+
+            // Set style to stroke, set color, stroke width
+            // Path effect is set to null if a solid line is to be shown, otherwise this will make a dashed line
+            paint.setStyle(Style.STROKE);
+            paint.setColor(borderColor);
+            paint.setStrokeWidth(borderWidth);
+            paint.setPathEffect(borderDashEffect);
+
+            // The radius is reduced by the amount of halfBorderWidth because this will ensure the radius is the same
+            // between the background and border
+            // The radius changes because the rectangles are different XXX
+            canvas.drawRoundRect(rectF, radius - halfBorderWidth, radius - halfBorderWidth, paint);
+        }
     }
 
     // endregion

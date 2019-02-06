@@ -53,8 +53,10 @@
         <attr name="selectorColor" format="color" />
         <attr name="selectorBackgroundDrawable" format="reference" />
 
-        <attr name="borderSize" format="dimension" />
+        <attr name="borderWidth" format="dimension" />
         <attr name="borderColor" format="color" />
+        <attr name="borderDashWidth" format="dimension" />
+        <attr name="borderDashGap" format="dimension" />
 
         <attr name="position" format="integer" />
         <attr name="radius" format="dimension" />
