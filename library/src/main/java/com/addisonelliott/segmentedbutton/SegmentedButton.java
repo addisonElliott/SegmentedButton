@@ -162,8 +162,7 @@ public class SegmentedButton extends View {
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
         drawableTint = ta.getColor(R.styleable.SegmentedButton_drawableTint, -1);
         hasSelectedDrawableTint = ta.hasValue(R.styleable.SegmentedButton_selectedDrawableTint);
-        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_selectedDrawableTint,
-                Color.WHITE);
+        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_selectedDrawableTint, Color.WHITE);
         hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_drawableWidth);
         hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_drawableHeight);
         drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
@@ -530,6 +529,12 @@ public class SegmentedButton extends View {
             mTextPaint.setColor(selectedTextColor);
             mStaticLayout.draw(canvas);
             canvas.restore();
+        }
+
+        // Draw drawable (unselected)
+        if (mDrawable != null) {
+            mDrawable.setColorFilter(mDrawableSelectedColor);
+            mDrawable.draw(canvas);
         }
 
         canvas.restore();
