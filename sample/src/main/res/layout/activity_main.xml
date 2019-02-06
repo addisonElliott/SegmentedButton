@@ -121,6 +121,7 @@
             app:drawable="@drawable/ic_legolas"
             app:drawableGravity="top"
             app:text="Legolas"
+            app:background="@color/blue"
             app:textColor_onSelection="@color/yellow_200" />
     </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 

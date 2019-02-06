@@ -1,6 +1,5 @@
 package com.addisonelliott.segmentedbutton;
 
-import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,39 +9,22 @@ import android.graphics.DashPathEffect;
 import android.graphics.Outline;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.PathDashPathEffect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewOutlineProvider;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AnticipateInterpolator;
-import android.view.animation.AnticipateOvershootInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.CycleInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import java.util.ArrayList;
 
 public class SegmentedButtonGroup extends LinearLayout {
@@ -254,19 +236,22 @@ public class SegmentedButtonGroup extends LinearLayout {
             SegmentedButton button = (SegmentedButton) child;
             final int position = numberOfButtons++;
 
-//            button.setSelectorColor(selectorColor);
-//            button.setSelectorRadius(radius);
-//            button.setBorderSize(borderSize);
-//
-//            if (position == 0) {
-//                button.hasBorderLeft(true);
-//            }
-//
-//            if (position > 0) {
-//                buttons.get(position - 1).hasBorderRight(false);
-//            }
-//
-//            button.hasBorderRight(true);
+            // Give radius to the button so it knows how to clip the background appropriately
+            button.setBackgroundRadius(radius);
+
+            // If this is the first item, set it as left-most button
+            // Otherwise, notify previous button that it is not right-most anymore
+            if (position == 0) {
+                button.setIsLeftButton(true);
+            } else {
+                buttons.get(position - 1).setIsRightButton(false);
+            }
+
+            // Set current button as right-most regardless
+            button.setIsRightButton(true);
+
+            // Sets up the background clip path in order to correctly round background to match the radius
+            button.setupBackgroundClipPath();
 
             // Add the button to the main group instead and store the button in our buttons list
             mainGroup.addView(button, params);

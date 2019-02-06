@@ -2,22 +2,18 @@ package com.addisonelliott.segmentedbutton;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.Resources.NotFoundException;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Point;
+import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -27,11 +23,9 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 public class SegmentedButton extends View {
@@ -41,6 +35,13 @@ public class SegmentedButton extends View {
 
     private float mClipAmount;
     private boolean clipLeftToRight;
+
+    // Clip path used to round background drawable edges to match parent radius
+    private Path backgroundClipPath;
+    // Radius of the background segmented button group used for creating background clip path
+    private int backgroundRadius;
+    // Whether this button is on the left or right side of the segmented group, determines which side to round out
+    private boolean isLeftButton, isRightButton;
 
     private TextPaint mTextPaint;
     private StaticLayout mStaticLayout;
@@ -55,7 +56,7 @@ public class SegmentedButton extends View {
     // Position (X/Y) of the text and drawable
     private PointF textPosition, drawablePosition;
 
-    private PorterDuffColorFilter mBitmapNormalColor, mBitmapClipColor;
+    private PorterDuffColorFilter mDrawableNormalColor, mBitmapClipColor;
 
     // Drawable is the icon or image to draw. This can be drawn beside text or without text
     private Drawable mDrawable;
@@ -101,11 +102,16 @@ public class SegmentedButton extends View {
         getAttributes(context, attrs);
 
         initText();
-        initDrawable(context);
+        initDrawable();
 
-        textPosition = new PointF();
-        drawablePosition = new PointF();
+        // Setup background clip path parameters
+        // This should be changed before onDraw is ever called but they are initialized to be safe
+        backgroundRadius = 0;
+        isLeftButton = false;
+        isRightButton = false;
 
+        // Create general purpose rectangle and paint object
+        // These are used by different components when drawing and saves us allocating during onDraw stage
         mRectF = new RectF();
         mPaint = new Paint();
         mPaint.setColor(Color.BLACK);
@@ -186,6 +192,10 @@ public class SegmentedButton extends View {
     }
 
     private void initText() {
+        // Text position is calculated regardless of text exists
+        // Not worth extra effort of not setting two float values
+        textPosition = new PointF();
+
         // If there is no text then do not bother
         if (!hasText) {
             return;
@@ -209,9 +219,18 @@ public class SegmentedButton extends View {
         }
     }
 
-    private void initDrawable(Context context) {
+    private void initDrawable() {
+        // Drawable position is calculated regardless of text exists
+        // Not worth extra effort of not setting two float values
+        drawablePosition = new PointF();
+
+        // If there is no drawable then do not bother
+        if (mDrawable == null) {
+            return;
+        }
+
         if (hasDrawableTint) {
-            mBitmapNormalColor = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
+            mDrawableNormalColor = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
         }
 
         if (hasDrawableTintOnSelection) {
@@ -323,6 +342,14 @@ public class SegmentedButton extends View {
 
         // Required to be called to notify the View of the width & height decided
         setMeasuredDimension(width, height);
+    }
+
+    @Override
+    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+
+        // Recalculate the background clip path since width & height have changed
+        setupBackgroundClipPath();
     }
 
     // Measures the text width given entire width of the segmented button
@@ -460,6 +487,14 @@ public class SegmentedButton extends View {
         final int height = getHeight();
 
 //        canvas.clipOutPath();
+        if (backgroundClipPath != null) {
+            canvas.clipPath(backgroundClipPath);
+//            if (VERSION.SDK_INT >= VERSION_CODES.O) {
+//                canvas.clipOutPath(backgroundClipPath);
+//            } else {
+
+//            }
+        }
 
         // Draw background
         if (mBackgroundDrawable != null) {
@@ -484,7 +519,7 @@ public class SegmentedButton extends View {
         // Draw drawable (unselected)
         if (mDrawable != null) {
             canvas.save();
-            mDrawable.setColorFilter(mBitmapNormalColor);
+            mDrawable.setColorFilter(mDrawableNormalColor);
             mDrawable.draw(canvas);
             canvas.restore();
         }
@@ -521,7 +556,7 @@ public class SegmentedButton extends View {
 //
 //        // Bitmap normal
 //        if (hasDrawable) {
-//            drawDrawableWithColorFilter(canvas, mBitmapNormalColor);
+//            drawDrawableWithColorFilter(canvas, mDrawableNormalColor);
 //        }
 //        // NORMAL -end
 //
@@ -564,6 +599,51 @@ public class SegmentedButton extends View {
         clipLeftToRight = true;
         mClipAmount = clip;
         invalidate();
+    }
+
+    // endregion
+
+    // region Getters & Setters
+
+    void setupBackgroundClipPath() {
+        mRectF.set(0.0f, 0.0f, getWidth(), getHeight());
+
+        if (isLeftButton && isRightButton) {
+            backgroundClipPath = new Path();
+            backgroundClipPath.addRoundRect(mRectF,
+                    new float[]{backgroundRadius, backgroundRadius, backgroundRadius, backgroundRadius,
+                            backgroundRadius, backgroundRadius, backgroundRadius, backgroundRadius}, Direction.CW);
+        } else if (isLeftButton) {
+            backgroundClipPath = new Path();
+            backgroundClipPath.addRoundRect(mRectF,
+                    new float[]{backgroundRadius, backgroundRadius, 0, 0, 0, 0, backgroundRadius, backgroundRadius},
+                    Direction.CW);
+        } else if (isRightButton) {
+            backgroundClipPath = new Path();
+            backgroundClipPath.addRoundRect(mRectF,
+                    new float[]{0, 0, backgroundRadius, backgroundRadius, backgroundRadius, backgroundRadius, 0, 0},
+                    Direction.CW);
+        } else {
+            backgroundClipPath = null;
+        }
+    }
+
+    void setIsLeftButton(boolean isLeftButton) {
+        this.isLeftButton = isLeftButton;
+
+        setupBackgroundClipPath();
+    }
+
+    void setIsRightButton(boolean isRightButton) {
+        this.isRightButton = isRightButton;
+
+        setupBackgroundClipPath();
+    }
+
+    void setBackgroundRadius(int backgroundRadius) {
+        this.backgroundRadius = backgroundRadius;
+
+        setupBackgroundClipPath();
     }
 
     // endregion
