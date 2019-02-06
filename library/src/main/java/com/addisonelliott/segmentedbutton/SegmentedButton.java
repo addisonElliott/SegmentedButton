@@ -50,8 +50,8 @@ public class SegmentedButton extends View {
     private StaticLayout mStaticLayout;
     private int mTextMaxWidth;
 
+    // General purpose rectangle to prevent memory allocation in onDraw
     private RectF mRectF;
-    private Paint mPaint;
 
     // Position (X/Y) of the text and drawable
     private PointF textPosition, drawablePosition;
@@ -126,12 +126,8 @@ public class SegmentedButton extends View {
         isLeftButton = false;
         isRightButton = false;
 
-        // Create general purpose rectangle and paint object
-        // These are used by different components when drawing and saves us allocating during onDraw stage
+        // Create general purpose rectangle, prevents memory allocation during onDraw
         mRectF = new RectF();
-        mPaint = new Paint();
-        mPaint.setColor(Color.BLACK);
-        mPaint.setAntiAlias(true);
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -177,8 +173,8 @@ public class SegmentedButton extends View {
         selectedTextColor = ta.getColor(R.styleable.SegmentedButton_selectedTextColor, Color.WHITE);
         textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
 
-        boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
-        int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
+        final boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
+        final int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
 
         // If a font family is present then load typeface with text style from that
         if (hasFontFamily) {
@@ -186,11 +182,9 @@ public class SegmentedButton extends View {
             // Experienced an odd bug in the design viewer of Android Studio where it would not work with only using
             // the ResourcesCompat.getFont function. Unsure of the reason but this fixes it
             if (VERSION.SDK_INT >= VERSION_CODES.O) {
-                textTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily),
-                        textStyle);
+                textTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily), textStyle);
             } else {
-                int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
-
+                final int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
                 textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
             }
         } else {
@@ -538,70 +532,6 @@ public class SegmentedButton extends View {
         }
 
         canvas.restore();
-
-//        int width = canvas.getWidth();
-//        int height = canvas.getHeight();
-//
-//        canvas.save();
-//
-//        if (clipLeftToRight) {
-//            canvas.translate(-width * (mClipAmount - 1), 0);
-//        } else {
-//            canvas.translate(width * (mClipAmount - 1), 0);
-//        }
-//
-//        mRectF.set(hasBorderLeft ? mBorderSize : 0, mBorderSize, hasBorderRight ? width - mBorderSize : width,
-//                height - mBorderSize);
-//        canvas.drawRoundRect(mRectF, mRadius, mRadius, mPaint);
-//
-//        canvas.restore();
-//
-//        canvas.save();
-//
-//        if (hasText) {
-//            canvas.translate(text_X, text_Y);
-//            if (hasTextColorOnSelection) {
-//                mTextPaint.setColor(textColor);
-//            }
-//            mStaticLayout.draw(canvas);
-//
-//            canvas.restore();
-//        }
-//        canvas.save();
-//
-//        // Bitmap normal
-//        if (hasDrawable) {
-//            drawDrawableWithColorFilter(canvas, mDrawableNormalColor);
-//        }
-//        // NORMAL -end
-//
-//        // CLIPPING
-//        if (clipLeftToRight) {
-//            canvas.clipRect(width * (1 - mClipAmount), 0, width, height);
-//        } else {
-//            canvas.clipRect(0, 0, width * mClipAmount, height);
-//        }
-//
-//        // CLIP -start
-//        // Text clip
-//        canvas.save();
-//
-//        if (hasText) {
-//            canvas.translate(text_X, text_Y);
-//            if (hasTextColorOnSelection) {
-//                mTextPaint.setColor(textColorOnSelection);
-//            }
-//            mStaticLayout.draw(canvas);
-//            canvas.restore();
-//        }
-//
-//        // Bitmap clip
-//        if (hasDrawable) {
-//            drawDrawableWithColorFilter(canvas, mBitmapClipColor);
-//        }
-//        // CLIP -end
-//
-//        canvas.restore();
     }
 
     /**
