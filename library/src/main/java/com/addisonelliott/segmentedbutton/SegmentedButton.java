@@ -272,22 +272,12 @@ public class SegmentedButton extends View {
             desiredWidth += Math.max(textWidth, drawableWidth);
         }
 
-        // Set the measured width based on width mode
-        // EXACTLY means set it to exactly the given size, AT_MOST means to set it to the desired width but dont let
-        // it exceed the given size, and UNSPECIFIED means to set it to the desired width
-        switch (widthMode) {
-            case MeasureSpec.EXACTLY:
-                width = widthSize;
-                break;
-
-            case MeasureSpec.AT_MOST:
-                width = Math.min(desiredWidth, widthSize);
-                break;
-
-            case MeasureSpec.UNSPECIFIED:
-                width = desiredWidth;
-                break;
-        }
+        // Resolve width with measure spec and desired width
+        // Three options:
+        //      - MeasureSpec.EXACTLY: Set width to exactly specified size
+        //      - MeasureSpec.AT_MOST: Set width to desired size but dont it exceed specified size
+        //      - MeasureSpec.UNSPECIFIED: Set width to desired size
+        width = resolveSize(desiredWidth, widthMeasureSpec);
 
         // With width calculated, recalculate the text parameters to get new height (wrapping may occur)
         measureTextWidth(width, drawableWidth);
@@ -310,22 +300,12 @@ public class SegmentedButton extends View {
             desiredHeight += textHeight + drawablePadding + drawableHeight;
         }
 
-        // Set the measured height based on height mode
-        // EXACTLY means set it to exactly the given size, AT_MOST means to set it to the desired height but dont let
-        // it exceed the given size, and UNSPECIFIED means to set it to the desired height
-        switch (heightMode) {
-            case MeasureSpec.EXACTLY:
-                height = heightSize;
-                break;
-
-            case MeasureSpec.AT_MOST:
-                height = Math.min(desiredHeight, widthSize);
-                break;
-
-            case MeasureSpec.UNSPECIFIED:
-                height = desiredHeight;
-                break;
-        }
+        // Resolve height with measure spec and desired height
+        // Three options:
+        //      - MeasureSpec.EXACTLY: Set height to exactly specified size
+        //      - MeasureSpec.AT_MOST: Set height to desired size but dont it exceed specified size
+        //      - MeasureSpec.UNSPECIFIED: Set height to desired size
+        height = resolveSize(desiredHeight, heightMeasureSpec);
 
         Log.d(TAG, String.format("onMeasure called with mode (%d, %d) and size (%d, %d). Desired size (%d, %d) "
                         + "Resulting size (%d, %d).", widthMode, heightMode, widthSize, heightSize, desiredWidth,

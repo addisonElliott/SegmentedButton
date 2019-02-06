@@ -5,7 +5,14 @@ import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class BackgroundView extends View {
+/**
+ * Purpose of this class is to fill the height of the parent
+ *
+ * For some reason this doesnt happen for a view inside FrameLayout so this is used instead
+ * TODO Explain better
+ */
+class BackgroundView extends View {
+
     public BackgroundView(Context context) {
         super(context);
     }
@@ -20,13 +27,11 @@ public class BackgroundView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int w = 0, h = 0;
+        // Desired size is the suggested minimum size
+        // Resolve size based on the measure spec and go from there
+        final int widthSize = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+        final int heightSize = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
 
-        w = Math.max(w, getSuggestedMinimumWidth());
-        h = Math.max(h, getSuggestedMinimumHeight());
-
-        int widthSize = resolveSizeAndState(w, widthMeasureSpec, 0);
-        int heightSize = resolveSizeAndState(h, heightMeasureSpec, 0);
         setMeasuredDimension(widthSize, heightSize);
     }
 }
