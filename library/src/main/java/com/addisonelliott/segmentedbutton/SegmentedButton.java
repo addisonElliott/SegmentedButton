@@ -62,14 +62,14 @@ public class SegmentedButton extends View {
     // Drawable for the background, this will be a ColorDrawable in case a solid color is given
     private Drawable mBackgroundDrawable;
 
-    private boolean hasDrawable, hasText;
+    private boolean hasText;
     private int drawableGravity;
 
     // Custom attributes
-    private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawable,
-            drawableTint, drawableWidth, drawableHeight, drawablePadding;
+    private int drawableTintOnSelection, textColorOnSelection, textColor, rippleColor, buttonWidth, drawableTint,
+            drawableWidth, drawableHeight, drawablePadding;
     private boolean hasTextColorOnSelection, hasRipple, hasWidth, hasWeight, hasDrawableTintOnSelection,
-            hasDrawableWidth, hasDrawableHeight, hasDrawableTint, hasBackgroundDrawable;
+            hasDrawableWidth, hasDrawableHeight, hasDrawableTint;
     private float buttonWeight, textSize;
     private String text;
     private Typeface textTypeface;
@@ -123,13 +123,14 @@ public class SegmentedButton extends View {
         // Load background if available, this can be a drawable or a color
         // In the instance of a color, a ColorDrawable is created and used instead
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
-        hasBackgroundDrawable = ta.hasValue(R.styleable.SegmentedButton_background);
-        if (hasBackgroundDrawable) {
+        if (ta.hasValue(R.styleable.SegmentedButton_background)) {
             mBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_background);
         }
 
-        hasDrawable = ta.hasValue(R.styleable.SegmentedButton_drawable);
-        drawable = ta.getResourceId(R.styleable.SegmentedButton_drawable, 0);
+        // Load drawable if available, otherwise variable will be null
+        if (ta.hasValue(R.styleable.SegmentedButton_drawable)) {
+            mDrawable = ta.getDrawable(R.styleable.SegmentedButton_drawable);
+        }
         drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
         drawableTint = ta.getColor(R.styleable.SegmentedButton_drawableTint, -1);
@@ -209,10 +210,6 @@ public class SegmentedButton extends View {
     }
 
     private void initDrawable(Context context) {
-        if (hasDrawable) {
-            mDrawable = ContextCompat.getDrawable(context, drawable);
-        }
-
         if (hasDrawableTint) {
             mBitmapNormalColor = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
         }
@@ -236,8 +233,8 @@ public class SegmentedButton extends View {
 
         // For the text width, assume that it is in a single line with no wrapping which would be mTextMaxWidth
         // This variable is used to calculate the desired width and the desire is for it all to be in a single line
-        final int drawableWidth = hasDrawable ? hasDrawableWidth ? this.drawableWidth : mDrawable.getIntrinsicWidth()
-                : 0;
+        final int drawableWidth = mDrawable != null ? hasDrawableWidth ? this.drawableWidth
+                : mDrawable.getIntrinsicWidth() : 0;
         final int textWidth = hasText ? mTextMaxWidth : 0;
 
         // Measured width & height
@@ -280,7 +277,7 @@ public class SegmentedButton extends View {
 
         // Repeat measuring process for height now
         // Note that the height is the static layout height which may or may not be multi-lined
-        final int drawableHeight = hasDrawable ? hasDrawableHeight ? this.drawableHeight
+        final int drawableHeight = mDrawable != null ? hasDrawableHeight ? this.drawableHeight
                 : mDrawable.getIntrinsicHeight() : 0;
         final int textHeight = hasText ? mStaticLayout.getHeight() : 0;
 
@@ -440,13 +437,13 @@ public class SegmentedButton extends View {
                     drawablePosition.y));
         }
 
-        if (hasDrawable) {
+        if (mDrawable != null) {
             mDrawable.setBounds((int) drawablePosition.x, (int) drawablePosition.y,
                     (int) drawablePosition.x + drawableWidth, (int) drawablePosition.y + drawableHeight);
         }
 
         // TODO Move somewhere better
-        if (hasBackgroundDrawable) {
+        if (mBackgroundDrawable != null) {
             mBackgroundDrawable.setBounds(0, 0, measuredWidth, measuredHeight);
         }
     }
@@ -465,7 +462,7 @@ public class SegmentedButton extends View {
 //        canvas.clipOutPath();
 
         // Draw background
-        if (hasBackgroundDrawable) {
+        if (mBackgroundDrawable != null) {
             canvas.save();
             mBackgroundDrawable.draw(canvas);
             canvas.restore();
@@ -485,7 +482,7 @@ public class SegmentedButton extends View {
         }
 
         // Draw drawable (unselected)
-        if (hasDrawable) {
+        if (mDrawable != null) {
             canvas.save();
             mDrawable.setColorFilter(mBitmapNormalColor);
             mDrawable.draw(canvas);
