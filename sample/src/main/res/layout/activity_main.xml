@@ -470,8 +470,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/blue_100"
             android:padding="4dp"
+            app:background="@color/blue_100"
             app:text="Both"
             app:textColor="@color/red"
             app:textColor_onSelection="@color/white" />

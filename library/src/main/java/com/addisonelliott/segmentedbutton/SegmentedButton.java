@@ -464,14 +464,10 @@ public class SegmentedButton extends View {
         final int width = getWidth();
         final int height = getHeight();
 
-//        canvas.clipOutPath();
+        // Apply background clip path if available
+        // This will clip the button to the parent segmented group in case there is a radius for rounding the corners
         if (backgroundClipPath != null) {
             canvas.clipPath(backgroundClipPath);
-//            if (VERSION.SDK_INT >= VERSION_CODES.O) {
-//                canvas.clipOutPath(backgroundClipPath);
-//            } else {
-
-//            }
         }
 
         // Draw background

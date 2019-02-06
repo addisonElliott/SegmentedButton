@@ -49,6 +49,10 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     private LinearLayout mainGroup, rippleContainer, dividerContainer;
 
+    // View for placing border on top of the buttons
+    private BackgroundView borderView;
+    private GradientDrawable borderDrawable;
+
     private RectF rectF;
     private Paint paint;
     // Object used for creating dashed effect on border
@@ -138,14 +142,22 @@ public class SegmentedButtonGroup extends LinearLayout {
         mainGroup.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(mainGroup);
 
-        BackgroundView v = new BackgroundView(context);
-////        BackgroundView
-        GradientDrawable x = new GradientDrawable();
-        x.setCornerRadius(radius - borderWidth / 2.0f);
-        x.setStroke(borderWidth, borderColor, borderDashWidth, borderDashGap);
-        v.setBackground(x);
-        v.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        container.addView(v);
+        // Create border view
+        // This is essentially a dummy view that is drawn on top of the mainGroup (contains the buttons) so that the
+        // border appears on top of them
+        borderView = new BackgroundView(context);
+        borderView.setLayoutParams(
+                new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.addView(borderView);
+
+        // Only create border drawable if border is present
+        if (borderWidth > 0) {
+            borderDrawable = new GradientDrawable();
+            borderDrawable.setCornerRadius(radius - borderWidth / 2.0f);
+            borderDrawable.setStroke(borderWidth, borderColor, borderDashWidth, borderDashGap);
+
+            borderView.setBackground(borderDrawable);
+        }
 
 //        rippleContainer = new LinearLayout(getContext());
 //        rippleContainer
@@ -250,8 +262,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             // Give radius to the button so it knows how to clip the background appropriately
             button.setBackgroundRadius(radius);
 //            button.setSelectorColor(selectorColor);
-//            button.setSelectorRadius(radius);
-//            button.setBorderSize(borderSize);
 
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
@@ -267,10 +277,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             // Sets up the background clip path in order to correctly round background to match the radius
             // TODO Not working, need to do position - 1 button too!
             button.setupBackgroundClipPath();
-
-//            button.setSelectorColor(selectorColor);
-//            button.setSelectorRadius(radius);
-//            button.setBorderSize(borderSize);
 
             // Add the button to the main group instead and store the button in our buttons list
             mainGroup.addView(button, params);
