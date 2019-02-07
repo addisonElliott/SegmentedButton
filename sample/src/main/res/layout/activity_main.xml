@@ -42,8 +42,7 @@
         app:radius="10dp"
         app:ripple="true"
         app:rippleColor="@color/blue_300"
-        app:selectorBackgroundDrawable="@drawable/gradient_drawable_selector"
-        app:selectorColor="@color/grey_500">
+        app:selectedBackground="@drawable/gradient_drawable_selector">
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -93,7 +92,7 @@
         app:position="1"
         app:radius="30dp"
         app:rippleColor="@color/green_800"
-        app:selectorColor="@color/green_900">
+        app:selectedBackground="@color/green_900">
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -246,7 +245,7 @@
     <!--app:position="0"-->
     <!--app:radius="30dp"-->
     <!--app:rippleColor="@color/black"-->
-    <!--app:selectorColor="@color/DarkRed">-->
+    <!--app:selectedBackground="@color/DarkRed">-->
 
     <!--<com.addisonelliott.segmentedbutton.SegmentedButton-->
     <!--android:layout_width="0dp"-->
@@ -320,7 +319,7 @@
         app:position="2"
         app:radius="2dp"
         app:rippleColor="@color/white"
-        app:selectorColor="@color/white">
+        app:selectedBackground="@color/red">
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -343,7 +342,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             app:drawable="@drawable/ic_b7"
-            app:drawableTint="@color/white" />
+            app:drawableTint="@color/white"
+            app:selectedDrawableTint="@color/blue" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
@@ -475,7 +475,7 @@
         app:background="@color/white"
         app:position="0"
         app:radius="20dp"
-        app:selectorColor="@color/blue_600">
+        app:selectedBackground="@color/blue_600">
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"

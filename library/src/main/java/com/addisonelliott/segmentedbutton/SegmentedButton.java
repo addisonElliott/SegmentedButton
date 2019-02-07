@@ -12,6 +12,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -23,6 +24,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
@@ -617,26 +619,59 @@ public class SegmentedButton extends View {
     @SuppressWarnings("SameParameterValue")
     void setIsLeftButton(boolean isLeftButton) {
         this.isLeftButton = isLeftButton;
-
-        // TODO Not sure this is best way to handle it
-        setupBackgroundClipPath();
     }
 
     void setIsRightButton(boolean isRightButton) {
         this.isRightButton = isRightButton;
-
-        setupBackgroundClipPath();
     }
 
     void setBackgroundRadius(int backgroundRadius) {
         this.backgroundRadius = backgroundRadius;
+    }
 
-        setupBackgroundClipPath();
+    /**
+     * Sets the background of the button to be the drawable background if it does not have a background already and
+     * the drawable is not null
+     *
+     * If either one of those conditions are met, then the background is not changed
+     *
+     * This is a package-private function used by SegmentedButtonGroup to pass its 'global' background down to the
+     * buttons
+     *
+     * @param drawable Drawable to set as the background
+     */
+    void setDefaultBackground(@Nullable Drawable drawable) {
+        if (backgroundDrawable == null && drawable != null) {
+            // Make sure to clone the drawable so that we can set the bounds on it
+            backgroundDrawable = drawable.getConstantState().newDrawable();
+        }
+    }
+
+    /**
+     * Sets the selected background of the button to be the drawable background if it does not have a background
+     * already and the drawable is not null
+     *
+     * If either one of those conditions are met, then the background is not changed
+     *
+     * This is a package-private function used by SegmentedButtonGroup to pass its 'global' background down to the
+     * buttons
+     *
+     * @param drawable Drawable to set as the background
+     */
+    void setDefaultSelectedBackground(@Nullable Drawable drawable) {
+        if (selectedBackgroundDrawable == null && drawable != null) {
+            // Make sure to clone the drawable so that we can set the bounds on it
+            selectedBackgroundDrawable = drawable.getConstantState().newDrawable();
+        }
     }
 
     // endregion
 
     // region Unused
+
+    // TODO Create getters and setters, test them though!
+
+    // TODO Go through and add docstrings to each function
 
 //    /**
 //     * Typeface.NORMAL: 0

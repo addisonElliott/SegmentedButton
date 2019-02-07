@@ -72,7 +72,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderWidth, borderColor,
             borderDashWidth, borderDashGap;
     private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
-    private Drawable backgroundDrawable, selectorBackgroundDrawable, dividerBackgroundDrawable;
+    private Drawable backgroundDrawable, selectedBackgroundDrawable, dividerBackgroundDrawable;
 
     private Interpolator interpolatorSelector;
 
@@ -192,56 +192,60 @@ public class SegmentedButtonGroup extends LinearLayout {
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
         // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
         // to the default
-        TypedArray typedArray = context.getTheme()
+        TypedArray ta = context.getTheme()
                 .obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
-        if (typedArray.hasValue(R.styleable.SegmentedButtonGroup_background)) {
-            backgroundDrawable = typedArray.getDrawable(R.styleable.SegmentedButtonGroup_background);
+        // Load background if available, this can be a drawable or a color
+        // In the instance of a color, a ColorDrawable is created and used instead
+        // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_background)) {
+            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_background);
         }
 
-        selectorBackgroundDrawable = typedArray
-                .getDrawable(R.styleable.SegmentedButtonGroup_selectorBackgroundDrawable);
-        selectorColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_selectorColor, Color.GRAY);
+        // Load background on selection if available, can be drawable or color
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_selectedBackground)) {
+            selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_selectedBackground);
+        }
 
         // Setup border for button group
         // Width is the thickness of the border, color is the color of the border
         // Dash width and gap, if the dash width is not zero will make the border dashed with a ratio between dash
         // width and gap
-        borderWidth = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderWidth, 0);
-        borderColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
-        borderDashWidth = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
-        borderDashGap = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
+        borderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderWidth, 0);
+        borderColor = ta.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
+        borderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
+        borderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
 
-        radius = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
-        position = typedArray.getInt(R.styleable.SegmentedButtonGroup_position, 0);
+        radius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
+        position = ta.getInt(R.styleable.SegmentedButtonGroup_position, 0);
 
-        hasRippleColor = typedArray.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
-        ripple = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
-        rippleColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
+        hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
+        ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
+        rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
 
-        hasDivider = typedArray.hasValue(R.styleable.SegmentedButtonGroup_dividerSize);
-        dividerBackgroundDrawable = typedArray
+        hasDivider = ta.hasValue(R.styleable.SegmentedButtonGroup_dividerSize);
+        dividerBackgroundDrawable = ta
                 .getDrawable(R.styleable.SegmentedButtonGroup_dividerBackgroundDrawable);
-        dividerSize = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerSize, 0);
-        dividerColor = typedArray.getColor(R.styleable.SegmentedButtonGroup_dividerColor, Color.WHITE);
-        dividerPadding = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
-        dividerRadius = typedArray.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
+        dividerSize = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerSize, 0);
+        dividerColor = ta.getColor(R.styleable.SegmentedButtonGroup_dividerColor, Color.WHITE);
+        dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
+        dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
 
-        animateSelector = typedArray.getInt(R.styleable.SegmentedButtonGroup_animateSelector, 0);
-        animateSelectorDuration = typedArray.getInt(R.styleable.SegmentedButtonGroup_animateSelectorDuration, 500);
+        animateSelector = ta.getInt(R.styleable.SegmentedButtonGroup_animateSelector, 0);
+        animateSelectorDuration = ta.getInt(R.styleable.SegmentedButtonGroup_animateSelectorDuration, 500);
 
-        enabled = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_enabled, true);
-        draggable = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
+        enabled = ta.getBoolean(R.styleable.SegmentedButtonGroup_enabled, true);
+        draggable = ta.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
 
         // TODO Why is clickable needed and why is it in a try/catch?
         try {
-            clickable = typedArray.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true);
+            clickable = ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true);
         } catch (Exception ex) {
             Log.d(TAG, ex.toString());
         }
 
         // Recycle the typed array, required once done using it
-        typedArray.recycle();
+        ta.recycle();
     }
 
     // endregion
@@ -255,26 +259,29 @@ public class SegmentedButtonGroup extends LinearLayout {
             SegmentedButton button = (SegmentedButton) child;
             final int position = numberOfButtons++;
 
-            // Give radius to the button so it knows how to clip the background appropriately
+            // Give radius, default background and default selected background to the button
             button.setBackgroundRadius(radius);
-            // TODO Maybe instead of drawing background here, we just pass it to buttons? Easier that way right?
-            // That removes the onDraw too! Plus it won't be ugly if both are specified, that's not possible then!
-            // TODO pass along background default drawable, etc anything else
-//            button.setSelectorColor(selectorColor);
+            button.setDefaultBackground(backgroundDrawable);
+            button.setDefaultSelectedBackground(selectedBackgroundDrawable);
 
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
             if (position == 0) {
                 button.setIsLeftButton(true);
             } else {
-                buttons.get(position - 1).setIsRightButton(false);
+                // Update previous button that it is not right-most anymore
+                final SegmentedButton oldButton = buttons.get(position - 1);
+
+                oldButton.setIsRightButton(false);
+
+                // Update the background clip path for that button
+                oldButton.setupBackgroundClipPath();
             }
 
             // Set current button as right-most regardless
             button.setIsRightButton(true);
 
             // Sets up the background clip path in order to correctly round background to match the radius
-            // TODO Not working, need to do position - 1 button too!
             button.setupBackgroundClipPath();
 
             // Add the button to the main group instead and store the button in our buttons list
@@ -352,18 +359,18 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Apply background clip path if available
         // This will clip the background drawable to round the corners if applicable
-        if (backgroundClipPath != null) {
-            canvas.clipPath(backgroundClipPath);
-        }
+//        if (backgroundClipPath != null) {
+//            canvas.clipPath(backgroundClipPath);
+//        }
 
         // Draw background with rounded edges if desired, radius of zero means regular rectangle
         // Setup rectangle to draw entire view
         // This background can be used to set the background for ALL buttons while the individual button backgrounds
         // are for personalization
         // Recommended not to use both of these at once
-        if (backgroundDrawable != null) {
-            backgroundDrawable.draw(canvas);
-        }
+//        if (backgroundDrawable != null) {
+//            backgroundDrawable.draw(canvas);
+//        }
     }
 
     // endregion

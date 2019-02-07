@@ -3,7 +3,7 @@
     <declare-styleable name="GlobalAttrs">
         <attr name="rippleColor" format="color" />
 
-        <attr name="background_onSelection" format="reference|color" />
+        <attr name="selectedBackground" format="reference|color" />
     </declare-styleable>
 
     <declare-styleable name="SegmentedButton">
@@ -46,9 +46,7 @@
 
     <declare-styleable name="SegmentedButtonGroup">
         <attr name="background" />
-
-        <attr name="selectorColor" format="color" />
-        <attr name="selectorBackgroundDrawable" format="reference" />
+        <attr name="selectedBackground" />
 
         <attr name="borderWidth" format="dimension" />
         <attr name="borderColor" format="color" />
