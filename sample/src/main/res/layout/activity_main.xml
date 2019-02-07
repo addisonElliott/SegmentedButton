@@ -343,8 +343,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             app:drawable="@drawable/ic_b7"
-            app:drawableTint="@color/white"
-            app:selectedDrawableTint="@color/black" />
+            app:drawableTint="@color/white" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"

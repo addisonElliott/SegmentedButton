@@ -347,6 +347,9 @@ public class SegmentedButton extends View {
 
         // Recalculate the background clip path since width & height have changed
         setupBackgroundClipPath();
+
+        // TODO Rename better
+//        calculatePositions2();
     }
 
     // Measures the text width given entire width of the segmented button
@@ -380,6 +383,10 @@ public class SegmentedButton extends View {
     }
 
     // Calculate X/Y positions of the drawable and text objects
+
+    /**
+     * TODO Do me
+     */
     private void calculatePositions(int measuredWidth, int measuredHeight, int textWidth, int textHeight,
             int drawableWidth, int drawableHeight, boolean useDesiredWidth, boolean useDesiredHeight) {
         // Calculates the X/Y positions of the text and drawable now that the measured size is known
@@ -459,6 +466,79 @@ public class SegmentedButton extends View {
 
         if (mSelectedBackgroundDrawable != null) {
             mSelectedBackgroundDrawable.setBounds(0, 0, measuredWidth, measuredHeight);
+        }
+    }
+
+
+    private void calculatePositions2() {
+        final int width = getWidth(), height = getHeight();
+        final int textWidth = textStaticLayout.getWidth(), textHeight = textStaticLayout.getHeight();
+        final int drawableWidth = mDrawable != null ? hasDrawableWidth ? this.drawableWidth
+                : mDrawable.getIntrinsicWidth() : 0;
+        final int drawableHeight = mDrawable != null ? hasDrawableHeight ? this.drawableHeight
+                : mDrawable.getIntrinsicHeight() : 0;
+
+        // Calculates the X/Y positions of the text and drawable now that the measured size is known
+        if (Gravity.isHorizontal(drawableGravity)) {
+            // Calculate Y position for horizontal gravity, i.e. center the drawable and/or text if necessary
+            // Fancy way of centering the two objects vertically, the last 2 if statements are special cases where
+            // either the drawable or text is taking up the full height so there is no need to calculate the center
+            textPosition.y = getPaddingTop()
+                    + (height - getPaddingTop() - getPaddingBottom() - textHeight) / 2.0f;
+//            drawablePosition.y = getPaddingTop()
+//                    + (height - getPaddingTop() - getPaddingBottom() - drawableHeight) / 2.0f;
+            drawablePosition.y = 0.0f;
+
+            // Calculate the starting X position with horizontal gravity
+            // If the exact amount of width is used (meaning useDesiredWidth is true), then the start position is set
+            // to be the left padding. Otherwise, the start position is half of the remaining space to center it
+            final float startPosition = (width - textWidth - drawableWidth - drawablePadding) / 2.0f;
+
+            // Position the drawable & text based on the gravity
+            if (drawableGravity == Gravity.LEFT) {
+                textPosition.x = startPosition + drawableWidth + drawablePadding;
+                drawablePosition.x = startPosition;
+            } else if (drawableGravity == Gravity.RIGHT) {
+                textPosition.x = startPosition;
+                drawablePosition.x = startPosition + textWidth + drawablePadding;
+            }
+
+            drawablePosition.x = 0.0f;
+        } else {
+            // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
+            // Fancy way of centering the two objects horizontally, the last 2 if statements are special cases where
+            // either the drawable or text is taking up the full height so there is no need to calculate the center
+            textPosition.x = getPaddingLeft()
+                    + (width - getPaddingLeft() - getPaddingRight() - textWidth) / 2.0f;
+            drawablePosition.x = getPaddingLeft()
+                    + (width - getPaddingLeft() - getPaddingRight() - drawableWidth) / 2.0f;
+
+            // Calculate the starting Y position with vertical gravity
+            // If the exact amount of height is used (meaning useDesiredHeight is true), then the start position is set
+            // to be the top padding. Otherwise, the start position is half of the remaining space to center it
+            final float startPosition = (height - textHeight - drawableHeight - drawablePadding) / 2.0f;
+
+            // Position the drawable & text based on the gravity
+            if (drawableGravity == Gravity.TOP) {
+                textPosition.y = startPosition + drawableHeight + drawablePadding;
+                drawablePosition.y = startPosition;
+            } else if (drawableGravity == Gravity.BOTTOM) {
+                textPosition.y = startPosition;
+                drawablePosition.y = startPosition + textHeight + drawablePadding;
+            }
+        }
+
+        if (mDrawable != null) {
+            mDrawable.setBounds((int) drawablePosition.x, (int) drawablePosition.y,
+                    (int) drawablePosition.x + drawableWidth, (int) drawablePosition.y + drawableHeight);
+        }
+
+        if (mBackgroundDrawable != null) {
+            mBackgroundDrawable.setBounds(0, 0, width, height);
+        }
+
+        if (mSelectedBackgroundDrawable != null) {
+            mSelectedBackgroundDrawable.setBounds(0, 0, width, height);
         }
     }
 
