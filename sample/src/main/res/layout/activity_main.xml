@@ -120,7 +120,7 @@
             app:drawable="@drawable/ic_gimli"
             app:drawableGravity="top"
             app:text="Gimli"
-            app:selectedTextColor="@color/grey_600"
+            app:textColor="@color/orange_700"
             app:textStyle="normal" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButton

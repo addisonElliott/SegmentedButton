@@ -80,17 +80,14 @@ public class SegmentedButton extends View {
     private boolean hasText;
     // Text to display for button
     private String text;
+    // Whether or not we have a selected text color, if not we use the default text color to display the text
+    private boolean hasSelectedTextColor;
+    // Text color and selected text color
+    private int textColor, selectedTextColor;
     // Font size in pixels of the text
     private float textSize;
     // Typeface (font) to use for displaying the text
     private Typeface textTypeface;
-
-    // Text color and selected text color
-    // Keep a boolean of whether there is a selected text color so we know if we dont need to draw anything
-    // TODO Wrong, no need for hasSelectedTextColor, should just use same selectedTextColor
-    // TODO Look into null type value for Color, -1 maybe?
-    private int textColor, selectedTextColor;
-    private boolean hasSelectedTextColor;
 
     // Custom attributes
     // TODO Individualized ripple color? That would be cool, not sure I wanna do that though
@@ -597,17 +594,21 @@ public class SegmentedButton extends View {
         }
 
         // Draw text (selected)
-        if (hasSelectedTextColor) {
+        if (hasText) {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
-            textPaint.setColor(selectedTextColor);
+            // If a selected text color was specified, then use that, otherwise we want to default to the original
+            // text color
+            textPaint.setColor(hasSelectedTextColor ? selectedTextColor : textColor);
             textStaticLayout.draw(canvas);
             canvas.restore();
         }
 
         // Draw drawable (unselected)
         if (mDrawable != null) {
-            mDrawable.setColorFilter(mDrawableSelectedColor);
+            // If a selected drawable tint was used, then use that, but if it wasn't specified we want to stick with
+            // the normal tint color.
+            mDrawable.setColorFilter(hasSelectedDrawableTint ? mDrawableSelectedColor : mDrawableNormalColor);
             mDrawable.draw(canvas);
         }
 
