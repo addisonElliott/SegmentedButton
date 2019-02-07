@@ -1,5 +1,8 @@
 package com.addisonelliott.segmentedbutton;
 
+import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
+import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -25,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewOutlineProvider;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -123,7 +128,8 @@ public class SegmentedButtonGroup extends LinearLayout {
             setOutlineProvider(new OutlineProvider());
         }
 
-//        setClickable(true);
+        // TODO Comment me
+        setClickable(true);
 
         buttons = new ArrayList<>();
 
@@ -330,14 +336,99 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Events
 
+//    @Override
+//    public boolean onInterceptTouchEvent(final MotionEvent ev) {
+////        return super.onInterceptTouchEvent(ev);
+//        return true;
+//    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        float selectorWidth, offsetX, offsetX2;
+        int position = 0;
+        float stop = 0.0f;
+
+        // Get largest index where event.getX() < x[k]
+        // That is your position = k
+        // Get width = x[k] - x[k-1], if k = 0, width = x[k]
+        // Relative clip = getX() - (x[k - 1]||0) / width
+        //
+        // Well, maybe I'll do it another way...
+//        float[] x = { 100, 200, 400, 600, 700};
+        final float x = event.getX();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_UP:
+
+                for (int i = 0; i < buttons.size(); ++i) {
+                    final SegmentedButton button = buttons.get(i);
+
+                    if (x >= button.getLeft() && x <= button.getRight()) {
+                        position = i;
+                        stop = button.getLeft();
+                        // button.getRight(); depending on which way we're moving
+                        break;
+                    }
+                }
+
+                ValueAnimator animator = ValueAnimator.ofFloat(0.0f, stop);
+                animator.addUpdateListener(new AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(final ValueAnimator animation) {
+                        final float value = (float)animation.getAnimatedValue();
+                        SegmentedButton button;
+
+                        for (int i = 0; i < buttons.size(); ++i) {
+                            button = buttons.get(i);
+//
+//                            if (value >= button.getLeft() && x <= button.getRight()) {
+//                                break;
+//                            }
+                            button.updateClip(value);
+                        }
+                        // Get button from value
+                        //
+                    }
+                });
+
+                animator.setDuration(5000);
+//                animator.setInterpolator(new BounceInterpolator());
+//                animator.setInterpolator(TimeInterpolator.);
+                animator.start();
+                //        animator.setInterpolator(interpolatorSelector);
+//        animator.setDuration(duration);
+//        animator.start();
+                // setPosition(position, animated: true);
+                // Get nearest position, loop through buttons, find one that is between getLeft() + getWidth()
+                // Position = k
+                // Get current position, if same position, do nothing
+                // Otherwise, animate to that value
+//                offsetX2 = (float) ((getX() / (float) getWidth()) * numberOfButtons - 0.5);
+
+//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
+//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
+//                position = (int) Math.floor(offsetX + 0.5);
+//
+//                Log.v(TAG, String.format("X: %f, Y: %f, offsetX: %f, selectorWidth: %f, position: %d, width: %d, %f",
+//                        event.getX(), event.getY(), offsetX, selectorWidth, position, getWidth(), offsetX2));
+                break;
+
+            case MotionEvent.ACTION_DOWN:
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                break;
+        }
+
+        return true;
+
 //        float selectorWidth, offsetX;
 //        int position = 0;
 //
 //        switch (event.getAction()) {
 //            case MotionEvent.ACTION_UP:
         // offsetX = (getX / width() * numberofButtons - 0.5
+        // -0.5 -> 2.5 for 3 buttons
 //                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
 //                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
 //                position = (int) Math.floor(offsetX + 0.5);
@@ -376,7 +467,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //
 //                break;
 //        }
-        return true;
     }
 
     // endregion
