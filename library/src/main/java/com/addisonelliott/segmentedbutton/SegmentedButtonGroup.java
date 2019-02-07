@@ -56,9 +56,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     private BackgroundView borderView;
     private GradientDrawable borderDrawable;
 
-    // Clip path used to round background drawable edges to match parent radius
-    private Path backgroundClipPath;
-
     // General purpose rectangle to prevent allocation in onDraw
     private RectF rectF;
 
@@ -118,12 +115,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         getAttributes(context, attrs);
 
         // TODO Analyze these parts below to see what is necessary
-        // Typically ViewGroups's do not have their onDraw method called but rather just draw all of their children
-        // Set this to false to allow drawing this view group
-        // Drawing is used to draw the background in case it has a radius, something that cannot be done until API 21
-        // with the outline provider
-        setWillNotDraw(false);
-
         // Create and set outline provider for the segmented button group
         // This is used to provide an outline for the layout because it may have rounded corners
         // The primary benefit to using this is that shadows will follow the contour of the outline rather than the
@@ -333,70 +324,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         } else {
             super.addView(child, index, params);
         }
-    }
-
-    @Override
-    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
-
-        // Recalculate the background clip path since width & height have changed
-        setupBackgroundClipPath();
-
-        // Update the drawable bounds with the new size change
-        if (backgroundDrawable != null) {
-            backgroundDrawable.setBounds(0, 0, w, h);
-        }
-    }
-
-    // endregion
-
-    // region Drawing
-
-    @SuppressWarnings("SuspiciousNameCombination")
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        // Apply background clip path if available
-        // This will clip the background drawable to round the corners if applicable
-//        if (backgroundClipPath != null) {
-//            canvas.clipPath(backgroundClipPath);
-//        }
-
-        // Draw background with rounded edges if desired, radius of zero means regular rectangle
-        // Setup rectangle to draw entire view
-        // This background can be used to set the background for ALL buttons while the individual button backgrounds
-        // are for personalization
-        // Recommended not to use both of these at once
-//        if (backgroundDrawable != null) {
-//            backgroundDrawable.draw(canvas);
-//        }
-    }
-
-    // endregion
-
-    // region XXX
-
-    // TODO Rename this section?
-
-    void setupBackgroundClipPath() {
-        // If there is no radius then skip
-        if (radius == 0) {
-            backgroundClipPath = null;
-            return;
-        }
-
-        // Set rectangle to take up entire view, used to create clip path
-        rectF.set(0, 0, getWidth(), getHeight());
-
-        // Note: In Android Studio previewer, some of the background color a rounded segmented button group along
-        // with a background color in individual buttons may appear. Does not appear when running on actual devices
-        // however.
-        // Recommended approach is to treat button group background and button background as being mutually exclusive.
-        // That is use one or the other but not both.
-        backgroundClipPath = new Path();
-        backgroundClipPath.addRoundRect(rectF,
-                new float[]{radius, radius, radius, radius, radius, radius, radius, radius}, Direction.CW);
     }
 
     // endregion
