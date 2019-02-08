@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:elevation="2dp"
-        app:selectionAnimationInterpolator="fastOutSlowIn"
+        app:selectionAnimationInterpolator="bounce"
         app:selectionAnimationDuration="1000"
         app:background="@drawable/gradient_drawable"
         app:dividerBackgroundDrawable="@drawable/gradient_drawable_divider"

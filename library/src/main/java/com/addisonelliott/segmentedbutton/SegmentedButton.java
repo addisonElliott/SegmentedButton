@@ -594,14 +594,6 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
-    public float getClipPosition() {
-        return relativeClipPosition;
-    }
-
-    public boolean getIsClippingLeft() {
-        return isClippingLeft;
-    }
-
     // endregion
 
     // region Getters & Setters
@@ -698,25 +690,6 @@ public class SegmentedButton extends View {
     // TODO Create getters and setters, test them though!
 
     // TODO Go through and add docstrings to each function
-
-    void updateClip(float value) {
-        if (value < getLeft() - getWidth() || value > getRight() + getWidth()) {
-            relativeClipPosition = isClippingLeft ? 0.0f : 1.0f;
-            invalidate();
-            return;
-        } else if (value < getLeft()) {
-            relativeClipPosition = (value - getLeft()) / getWidth();
-            isClippingLeft = true;
-            invalidate();
-        } else if (value > getRight()) {
-            relativeClipPosition = 1.0f - (value - getLeft()) / getWidth();
-            isClippingLeft = false;
-            invalidate();
-        } else {
-            relativeClipPosition = (value - getLeft()) / getWidth();
-            invalidate();
-        }
-    }
 
 //    /**
 //     * Typeface.NORMAL: 0

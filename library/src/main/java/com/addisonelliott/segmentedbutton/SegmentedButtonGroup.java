@@ -153,9 +153,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             setOutlineProvider(new OutlineProvider());
         }
 
-        // TODO Comment me
-        setClickable(true);
-
         // Initial setup
         // TODO Describe me
         currentPosition = position;
@@ -434,7 +431,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
-        if (!animate || selectionAnimation == ANIM_INTERPOLATOR_NONE) {
+        if (!animate || selectionAnimationInterpolator == null) {
             updatePositions(position);
             return;
         }
@@ -535,7 +532,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         return selectionAnimationInterpolator;
     }
 
-    public void setSelectionAnimationInterpolator(Interpolator interpolator) {
+    public void setSelectionAnimationInterpolator(@Nullable Interpolator interpolator) {
         selectionAnimationInterpolator = interpolator;
     }
 
@@ -632,30 +629,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //            }
 //        } else {
 //            BackgroundHelper.setBackground(v, null);
-//        }
-//    }
-//
-//
-//    private void initInterpolations() {
-//        ArrayList<Class> interpolatorList = new ArrayList<Class>() {{
-//            add(FastOutSlowInInterpolator.class);
-//            add(BounceInterpolator.class);
-//            add(LinearInterpolator.class);
-//            add(DecelerateInterpolator.class);
-//            add(CycleInterpolator.class);
-//            add(AnticipateInterpolator.class);
-//            add(AccelerateDecelerateInterpolator.class);
-//            add(AccelerateInterpolator.class);
-//            add(AnticipateOvershootInterpolator.class);
-//            add(FastOutLinearInInterpolator.class);
-//            add(LinearOutSlowInInterpolator.class);
-//            add(OvershootInterpolator.class);
-//        }};
-//
-//        try {
-//            interpolatorSelector = (Interpolator) interpolatorList.get(animateSelector).newInstance();
-//        } catch (Exception e) {
-//            e.printStackTrace();
 //        }
 //    }
 //
