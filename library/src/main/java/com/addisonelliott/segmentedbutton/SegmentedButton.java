@@ -576,6 +576,14 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    public float getClipPosition() {
+        return relativeClipPosition;
+    }
+
+    public boolean getIsClippingLeft() {
+        return isClippingLeft;
+    }
+
     // endregion
 
     // region Getters & Setters
