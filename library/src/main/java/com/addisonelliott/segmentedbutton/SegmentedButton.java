@@ -24,10 +24,16 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
+@SuppressLint("RtlHardcoded")
 public class SegmentedButton extends View {
 
     // region Variables & Constants
@@ -69,6 +75,16 @@ public class SegmentedButton extends View {
     // tint
     private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
+    @IntDef(flag=true, value={
+            Gravity.LEFT,
+            Gravity.RIGHT,
+            Gravity.TOP,
+            Gravity.BOTTOM,
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface GravityOptions {}
+    // TODO Use this eventually
+
     // Drawable is the icon or image to draw. This can be drawn beside text or without text
     private Drawable drawable;
     private int drawableGravity;
@@ -77,6 +93,8 @@ public class SegmentedButton extends View {
     private boolean hasDrawableWidth, hasDrawableHeight;
     private int drawableWidth, drawableHeight;
     private int drawablePadding;
+
+    // TODO Text gravity not used?
 
     // Whether or not we have text, false indicates text should be empty
     private boolean hasText;
@@ -539,7 +557,7 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 0.0f
      *                         would represent no clipping and 1.0f would represent clipping the entire view
      */
-    public void clipLeft(float relativePosition) {
+    public void clipLeft(@FloatRange(from=0.0, to=1.0)float relativePosition) {
         // Clipping from the left side, set to true
         isClippingLeft = true;
 
@@ -565,7 +583,7 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 1.0f
      *                         would represent no clipping and 0.0f would represent clipping the entire view
      */
-    public void clipRight(float relativePosition) {
+    public void clipRight(@FloatRange(from=0.0, to=1.0) float relativePosition) {
         // Clipping from the right side, set to false
         isClippingLeft = false;
 

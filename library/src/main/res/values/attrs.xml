@@ -70,7 +70,7 @@
         <attr name="draggable" format="boolean" />
 
         <attr name="selectionAnimationDuration" format="integer" />
-        <attr name="selectionAnimation" format="enum">
+        <attr name="selectionAnimationInterpolator" format="enum">
             <enum name="none" value="-1" />
             <enum name="fastOutSlowIn" value="0" />
             <enum name="bounce" value="1" />

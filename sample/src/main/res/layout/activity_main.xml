@@ -30,8 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:elevation="2dp"
-        app:animateSelector="fastOutSlowIn"
-        app:animateSelectorDuration="1000"
+        app:selectionAnimationInterpolator="fastOutSlowIn"
+        app:selectionAnimationDuration="1000"
         app:background="@drawable/gradient_drawable"
         app:dividerBackgroundDrawable="@drawable/gradient_drawable_divider"
         app:dividerColor="@color/grey_500"
@@ -141,8 +141,8 @@
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_margin="10dp"-->
     <!--android:elevation="2dp"-->
-    <!--app:sbg_animateSelector="bounce"-->
-    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:selectionAnimationInterpolator="bounce"-->
+    <!--app:sbg_selectionAnimationDuration="1000"-->
     <!--app:sbg_backgroundColor="@color/red_700"-->
     <!--app:sbg_borderColor="@color/black"-->
     <!--app:sbg_borderWidth="1dp"-->
@@ -313,8 +313,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:elevation="2dp"
-        app:animateSelector="fastOutSlowIn"
-        app:animateSelectorDuration="1000"
+        app:selectionAnimationInterpolator="fastOutSlowIn"
+        app:selectionAnimationDuration="1000"
         app:background="@color/black"
         app:position="2"
         app:radius="2dp"
@@ -384,7 +384,7 @@
     <!--app:sbg_position="0"-->
     <!--app:sbg_radius="30dp"-->
     <!--app:sbg_draggable="true"-->
-    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:sbg_selectionAnimationDuration="1000"-->
     <!--app:sbg_rippleColor="@color/black"-->
     <!--app:sbg_selectorColor="@color/green_800">-->
 
@@ -435,8 +435,8 @@
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_margin="4dp"-->
     <!--android:elevation="2dp"-->
-    <!--app:sbg_animateSelector="fastOutSlowIn"-->
-    <!--app:sbg_animateSelectorDuration="1000"-->
+    <!--app:sbg_selectionAnimationInterpolator="fastOutSlowIn"-->
+    <!--app:sbg_selectionAnimationDuration="1000"-->
     <!--app:sbg_backgroundColor="@color/black"-->
     <!--app:sbg_position="0"-->
     <!--app:sbg_radius="2dp"-->

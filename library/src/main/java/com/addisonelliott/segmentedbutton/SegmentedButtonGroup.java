@@ -20,12 +20,28 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AnticipateInterpolator;
+import android.view.animation.AnticipateOvershootInterpolator;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import androidx.annotation.AnimRes;
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 
 public class SegmentedButtonGroup extends LinearLayout {
@@ -33,19 +49,27 @@ public class SegmentedButtonGroup extends LinearLayout {
     // region Variables & Constants
     private static final String TAG = "SegmentedButtonGroup";
 
-    public final static int None = -1;
-    public final static int FastOutSlowInInterpolator = 0;
-    public final static int BounceInterpolator = 1;
-    public final static int LinearInterpolator = 2;
-    public final static int DecelerateInterpolator = 3;
-    public final static int CycleInterpolator = 4;
-    public final static int AnticipateInterpolator = 5;
-    public final static int AccelerateDecelerateInterpolator = 6;
-    public final static int AccelerateInterpolator = 7;
-    public final static int AnticipateOvershootInterpolator = 8;
-    public final static int FastOutLinearInInterpolator = 9;
-    public final static int LinearOutSlowInInterpolator = 10;
-    public final static int OvershootInterpolator = 11;
+    public final static int ANIM_INTERPOLATOR_NONE = -1;
+    public final static int ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN = 0;
+    public final static int ANIM_INTERPOLATOR_BOUNCE = 1;
+    public final static int ANIM_INTERPOLATOR_LINEAR = 2;
+    public final static int ANIM_INTERPOLATOR_DECELERATE = 3;
+    public final static int ANIM_INTERPOLATOR_CYCLE = 4;
+    public final static int ANIM_INTERPOLATOR_ANTICIPATE = 5;
+    public final static int ANIM_INTERPOLATOR_ACCELERATE_DECELERATE = 6;
+    public final static int ANIM_INTERPOLATOR_ACCELERATE = 7;
+    public final static int ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT = 8;
+    public final static int ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN = 9;
+    public final static int ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN = 10;
+    public final static int ANIM_INTERPOLATOR_OVERSHOOT = 11;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({ANIM_INTERPOLATOR_NONE, ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN, ANIM_INTERPOLATOR_BOUNCE,
+            ANIM_INTERPOLATOR_LINEAR, ANIM_INTERPOLATOR_DECELERATE, ANIM_INTERPOLATOR_CYCLE,
+            ANIM_INTERPOLATOR_ANTICIPATE, ANIM_INTERPOLATOR_ACCELERATE_DECELERATE, ANIM_INTERPOLATOR_ACCELERATE,
+            ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT, ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN,
+            ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT})
+    public @interface AnimationInterpolator {}
 
     private LinearLayout mainGroup, rippleContainer, dividerContainer;
 
@@ -76,7 +100,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     // This is the actual position of the selector
     private float currentPosition;
 
-    private int selectionAnimation;
     private int selectionAnimationDuration;
 
     // TODO UNUSED VARIABLES, FIX UP LATER
@@ -84,11 +107,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             dividerSize, rippleColor, dividerPadding, dividerRadius;
     private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
     private Drawable dividerBackgroundDrawable;
-
-    private int toggledPosition = 0;
-    private float toggledPositionOffset = 0;
-    //    private int lastPosition = 0;
-    private float lastPositionOffset = 0;
 
 //    private OnPositionChangedListener onPositionChangedListener;
 //    private OnClickedButtonListener onClickedButtonListener;
@@ -238,7 +256,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
         dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
 
-        selectionAnimation = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimation, FastOutSlowInInterpolator);
+        int selectionAnimationInterpolator = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationInterpolator,
+                ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN);
+        setSelectionAnimationInterpolator(selectionAnimationInterpolator);
         selectionAnimationDuration = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationDuration, 500);
 
         enabled = ta.getBoolean(R.styleable.SegmentedButtonGroup_enabled, true);
@@ -359,8 +379,8 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // Position selected via touch
                 final int position = getButtonPositionFromX(event.getX());
 
-//                setPosition(position, true);
-                setPosition(position, false);
+                setPosition(position, true);
+//                setPosition(position, false);
                 break;
 
             case MotionEvent.ACTION_DOWN:
@@ -414,7 +434,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
-        if (!animate || selectionAnimation == None) {
+        if (!animate || selectionAnimation == ANIM_INTERPOLATOR_NONE) {
             updatePositions(position);
             return;
         }
@@ -480,7 +500,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         });
 
         buttonAnimator.setDuration(selectionAnimationDuration);
-        buttonAnimator.setInterpolator(new BounceInterpolator());
+        buttonAnimator.setInterpolator(selectionAnimationInterpolator);
         buttonAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(final Animator animation, final boolean isReverse) {
@@ -504,6 +524,74 @@ public class SegmentedButtonGroup extends LinearLayout {
             } else {
                 button.clipRight(1.0f);
             }
+        }
+    }
+
+    // endregion
+
+    // region Getters & Setters
+
+    public Interpolator getSelectionAnimationInterpolator() {
+        return selectionAnimationInterpolator;
+    }
+
+    public void setSelectionAnimationInterpolator(Interpolator interpolator) {
+        selectionAnimationInterpolator = interpolator;
+    }
+
+    public void setSelectionAnimationInterpolator(@AnimationInterpolator int interpolator) {
+        switch (interpolator) {
+            case ANIM_INTERPOLATOR_NONE:
+                selectionAnimationInterpolator = null;
+                break;
+
+            case ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN:
+                selectionAnimationInterpolator = new FastOutSlowInInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_BOUNCE:
+                selectionAnimationInterpolator = new BounceInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_LINEAR:
+                selectionAnimationInterpolator = new LinearInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_DECELERATE:
+                selectionAnimationInterpolator = new DecelerateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_CYCLE:
+                selectionAnimationInterpolator = new CycleInterpolator(1.0f);
+                break;
+
+            case ANIM_INTERPOLATOR_ANTICIPATE:
+                selectionAnimationInterpolator = new AnticipateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_ACCELERATE_DECELERATE:
+                selectionAnimationInterpolator = new AccelerateDecelerateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_ACCELERATE:
+                selectionAnimationInterpolator = new AccelerateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT:
+                selectionAnimationInterpolator = new AnticipateOvershootInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN:
+                selectionAnimationInterpolator = new FastOutLinearInInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN:
+                selectionAnimationInterpolator = new LinearOutSlowInInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_OVERSHOOT:
+                selectionAnimationInterpolator = new OvershootInterpolator();
+                break;
         }
     }
 
