@@ -33,6 +33,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     // region Variables & Constants
     private static final String TAG = "SegmentedButtonGroup";
 
+    public final static int None = -1;
     public final static int FastOutSlowInInterpolator = 0;
     public final static int BounceInterpolator = 1;
     public final static int LinearInterpolator = 2;
@@ -57,14 +58,16 @@ public class SegmentedButtonGroup extends LinearLayout {
     private ArrayList<SegmentedButton> buttons;
     private ArrayList<BackgroundView> ripples = new ArrayList<>();
 
-    // Custom attributes
-    private int selectorColor, animateSelector, animateSelectorDuration, position, dividerColor,
-            radius, dividerSize, rippleColor, dividerPadding, dividerRadius, borderWidth, borderColor,
-            borderDashWidth, borderDashGap;
-    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
-    private Drawable backgroundDrawable, selectedBackgroundDrawable, dividerBackgroundDrawable;
+    private int position;
+    private int radius;
 
-    private Interpolator interpolatorSelector;
+    private int borderWidth;
+    private int borderColor;
+    private int borderDashWidth, borderDashGap;
+
+    private Drawable backgroundDrawable, selectedBackgroundDrawable;
+
+    private Interpolator selectionAnimationInterpolator;
 
     // TODO Explain these
     ValueAnimator buttonAnimator;
@@ -72,6 +75,15 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Note this is different from the position field because that is set to basically what it WANTS to be
     // This is the actual position of the selector
     private float currentPosition;
+
+    private int selectionAnimation;
+    private int selectionAnimationDuration;
+
+    // TODO UNUSED VARIABLES, FIX UP LATER
+    private int selectorColor, animateSelector, animateSelectorDuration, dividerColor,
+            dividerSize, rippleColor, dividerPadding, dividerRadius;
+    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
+    private Drawable dividerBackgroundDrawable;
 
     private int toggledPosition = 0;
     private float toggledPositionOffset = 0;
@@ -226,8 +238,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
         dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
 
-        animateSelector = ta.getInt(R.styleable.SegmentedButtonGroup_animateSelector, 0);
-        animateSelectorDuration = ta.getInt(R.styleable.SegmentedButtonGroup_animateSelectorDuration, 500);
+        selectionAnimation = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimation, FastOutSlowInInterpolator);
+        selectionAnimationDuration = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationDuration, 500);
 
         enabled = ta.getBoolean(R.styleable.SegmentedButtonGroup_enabled, true);
         draggable = ta.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
@@ -285,19 +297,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             // If the given position to start at is this button, select it
             if (this.position == position) {
-                // Disabled clipping for button to display entire selected view
-                button.clipRight(0.0f);
+                updatePositions(position);
             }
 
-            // TODO Ensure that padding is set to 0 for this class, otherwise it messes stuff up
-
-//            if (this.position == position) {
-//                button.clipToRight(1);
-//
-//                lastPosition = toggledPosition = position;
-//                lastPositionOffset = toggledPositionOffset = (float) position;
-//            }
-//
 //            // RIPPLE
 //            BackgroundView rippleView = new BackgroundView(getContext());
 //            if (!draggable) {
@@ -334,12 +336,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Events
 
-//    @Override
-//    public boolean onInterceptTouchEvent(final MotionEvent ev) {
-////        return super.onInterceptTouchEvent(ev);
-//        return true;
-//    }
-
     int getButtonPositionFromX(float x) {
         // TODO Comment me
         for (int i = 0; i < buttons.size(); ++i) {
@@ -363,7 +359,8 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // Position selected via touch
                 final int position = getButtonPositionFromX(event.getX());
 
-                setPosition(position, true);
+//                setPosition(position, true);
+                setPosition(position, false);
                 break;
 
             case MotionEvent.ACTION_DOWN:
@@ -435,6 +432,11 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
+        if (!animate || selectionAnimation == None) {
+            updatePositions(position);
+            return;
+        }
+
         // Whether or not we are going to move left or right
         final boolean isMovingLeft = (this.position > position);
 
@@ -500,17 +502,32 @@ public class SegmentedButtonGroup extends LinearLayout {
             lastEndPosition = currentEndButtonPosition;
         });
 
-        buttonAnimator.setDuration(500);
+        buttonAnimator.setDuration(selectionAnimationDuration);
         buttonAnimator.setInterpolator(new BounceInterpolator());
         buttonAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(final Animator animation, final boolean isReverse) {
-                // TODO Here is where I can handle stuff?
-                SegmentedButtonGroup.this.position = position;
-//                Log.v(TAG, "Test: " + Float.toString(currentPosition));
+                updatePositions(position);
             }
         });
         buttonAnimator.start();
+    }
+
+    private void updatePositions(final int position) {
+        this.position = position;
+        this.currentPosition = position;
+        this.lastPosition = position;
+        this.lastEndPosition = position + 1;
+
+        for (int i = 0; i < buttons.size(); ++i) {
+            final SegmentedButton button = buttons.get(i);
+
+            if (i == position) {
+                button.clipRight(0.0f);
+            } else {
+                button.clipRight(1.0f);
+            }
+        }
     }
 
     // endregion
