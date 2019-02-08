@@ -372,24 +372,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         return true;
 
-//        float selectorWidth, offsetX;
-//        int position = 0;
-//
-//        switch (event.getAction()) {
-//            case MotionEvent.ACTION_UP:
-        // offsetX = (getX / width() * numberofButtons - 0.5
-        // -0.5 -> 2.5 for 3 buttons
-//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
-//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / getWidth();
-//                position = (int) Math.floor(offsetX + 0.5);
-//
-//                toggledPositionOffset = lastPositionOffset = offsetX;
-//
-//                toggle(position, animateSelectorDuration, true);
-//
-//                break;
-//            case MotionEvent.ACTION_DOWN:
-//                break;
 //            case MotionEvent.ACTION_MOVE:
 //
 //                if (!draggable) {
@@ -436,11 +418,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             updatePositions(position);
             return;
         }
-
-        // Whether or not we are going to move left or right
-        final boolean isMovingLeft = (this.position > position);
-
-        // TODO Handle if animation is set to false
 
         // Animate value from current position to the new position
         // Fraction positions such as 1.25 means we are 75% in button 1 and 25% in button 2.
