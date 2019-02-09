@@ -4,18 +4,22 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +81,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     private BackgroundView borderView;
     private GradientDrawable borderDrawable;
 
+    // TODO Move all initial values into the instantiation themself?
     private boolean draggable = false;
+    private float dragAnchorPoint = 0.0f;
+
     private int numberOfButtons = 0;
     private ArrayList<SegmentedButton> buttons;
     private ArrayList<BackgroundView> ripples = new ArrayList<>();
@@ -102,12 +109,16 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     private int selectionAnimationDuration;
 
-    // TODO UNUSED VARIABLES, FIX UP LATER
-    private int selectorColor, animateSelector, animateSelectorDuration, dividerColor,
-            dividerSize, rippleColor, dividerPadding, dividerRadius;
-    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
     private Drawable dividerBackgroundDrawable;
+    private int dividerSize;
+    private int dividerPadding;
+    private int dividerRadius;
 
+    // TODO UNUSED VARIABLES, FIX UP LATER
+    private int selectorColor, animateSelector, animateSelectorDuration, dividerColor, rippleColor;
+    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
+
+    // TODO Add these
 //    private OnPositionChangedListener onPositionChangedListener;
 //    private OnClickedButtonListener onClickedButtonListener;
 
@@ -170,6 +181,19 @@ public class SegmentedButtonGroup extends LinearLayout {
         mainGroup.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         mainGroup.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(mainGroup);
+
+        // TODO Need to find way to have dividers shown on top of the buttons
+//        mainGroup.setDividerPadding(25);
+//        mainGroup.setBackgroundColor(Color.YELLOW);
+
+//        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.RED,
+//                Color.RED});
+//        drawable.setCornerRadius(2);
+//        drawable.setShape(GradientDrawable.RECTANGLE);
+////        drawable.setColor(Color.RED);
+//        drawable.setSize(10, 75);
+//        mainGroup.setDividerDrawable(drawable);
+//        mainGroup.setShowDividers(SHOW_DIVIDER_MIDDLE);
 
         // Create border view
         // This is essentially a dummy view that is drawn on top of the mainGroup (contains the buttons) so that the
@@ -245,13 +269,24 @@ public class SegmentedButtonGroup extends LinearLayout {
         ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
         rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
 
-        hasDivider = ta.hasValue(R.styleable.SegmentedButtonGroup_dividerSize);
-        dividerBackgroundDrawable = ta
-                .getDrawable(R.styleable.SegmentedButtonGroup_dividerBackgroundDrawable);
-        dividerSize = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerSize, 0);
-        dividerColor = ta.getColor(R.styleable.SegmentedButtonGroup_dividerColor, Color.WHITE);
-        dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
-        dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
+//        final TypedValue value = new TypedValue();
+//        if (ta.getValue(R.styleable.SegmentedButtonGroup_divider, value)) {
+//            if (value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_STRING) {
+//                // Resource =                value.resourceId
+//            } else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+//                // Color = value.data
+//            } else {
+////                throw new Exception("whaaa TODO fix me");
+//            }
+//        }
+
+//        hasDivider = ta.hasValue(R.styleable.SegmentedButtonGroup_dividerSize);
+//        dividerBackgroundDrawable = ta
+//                .getDrawable(R.styleable.SegmentedButtonGroup_dividerBackgroundDrawable);
+//        dividerSize = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerSize, 0);
+//        dividerColor = ta.getColor(R.styleable.SegmentedButtonGroup_dividerColor, Color.WHITE);
+//        dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
+//        dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
 
         int selectionAnimationInterpolator = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationInterpolator,
                 ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN);
@@ -276,6 +311,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Layout & Measure
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
 
@@ -287,6 +323,52 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setBackgroundRadius(radius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
+
+//            button.setOnTouchListener((v, event) -> {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_UP:
+//                        Log.v(TAG, "Going to position " + Integer.toString(position));
+//                        setPosition(position, true);
+//                        break;
+//
+//                    case MotionEvent.ACTION_DOWN:
+////                        dragAnchorPoint = event.getX() - button.getLeft();
+//                        dragAnchorPoint = event.getX();
+//                        Log.v(TAG, String.format("down: %f %d = %f", event.getX(), button.getLeft(), dragAnchorPoint));
+//                        break;
+//
+//                    case MotionEvent.ACTION_MOVE:
+//                        // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
+//                        // TODO Move invalidate into the moveSelectedButton function
+//
+//                        // Only can drag when starting on the selected button
+//                        if (this.position != position) {
+//                            return false;
+//                        }
+//
+//                        float newPosition = button.getLeft() + (event.getX() - dragAnchorPoint);
+//                        float finalPosition = 0.0f;
+//
+//                        for (int i = 0; i < buttons.size(); ++i) {
+//                            final SegmentedButton button_ = buttons.get(i);
+//
+//                            if (newPosition < button_.getRight()) {
+//                                finalPosition = i + (newPosition - button_.getLeft()) / button_.getWidth();
+//                                break;
+//                            }
+//                        }
+//
+//                        Log.v(TAG, String.format("move: %f %f %f %f", event.getX(), dragAnchorPoint, newPosition,
+//                                finalPosition));
+//                        moveSelectedButton(finalPosition);
+//                        invalidate();
+//
+//                        return true;
+//                }
+//
+//                // TODO Return false so the normal button click is handled and state is changed for drawable
+//                return false;
+//            });
 
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
@@ -368,54 +450,97 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        final float x = event.getX();
+    public boolean dispatchTouchEvent(final MotionEvent ev) {
+        int position = getButtonPositionFromX(ev.getX());
 
-        switch (event.getAction()) {
+        switch (ev.getAction()) {
             case MotionEvent.ACTION_UP:
-                // Position selected via touch
-                final int position = getButtonPositionFromX(event.getX());
-
                 setPosition(position, true);
-//                setPosition(position, false);
                 break;
 
             case MotionEvent.ACTION_DOWN:
+                if (this.position != position) {
+                    dragAnchorPoint = -1.0f;
+                    break;
+                }
+
+                dragAnchorPoint = ev.getX() - buttons.get(position).getLeft();
+                Log.v(TAG, String.format("down: %f = %f", ev.getX(), dragAnchorPoint));
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
+                // TODO Move invalidate into the moveSelectedButton function
+                // Only can drag when starting on the selected button
+                if (dragAnchorPoint == -1.0f) {
+                    break;
+                }
+
+                float newPosition = ev.getX() - dragAnchorPoint;
+                float finalPosition = 0.0f;
+
+                for (int i = 0; i < buttons.size(); ++i) {
+                    final SegmentedButton button_ = buttons.get(i);
+
+                    if (newPosition < button_.getRight()) {
+                        finalPosition = i + (newPosition - button_.getLeft()) / button_.getWidth();
+                        break;
+                    }
+                }
+
+                Log.v(TAG, String.format("move: %f %f %f %f", ev.getX(), dragAnchorPoint, newPosition, finalPosition));
+                moveSelectedButton(finalPosition);
+                invalidate();
                 break;
         }
 
-        return true;
+//        button.setOnTouchListener((v, event) -> {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_UP:
+//                        Log.v(TAG, "Going to position " + Integer.toString(position));
+//                        setPosition(position, true);
+//                        break;
+//
+//                    case MotionEvent.ACTION_DOWN:
+////                        dragAnchorPoint = event.getX() - button.getLeft();
+//                        dragAnchorPoint = event.getX();
+//                        Log.v(TAG, String.format("down: %f %d = %f", event.getX(), button.getLeft(), dragAnchorPoint));
+//                        break;
+//
+//                    case MotionEvent.ACTION_MOVE:
+//                        // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
+//                        // TODO Move invalidate into the moveSelectedButton function
+//
+//                        // Only can drag when starting on the selected button
+//                        if (this.position != position) {
+//                            return false;
+//                        }
+//
+//                        float newPosition = button.getLeft() + (event.getX() - dragAnchorPoint);
+//                        float finalPosition = 0.0f;
+//
+//                        for (int i = 0; i < buttons.size(); ++i) {
+//                            final SegmentedButton button_ = buttons.get(i);
+//
+//                            if (newPosition < button_.getRight()) {
+//                                finalPosition = i + (newPosition - button_.getLeft()) / button_.getWidth();
+//                                break;
+//                            }
+//                        }
+//
+//                        Log.v(TAG, String.format("move: %f %f %f %f", event.getX(), dragAnchorPoint, newPosition,
+//                                finalPosition));
+//                        moveSelectedButton(finalPosition);
+//                        invalidate();
+//
+//                        return true;
+//                }
+//
+//                // TODO Return false so the normal button click is handled and state is changed for drawable
+//                return false;
+//            });
 
-//            case MotionEvent.ACTION_MOVE:
-//
-//                if (!draggable) {
-//                    break;
-//                }
-//
-//                selectorWidth = (float) getWidth() / numberOfButtons / 2f;
-//
-//                offsetX = ((event.getX() - selectorWidth) * numberOfButtons) / (float) getWidth();
-//                position = (int) Math.floor(offsetX);
-//                offsetX -= position;
-//
-//                if (event.getRawX() - selectorWidth < getLeft()) {
-//                    offsetX = 0;
-//                    animateViews(position + 1, offsetX);
-//                    break;
-//                }
-//                if (event.getRawX() + selectorWidth > getRight()) {
-//                    offsetX = 1;
-//                    animateViews(position - 1, offsetX);
-//                    break;
-//                }
-//
-//                animateViews(position, offsetX);
-//
-//                break;
-//        }
+        return super.dispatchTouchEvent(ev);
     }
 
     // TODO Better name?
@@ -442,58 +567,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Buttons are animated from this listener
         buttonAnimator.addUpdateListener(animation -> {
-            // Update current position to be the animated value
-            // This is a float value indicating where the left-side of the button is located
-            // For example, a currentPosition of 1.0 would mean all of button 1 was selected
-            // But a currentPosition of 1.5 would mean half of button 1 was selected and half of button 2 (its in
-            // between animating the value)
-            //
-            // endPosition is the position where the right side of the button should be and that is always 1 + the
-            // current position. For example, a currentPosition of 1.5 means the right half of the button is at 2.5.
-            // This is always 1.0 because the button selection width is assumed to be the same size as the button
-            currentPosition = (float) animation.getAnimatedValue();
-
-            // Get the current button position and extract the offset. For example, a currentPosition of 2.25 would
-            // result in a currentButtonPosition of 2 and the currentOffset to 0.25.
-            final int currentButtonPosition = (int) currentPosition;
-            final float currentOffset = currentPosition - currentButtonPosition;
-
-            // Get the current end button position and extract the offset. For example, a currentEndPosition of 2.25
-            // would result in a currentEndButtonPosition of 2 and the currentEndOffset to 0.25.
-            final int currentEndButtonPosition = currentButtonPosition + 1;
-            // TODO This can be simplified
-
-            // Grab the current button from the position and clip the right side of the button to show the
-            // appropriate amount
-            //
-            // For example, if the currentOffset was 0.25, then the right 75% of the button would be showing. The
-            // offset given to the current button is 0.0f -> 1.0f and represents the relative X position to clip the
-            // button at (going all the way to the right side of the button, i.e. 0.25 all the way to 1.0)
-            final SegmentedButton currentButton = buttons.get(currentButtonPosition);
-            currentButton.clipRight(currentOffset);
-
-            // For the end button, we want to clip the left side of the button to match up with the right side of the
-            // previous button. However, there is a slight chance the end button position might be out of range so we
-            // check if it is first
-            if (currentEndButtonPosition >= 0 && currentEndButtonPosition < buttons.size()) {
-                // Grab the button directly to the right of the current button and clip the left
-                final SegmentedButton currentEndButton = buttons.get(currentEndButtonPosition);
-                currentEndButton.clipLeft(currentOffset);
-
-                // TODO Add feature for speed per button to make it not so bad?
-            }
-
-            if (lastPosition != currentButtonPosition && lastPosition != currentEndButtonPosition) {
-                buttons.get(lastPosition).clipRight(1.0f);
-            }
-
-            if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
-                    && lastEndPosition < buttons.size()) {
-                buttons.get(lastEndPosition).clipRight(1.0f);
-            }
-
-            lastPosition = currentButtonPosition;
-            lastEndPosition = currentEndButtonPosition;
+            moveSelectedButton((float) animation.getAnimatedValue());
         });
 
         buttonAnimator.setDuration(selectionAnimationDuration);
@@ -505,6 +579,60 @@ public class SegmentedButtonGroup extends LinearLayout {
             }
         });
         buttonAnimator.start();
+    }
+
+    private void moveSelectedButton(float position) {
+        // Update current position to be the animated value
+        // This is a float value indicating where the left-side of the button is located
+        // For example, a currentPosition of 1.0 would mean all of button 1 was selected
+        // But a currentPosition of 1.5 would mean half of button 1 was selected and half of button 2 (its in
+        // between animating the value)
+        //
+        // endPosition is the position where the right side of the button should be and that is always 1 + the
+        // current position. For example, a currentPosition of 1.5 means the right half of the button is at 2.5.
+        // This is always 1.0 because the button selection width is assumed to be the same size as the button
+        currentPosition = position;
+
+        // Get the current button position and extract the offset. For example, a currentPosition of 2.25 would
+        // result in a currentButtonPosition of 2 and the currentOffset to 0.25.
+        final int currentButtonPosition = (int) currentPosition;
+        final float currentOffset = currentPosition - currentButtonPosition;
+
+        // Get the current end button position and extract the offset. For example, a currentEndPosition of 2.25
+        // would result in a currentEndButtonPosition of 2 and the currentEndOffset to 0.25.
+        final int currentEndButtonPosition = currentButtonPosition + 1;
+
+        // Grab the current button from the position and clip the right side of the button to show the
+        // appropriate amount
+        //
+        // For example, if the currentOffset was 0.25, then the right 75% of the button would be showing. The
+        // offset given to the current button is 0.0f -> 1.0f and represents the relative X position to clip the
+        // button at (going all the way to the right side of the button, i.e. 0.25 all the way to 1.0)
+        final SegmentedButton currentButton = buttons.get(currentButtonPosition);
+        currentButton.clipRight(currentOffset);
+
+        // For the end button, we want to clip the left side of the button to match up with the right side of the
+        // previous button. However, there is a slight chance the end button position might be out of range so we
+        // check if it is first
+        if (currentEndButtonPosition >= 0 && currentEndButtonPosition < buttons.size()) {
+            // Grab the button directly to the right of the current button and clip the left
+            final SegmentedButton currentEndButton = buttons.get(currentEndButtonPosition);
+            currentEndButton.clipLeft(currentOffset);
+
+            // TODO Add feature for speed per button to make it not so bad?
+        }
+
+        if (lastPosition != currentButtonPosition && lastPosition != currentEndButtonPosition) {
+            buttons.get(lastPosition).clipRight(1.0f);
+        }
+
+        if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
+                && lastEndPosition < buttons.size()) {
+            buttons.get(lastEndPosition).clipRight(1.0f);
+        }
+
+        lastPosition = currentButtonPosition;
+        lastEndPosition = currentEndButtonPosition;
     }
 
     private void updatePositions(final int position) {

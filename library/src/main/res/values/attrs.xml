@@ -59,11 +59,10 @@
         <attr name="ripple" format="boolean" />
         <attr name="rippleColor" />
 
-        <attr name="dividerBackgroundDrawable" format="reference" />
+        <attr name="divider" />
+        <attr name="dividerRadius" format="dimension" />
         <attr name="dividerSize" format="dimension" />
         <attr name="dividerPadding" format="dimension" />
-        <attr name="dividerColor" format="color" />
-        <attr name="dividerRadius" format="dimension" />
 
         <attr name="enabled" format="boolean" />
         <attr name="android:clickable" />

@@ -2,6 +2,7 @@ package com.addisonelliott.segmentedbutton;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,24 +15,34 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Drawable.Callback;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.SystemClock;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
 
 @SuppressLint("RtlHardcoded")
 public class SegmentedButton extends View {
@@ -75,7 +86,10 @@ public class SegmentedButton extends View {
     // tint
     private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
-    @IntDef(flag=true, value={
+    // TODO Testing ripple
+    private RippleDrawable rippleDrawable;
+
+    @IntDef(flag = true, value = {
             Gravity.LEFT,
             Gravity.RIGHT,
             Gravity.TOP,
@@ -156,6 +170,84 @@ public class SegmentedButton extends View {
 
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
+
+//        int[][] states = new int[][] {
+//                new int[] { android.R.attr.state_enabled}, // enabled
+//                new int[] {-android.R.attr.state_enabled}, // disabled
+//                new int[] {-android.R.attr.state_checked}, // unchecked
+//                new int[] { android.R.attr.state_pressed}  // pressed
+//        };
+//
+//        int[] colors = new int[] {
+//                Color.BLACK,
+//                Color.RED,
+//                Color.GREEN,
+//                Color.BLUE
+//        };
+//
+//        ColorStateList myList = new ColorStateList(states, colors);
+//
+////        backgroundDrawable = ColorSta
+//        new StateListDrawable()
+
+//        RoundRectShape r = new RoundRectShape(outerRadii, null, null);
+        ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape());
+        shapeDrawable.getPaint().setColor(Color.BLUE);
+
+        rippleDrawable = new RippleDrawable(ColorStateList.valueOf(Color.RED), null, null);
+        rippleDrawable.setVisible(true, false);
+        rippleDrawable.setCallback(this);
+        this.setClickable(true);
+    }
+
+    @Override
+    public void drawableHotspotChanged(final float x, final float y) {
+        super.drawableHotspotChanged(x, y);
+
+        rippleDrawable.setHotspot(x, y);
+    }
+
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+
+        rippleDrawable.setState(getDrawableState());
+
+        ArrayList<String> x = new ArrayList<>();
+        for (int y : getDrawableState()) {
+            if (y == android.R.attr.state_pressed) {
+                x.add("pressed");
+            } else if (y == android.R.attr.state_enabled) {
+                x.add("enabled");
+            } else if (y == android.R.attr.state_enabled) {
+                x.add("enabled");
+            } else if (y == android.R.attr.state_hovered) {
+                x.add("hover");
+            } else if (y == android.R.attr.state_active) {
+                x.add("active");
+            } else if (y == android.R.attr.state_focused) {
+                x.add("focused");
+            } else {
+                x.add("unknown" + Integer.toString(y));
+            }
+        }
+
+        Log.v(TAG, "drawableStateChanged " + String.join(",", x));
+    }
+
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+//        boolean value = super.onTouchEvent(event);
+        Log.v(TAG, "SegmentedButton.onTouchEvent " + Integer.toString(event.getAction()));
+
+//        if (event.getAction() == MotionEvent.ACTION_MOVE) {
+//            return false;
+//        }
+
+        return super.onTouchEvent(event);
+//        super.onTouchEvent(event);
+//        return (event.getAction() != MotionEvent.ACTION_UP) && value;
+//        return false;
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -464,6 +556,13 @@ public class SegmentedButton extends View {
         if (selectedBackgroundDrawable != null) {
             selectedBackgroundDrawable.setBounds(0, 0, width, height);
         }
+
+        rippleDrawable.setBounds(0, 0, width, height);
+    }
+
+    @Override
+    protected boolean verifyDrawable(@NonNull final Drawable who) {
+        return (who == rippleDrawable) || super.verifyDrawable(who);
     }
 
     // endregion
@@ -540,6 +639,8 @@ public class SegmentedButton extends View {
         }
 
         canvas.restore();
+
+        rippleDrawable.draw(canvas);
     }
 
     /**
@@ -557,7 +658,7 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 0.0f
      *                         would represent no clipping and 1.0f would represent clipping the entire view
      */
-    public void clipLeft(@FloatRange(from=0.0, to=1.0)float relativePosition) {
+    public void clipLeft(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
         // Clipping from the left side, set to true
         isClippingLeft = true;
 
@@ -583,7 +684,7 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 1.0f
      *                         would represent no clipping and 0.0f would represent clipping the entire view
      */
-    public void clipRight(@FloatRange(from=0.0, to=1.0) float relativePosition) {
+    public void clipRight(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
         // Clipping from the right side, set to false
         isClippingLeft = false;
 
