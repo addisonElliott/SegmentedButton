@@ -3,23 +3,19 @@ package com.addisonelliott.segmentedbutton;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
-import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Outline;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,11 +32,9 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import androidx.annotation.AnimRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
@@ -53,6 +47,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     // region Variables & Constants
     private static final String TAG = "SegmentedButtonGroup";
 
+    // Animation interpolator styles for animating button movement
     public final static int ANIM_INTERPOLATOR_NONE = -1;
     public final static int ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN = 0;
     public final static int ANIM_INTERPOLATOR_BOUNCE = 1;
@@ -67,6 +62,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     public final static int ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN = 10;
     public final static int ANIM_INTERPOLATOR_OVERSHOOT = 11;
 
+    // Interface defined for linting purposes to ensure that an animation interpolator value (integer type) is one
+    // of the valid values
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ANIM_INTERPOLATOR_NONE, ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN, ANIM_INTERPOLATOR_BOUNCE,
             ANIM_INTERPOLATOR_LINEAR, ANIM_INTERPOLATOR_DECELERATE, ANIM_INTERPOLATOR_CYCLE,
@@ -75,7 +72,8 @@ public class SegmentedButtonGroup extends LinearLayout {
             ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT})
     public @interface AnimationInterpolator {}
 
-    private LinearLayout mainGroup, rippleContainer, dividerContainer;
+    private LinearLayout buttonLayout;
+    private LinearLayout dividerLayout;
 
     // View for placing border on top of the buttons
     private BackgroundView borderView;
@@ -172,35 +170,22 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         buttons = new ArrayList<>();
 
+        // TODO Explain why we need this and why the parent class has to be a LinearLayout
         FrameLayout container = new FrameLayout(getContext());
-        container.setLayoutParams(
-                new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        container.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(container);
 
-        mainGroup = new LinearLayout(getContext());
-        mainGroup.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-        mainGroup.setOrientation(LinearLayout.HORIZONTAL);
-        container.addView(mainGroup);
-
-        // TODO Need to find way to have dividers shown on top of the buttons
-//        mainGroup.setDividerPadding(25);
-//        mainGroup.setBackgroundColor(Color.YELLOW);
-
-//        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.RED,
-//                Color.RED});
-//        drawable.setCornerRadius(2);
-//        drawable.setShape(GradientDrawable.RECTANGLE);
-////        drawable.setColor(Color.RED);
-//        drawable.setSize(10, 75);
-//        mainGroup.setDividerDrawable(drawable);
-//        mainGroup.setShowDividers(SHOW_DIVIDER_MIDDLE);
+        buttonLayout = new LinearLayout(getContext());
+        buttonLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
+        container.addView(buttonLayout);
 
         // Create border view
-        // This is essentially a dummy view that is drawn on top of the mainGroup (contains the buttons) so that the
+        // This is essentially a dummy view that is drawn on top of the buttonLayout (contains the buttons) so that the
         // border appears on top of them
         borderView = new BackgroundView(context);
-        borderView.setLayoutParams(
-                new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        borderView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
         container.addView(borderView);
 
         // Only create border drawable if border is present
@@ -214,13 +199,26 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // TODO Struggling to see the purpose of this container
         // Oh, it probably is so that the divider appears over the ripple container
-        dividerContainer = new LinearLayout(getContext());
-        dividerContainer.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+        dividerLayout = new LinearLayout(getContext());
+        dividerLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
                 LayoutParams.MATCH_PARENT));
-        dividerContainer.setOrientation(LinearLayout.HORIZONTAL);
-        dividerContainer.setClickable(false);
-        dividerContainer.setFocusable(false);
-        container.addView(dividerContainer);
+        dividerLayout.setOrientation(LinearLayout.HORIZONTAL);
+        dividerLayout.setClickable(false);
+        dividerLayout.setFocusable(false);
+        container.addView(dividerLayout);
+
+        // TODO Need to find way to have dividers shown on top of the buttons
+        dividerLayout.setDividerPadding(25);
+//        dividerLayout.setBackgroundColor(Color.YELLOW);
+
+        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.RED,
+                Color.RED});
+        drawable.setCornerRadius(2);
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setColor(Color.RED);
+        drawable.setSize(10, 75);
+        dividerLayout.setDividerDrawable(drawable);
+        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
 
 //        initInterpolations();
 //        setDividerAttrs();
@@ -305,6 +303,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
+//        LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)params;
+//        Log.v(TAG, "View added, params: " + Float.toString(params2.weight));
 
         if (child instanceof SegmentedButton) {
             SegmentedButton button = (SegmentedButton) child;
@@ -336,7 +336,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setupBackgroundClipPath();
 
             // Add the button to the main group instead and store the button in our buttons list
-            mainGroup.addView(button, params);
+            buttonLayout.addView(button, params);
             buttons.add(button);
 
             // If the given position to start at is this button, select it
@@ -368,8 +368,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 //            }
 //
             BackgroundView dividerView = new BackgroundView(getContext());
-            dividerContainer.addView(dividerView, new LinearLayout.LayoutParams(button.getButtonWidth(),
-                    ViewGroup.LayoutParams.MATCH_PARENT, button.getWeight()));
+//            dividerLayout.addView(dividerView, new LinearLayout.LayoutParams(button.getButtonWidth(),
+//                    ViewGroup.LayoutParams.MATCH_PARENT, button.getWeight()));
+            dividerLayout.addView(dividerView, params);
 
             // On update setLayoutParams
             // On update weightsum, well that won't happen, well sure it could I guess
@@ -639,9 +640,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 //        if (!hasDivider) {
 //            return;
 //        }
-//        dividerContainer.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
+//        dividerLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
 //        // Divider Views
-//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
 //                dividerBackgroundDrawable);
 //    }
 
@@ -827,7 +828,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //     */
 //    public void setDividerColor(int dividerColor) {
 //        this.dividerColor = dividerColor;
-//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
 //                dividerBackgroundDrawable);
 //    }
 //
@@ -837,7 +838,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //     */
 //    public void setDividerSize(int dividerSize) {
 //        this.dividerSize = dividerSize;
-//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
 //                dividerBackgroundDrawable);
 //    }
 //
@@ -847,7 +848,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //     */
 //    public void setDividerRadius(int dividerRadius) {
 //        this.dividerRadius = dividerRadius;
-//        RoundHelper.makeDividerRound(dividerContainer, dividerColor, dividerRadius, dividerSize,
+//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
 //                dividerBackgroundDrawable);
 //    }
 //

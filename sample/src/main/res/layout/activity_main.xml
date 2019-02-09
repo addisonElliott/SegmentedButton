@@ -95,7 +95,7 @@
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
@@ -108,7 +108,7 @@
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
@@ -123,7 +123,7 @@
 
         <com.addisonelliott.segmentedbutton.SegmentedButton
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/aniron"
             android:paddingBottom="8dp"
