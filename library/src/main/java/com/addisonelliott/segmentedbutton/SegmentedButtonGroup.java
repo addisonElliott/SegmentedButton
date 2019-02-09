@@ -214,13 +214,13 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // TODO Struggling to see the purpose of this container
         // Oh, it probably is so that the divider appears over the ripple container
-//        dividerContainer = new LinearLayout(getContext());
-//        dividerContainer
-//                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-//        dividerContainer.setOrientation(LinearLayout.HORIZONTAL);
-//        dividerContainer.setClickable(false);
-//        dividerContainer.setFocusable(false);
-//        container.addView(dividerContainer);
+        dividerContainer = new LinearLayout(getContext());
+        dividerContainer.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
+        dividerContainer.setOrientation(LinearLayout.HORIZONTAL);
+        dividerContainer.setClickable(false);
+        dividerContainer.setFocusable(false);
+        container.addView(dividerContainer);
 
 //        initInterpolations();
 //        setDividerAttrs();
@@ -367,11 +367,15 @@ public class SegmentedButtonGroup extends LinearLayout {
 //                return;
 //            }
 //
-//            BackgroundView dividerView = new BackgroundView(getContext());
-//            dividerContainer.addView(dividerView,
-//                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
-//                            button.getWeight()));
+            BackgroundView dividerView = new BackgroundView(getContext());
+            dividerContainer.addView(dividerView, new LinearLayout.LayoutParams(button.getButtonWidth(),
+                    ViewGroup.LayoutParams.MATCH_PARENT, button.getWeight()));
+
+            // On update setLayoutParams
+            // On update weightsum, well that won't happen, well sure it could I guess
+
         } else {
+            // TODO Throw exception here, safe to require SegmentedButton
             super.addView(child, index, params);
         }
     }

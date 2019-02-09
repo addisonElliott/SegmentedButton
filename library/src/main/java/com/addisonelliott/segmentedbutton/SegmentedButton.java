@@ -128,6 +128,9 @@ public class SegmentedButton extends View {
     private int rippleColor;
     private boolean hasRipple;
 
+    private int buttonWidth;
+    private float buttonWeight;
+
     // endregion
 
     // region Constructor
@@ -276,6 +279,10 @@ public class SegmentedButton extends View {
         } else {
             textTypeface = Typeface.create((Typeface) null, textStyle);
         }
+
+        buttonWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_width, 0);
+//        buttonHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_height, 0);
+        buttonWeight = ta.getFloat(R.styleable.SegmentedButton_android_layout_weight, 0.0f);
 
         ta.recycle();
     }
@@ -756,6 +763,14 @@ public class SegmentedButton extends View {
     // TODO Create getters and setters, test them though!
 
     // TODO Go through and add docstrings to each function
+
+    float getWeight() {
+        return buttonWeight;
+    }
+
+    int getButtonWidth() {
+        return buttonWidth;
+    }
 
 //    /**
 //     * Typeface.NORMAL: 0
