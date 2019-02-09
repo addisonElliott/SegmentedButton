@@ -62,6 +62,9 @@ public class SegmentedButtonGroup extends LinearLayout {
     public final static int ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN = 10;
     public final static int ANIM_INTERPOLATOR_OVERSHOOT = 11;
 
+    // TODO Is this a vlaid number?
+    private final static float DRAG_ANCHOR_NONE = Float.NaN;
+
     // Interface defined for linting purposes to ensure that an animation interpolator value (integer type) is one
     // of the valid values
     @Retention(RetentionPolicy.SOURCE)
@@ -72,30 +75,55 @@ public class SegmentedButtonGroup extends LinearLayout {
             ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT})
     public @interface AnimationInterpolator {}
 
+    // This ViewGroup consists of a FrameLayout as it's child which contains three items:
+    // 1. Button linear layout that contains the SegmentedButtons
+    // 2. Divider linear layout that contains the dividers between buttons
+    // 3. Border view that has the border for the group that is drawn over everything else
     private LinearLayout buttonLayout;
+
+    // Purpose of divider LinearLayout is to ensure the button dividers are placed in between the buttons and that no
+    // extra space is allocated for the divider. If dividers were placed on the buttonLayout, then space would be
+    // allocated for the dividers and the biggest problem is that the background ends up being gray if there is
+    // divider padding set.
     private LinearLayout dividerLayout;
 
     // View for placing border on top of the buttons
+    // Background view for placing border on top of the buttons, background is transparent to see everything but border
     private BackgroundView borderView;
-    private GradientDrawable borderDrawable;
 
-    // TODO Move all initial values into the instantiation themself?
-    private boolean draggable = false;
-    private float dragAnchorPoint = 0.0f;
-
-    private int numberOfButtons = 0;
+    // Array containing the buttons
     private ArrayList<SegmentedButton> buttons;
+
+    // Whether or not the button can be dragged to a different position (default value is false)
+    private boolean draggable;
+    // When a user touches down on the currently selected button, this is set to be the difference between their
+    // current X location of tapping and the currently selected button's left X coordinate
+    // When user drags their finger across the button group, this value will be used to offset the current X location
+    // with how much the button should have moved
+    //
+    // This value will be NaN when dragging is disabled
+    private float dragOffsetX;
+
+    // TODO Do I need this
     private ArrayList<BackgroundView> ripples = new ArrayList<>();
 
+    // Position of the currently selected button, zero-indexed (default value is 0)
+    // When animating, the position will be the previous value until after animation is finished
     private int position;
+
+    // Radius for rounding edges of the button group, in pixels (default value is 0)
     private int radius;
 
+    // Drawable for the border (default value is null)
+    private GradientDrawable borderDrawable;
     private int borderWidth;
     private int borderColor;
     private int borderDashWidth, borderDashGap;
 
     private Drawable backgroundDrawable, selectedBackgroundDrawable;
 
+    // Animation interpolator for animating button movement
+    // Android has some standard interpolator, e.g. BounceInterpolator, but also easy to create own interpolator
     private Interpolator selectionAnimationInterpolator;
 
     // TODO Explain these
@@ -308,7 +336,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         if (child instanceof SegmentedButton) {
             SegmentedButton button = (SegmentedButton) child;
-            final int position = numberOfButtons++;
+            final int position = buttons.size();
 
             // Give radius, default background and default selected background to the button
             button.setBackgroundRadius(radius);
@@ -410,23 +438,23 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             case MotionEvent.ACTION_DOWN:
                 if (this.position != position) {
-                    dragAnchorPoint = -1.0f;
+                    dragOffsetX = -1.0f;
                     break;
                 }
 
-                dragAnchorPoint = ev.getX() - buttons.get(position).getLeft();
-                Log.v(TAG, String.format("down: %f = %f", ev.getX(), dragAnchorPoint));
+                dragOffsetX = ev.getX() - buttons.get(position).getLeft();
+                Log.v(TAG, String.format("down: %f = %f", ev.getX(), dragOffsetX));
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
                 // TODO Move invalidate into the moveSelectedButton function
                 // Only can drag when starting on the selected button
-                if (dragAnchorPoint == -1.0f) {
+                if (dragOffsetX == -1.0f) {
                     break;
                 }
 
-                float newPosition = ev.getX() - dragAnchorPoint;
+                float newPosition = ev.getX() - dragOffsetX;
                 float finalPosition = 0.0f;
 
                 for (int i = 0; i < buttons.size(); ++i) {
@@ -438,7 +466,7 @@ public class SegmentedButtonGroup extends LinearLayout {
                     }
                 }
 
-                Log.v(TAG, String.format("move: %f %f %f %f", ev.getX(), dragAnchorPoint, newPosition, finalPosition));
+                Log.v(TAG, String.format("move: %f %f %f %f", ev.getX(), dragOffsetX, newPosition, finalPosition));
                 moveSelectedButton(finalPosition);
                 invalidate();
                 break;
