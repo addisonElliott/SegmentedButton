@@ -171,26 +171,6 @@ public class SegmentedButton extends View {
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
 
-//        int[][] states = new int[][] {
-//                new int[] { android.R.attr.state_enabled}, // enabled
-//                new int[] {-android.R.attr.state_enabled}, // disabled
-//                new int[] {-android.R.attr.state_checked}, // unchecked
-//                new int[] { android.R.attr.state_pressed}  // pressed
-//        };
-//
-//        int[] colors = new int[] {
-//                Color.BLACK,
-//                Color.RED,
-//                Color.GREEN,
-//                Color.BLUE
-//        };
-//
-//        ColorStateList myList = new ColorStateList(states, colors);
-//
-////        backgroundDrawable = ColorSta
-//        new StateListDrawable()
-
-//        RoundRectShape r = new RoundRectShape(outerRadii, null, null);
         ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape());
         shapeDrawable.getPaint().setColor(Color.BLUE);
 
@@ -233,21 +213,6 @@ public class SegmentedButton extends View {
         }
 
         Log.v(TAG, "drawableStateChanged " + String.join(",", x));
-    }
-
-    @Override
-    public boolean onTouchEvent(final MotionEvent event) {
-//        boolean value = super.onTouchEvent(event);
-        Log.v(TAG, "SegmentedButton.onTouchEvent " + Integer.toString(event.getAction()));
-
-//        if (event.getAction() == MotionEvent.ACTION_MOVE) {
-//            return false;
-//        }
-
-        return super.onTouchEvent(event);
-//        super.onTouchEvent(event);
-//        return (event.getAction() != MotionEvent.ACTION_UP) && value;
-//        return false;
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -817,8 +782,6 @@ public class SegmentedButton extends View {
 //    void setSelectorColor(int color) {
 //        mPaint.setColor(color);
 //    }
-//
-//
 //
 //    /**
 //     * Sets button's drawable by given drawable object and its position

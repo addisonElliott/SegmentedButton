@@ -212,15 +212,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             borderView.setBackground(borderDrawable);
         }
 
-//        rippleContainer = new LinearLayout(getContext());
-//        rippleContainer
-//                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-//        rippleContainer.setOrientation(LinearLayout.HORIZONTAL);
-//        rippleContainer.setClickable(false);
-//        rippleContainer.setFocusable(false);
-//        rippleContainer.setPadding(borderSize, borderSize, borderSize, borderSize);
-//        container.addView(rippleContainer);
-
         // TODO Struggling to see the purpose of this container
         // Oh, it probably is so that the divider appears over the ripple container
 //        dividerContainer = new LinearLayout(getContext());
@@ -323,52 +314,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setBackgroundRadius(radius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
-
-//            button.setOnTouchListener((v, event) -> {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_UP:
-//                        Log.v(TAG, "Going to position " + Integer.toString(position));
-//                        setPosition(position, true);
-//                        break;
-//
-//                    case MotionEvent.ACTION_DOWN:
-////                        dragAnchorPoint = event.getX() - button.getLeft();
-//                        dragAnchorPoint = event.getX();
-//                        Log.v(TAG, String.format("down: %f %d = %f", event.getX(), button.getLeft(), dragAnchorPoint));
-//                        break;
-//
-//                    case MotionEvent.ACTION_MOVE:
-//                        // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
-//                        // TODO Move invalidate into the moveSelectedButton function
-//
-//                        // Only can drag when starting on the selected button
-//                        if (this.position != position) {
-//                            return false;
-//                        }
-//
-//                        float newPosition = button.getLeft() + (event.getX() - dragAnchorPoint);
-//                        float finalPosition = 0.0f;
-//
-//                        for (int i = 0; i < buttons.size(); ++i) {
-//                            final SegmentedButton button_ = buttons.get(i);
-//
-//                            if (newPosition < button_.getRight()) {
-//                                finalPosition = i + (newPosition - button_.getLeft()) / button_.getWidth();
-//                                break;
-//                            }
-//                        }
-//
-//                        Log.v(TAG, String.format("move: %f %f %f %f", event.getX(), dragAnchorPoint, newPosition,
-//                                finalPosition));
-//                        moveSelectedButton(finalPosition);
-//                        invalidate();
-//
-//                        return true;
-//                }
-//
-//                // TODO Return false so the normal button click is handled and state is changed for drawable
-//                return false;
-//            });
 
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
@@ -493,52 +438,6 @@ public class SegmentedButtonGroup extends LinearLayout {
                 invalidate();
                 break;
         }
-
-//        button.setOnTouchListener((v, event) -> {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_UP:
-//                        Log.v(TAG, "Going to position " + Integer.toString(position));
-//                        setPosition(position, true);
-//                        break;
-//
-//                    case MotionEvent.ACTION_DOWN:
-////                        dragAnchorPoint = event.getX() - button.getLeft();
-//                        dragAnchorPoint = event.getX();
-//                        Log.v(TAG, String.format("down: %f %d = %f", event.getX(), button.getLeft(), dragAnchorPoint));
-//                        break;
-//
-//                    case MotionEvent.ACTION_MOVE:
-//                        // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
-//                        // TODO Move invalidate into the moveSelectedButton function
-//
-//                        // Only can drag when starting on the selected button
-//                        if (this.position != position) {
-//                            return false;
-//                        }
-//
-//                        float newPosition = button.getLeft() + (event.getX() - dragAnchorPoint);
-//                        float finalPosition = 0.0f;
-//
-//                        for (int i = 0; i < buttons.size(); ++i) {
-//                            final SegmentedButton button_ = buttons.get(i);
-//
-//                            if (newPosition < button_.getRight()) {
-//                                finalPosition = i + (newPosition - button_.getLeft()) / button_.getWidth();
-//                                break;
-//                            }
-//                        }
-//
-//                        Log.v(TAG, String.format("move: %f %f %f %f", event.getX(), dragAnchorPoint, newPosition,
-//                                finalPosition));
-//                        moveSelectedButton(finalPosition);
-//                        invalidate();
-//
-//                        return true;
-//                }
-//
-//                // TODO Return false so the normal button click is handled and state is changed for drawable
-//                return false;
-//            });
 
         return super.dispatchTouchEvent(ev);
     }
@@ -1088,88 +987,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //            setPosition(position, false);
 //        }
 //        super.onRestoreInstanceState(state);
-//    }
-//
-//    private void toggle(int position, int duration, boolean isToggledByTouch) {
-//        if (!draggable && toggledPosition == position) {
-//            return;
-//        }
-//
-//        toggledPosition = position;
-//
-//        ValueAnimator animator = ValueAnimator.ofFloat(toggledPositionOffset, position);
-//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                float animatedValue = toggledPositionOffset = (float) animation.getAnimatedValue();
-//
-//                int position = (int) animatedValue;
-//                float positionOffset = animatedValue - position;
-//
-//                animateViews(position, positionOffset);
-//
-//                invalidate();
-//            }
-//        });
-//        animator.setInterpolator(interpolatorSelector);
-//        animator.setDuration(duration);
-//        animator.start();
-//
-//        if (null != onClickedButtonListener && isToggledByTouch) {
-//            onClickedButtonListener.onClickedButton(position);
-//        }
-//
-//        if (null != onPositionChangedListener) {
-//            onPositionChangedListener.onPositionChanged(position);
-//        }
-//
-//        this.position = position;
-//    }
-//
-//    private void animateViews(int position, float positionOffset) {
-//        float realPosition = position + positionOffset;
-//        float lastRealPosition = lastPosition + lastPositionOffset;
-//
-//        if (realPosition == lastRealPosition) {
-//            return;
-//        }
-//
-//        int nextPosition = position + 1;
-//        if (positionOffset == 0.0f) {
-//            if (lastRealPosition <= realPosition) {
-//                nextPosition = position - 1;
-//            }
-//        }
-//
-//        if (lastPosition > position) {
-//            if (lastPositionOffset > 0f) {
-//                toNextPosition(nextPosition + 1, 1);
-//            }
-//        }
-//
-//        if (lastPosition < position) {
-//            if (lastPositionOffset < 1.0f) {
-//                toPosition(position - 1, 0);
-//            }
-//        }
-//
-//        toNextPosition(nextPosition, 1.0f - positionOffset);
-//        toPosition(position, 1.0f - positionOffset);
-//
-//        lastPosition = position;
-//        lastPositionOffset = positionOffset;
-//    }
-//
-//    private void toPosition(int position, float clip) {
-//        if (position >= 0 && position < numberOfButtons) {
-//            buttons.get(position).clipToRight(clip);
-//        }
-//    }
-//
-//    private void toNextPosition(int position, float clip) {
-//        if (position >= 0 && position < numberOfButtons) {
-//            buttons.get(position).clipToLeft(clip);
-//        }
 //    }
 
     // endregion
