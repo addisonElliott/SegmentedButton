@@ -47,7 +47,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     // region Variables & Constants
     private static final String TAG = "SegmentedButtonGroup";
 
-    // Animation interpolator styles for animating button movement
+    // Animation interpolator styles for animating changing the selected button
     public final static int ANIM_INTERPOLATOR_NONE = -1;
     public final static int ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN = 0;
     public final static int ANIM_INTERPOLATOR_BOUNCE = 1;
@@ -62,9 +62,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     public final static int ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN = 10;
     public final static int ANIM_INTERPOLATOR_OVERSHOOT = 11;
 
-    // TODO Is this a vlaid number?
-    private final static float DRAG_ANCHOR_NONE = Float.NaN;
-
     // Interface defined for linting purposes to ensure that an animation interpolator value (integer type) is one
     // of the valid values
     @Retention(RetentionPolicy.SOURCE)
@@ -76,15 +73,17 @@ public class SegmentedButtonGroup extends LinearLayout {
     public @interface AnimationInterpolator {}
 
     // This ViewGroup consists of a FrameLayout as it's child which contains three items:
-    // 1. Button linear layout that contains the SegmentedButtons
-    // 2. Divider linear layout that contains the dividers between buttons
-    // 3. Border view that has the border for the group that is drawn over everything else
+    //     1. Button LinearLayout that contains the SegmentedButtons
+    //     2. Divider LinearLayout that contains the dividers between buttons
+    //     3. Border view that has the border for the group that is drawn over everything else
     private LinearLayout buttonLayout;
 
-    // Purpose of divider LinearLayout is to ensure the button dividers are placed in between the buttons and that no
-    // extra space is allocated for the divider. If dividers were placed on the buttonLayout, then space would be
-    // allocated for the dividers and the biggest problem is that the background ends up being gray if there is
-    // divider padding set.
+    // Purpose of the divider LinearLayout is to ensure the button dividers are placed in between the buttons and
+    // that no extra space is allocated for the divider. If dividers were placed on the buttonLayout instead, then space
+    // would be allocated for the dividers and the biggest problem is that the background ends up being gray if there is
+    // a divider padding set.
+    // This becomes difficult to solve since each button can have its individual background, much easier to just put
+    // the dividers in between the buttons and allocate no space
     private LinearLayout dividerLayout;
 
     // View for placing border on top of the buttons
@@ -104,12 +103,14 @@ public class SegmentedButtonGroup extends LinearLayout {
     // This value will be NaN when dragging is disabled
     private float dragOffsetX;
 
-    // TODO Do I need this
-    private ArrayList<BackgroundView> ripples = new ArrayList<>();
-
     // Position of the currently selected button, zero-indexed (default value is 0)
     // When animating, the position will be the previous value until after animation is finished
     private int position;
+
+    // Drawable for the background, this will be a ColorDrawable in case a solid color is given
+    private Drawable backgroundDrawable;
+    // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
+    private Drawable selectedBackgroundDrawable;
 
     // Radius for rounding edges of the button group, in pixels (default value is 0)
     private int radius;
@@ -120,20 +121,24 @@ public class SegmentedButtonGroup extends LinearLayout {
     private int borderColor;
     private int borderDashWidth, borderDashGap;
 
-    private Drawable backgroundDrawable, selectedBackgroundDrawable;
-
     // Animation interpolator for animating button movement
-    // Android has some standard interpolator, e.g. BounceInterpolator, but also easy to create own interpolator
+    // Android has some standard interpolator, e.g. BounceInterpolator, but also easy to create custom interpolator
     private Interpolator selectionAnimationInterpolator;
+    // Duration in milliseconds for animating changing the selected button (default value is 500ms)
+    private int selectionAnimationDuration;
 
     // TODO Explain these
     ValueAnimator buttonAnimator;
-    private int lastPosition, lastEndPosition;
-    // Note this is different from the position field because that is set to basically what it WANTS to be
-    // This is the actual position of the selector
+    // Exact position of the currently selected button which includes its location during animation
+    // The range is from 0.0f to the number of buttons - 1. (i.e. 0.0f -> 2.0f for 3 buttons)
+    // A value of 2.25 would mean the left side of the selected button is 25% of the 3rd button.
+    //
+    // One particular use for saving this variable is in case the user selects a different button mid-animation, it
+    // allows the animation to go from the current position to the newly selected position
     private float currentPosition;
-
-    private int selectionAnimationDuration;
+    // Value that contains the last location of the left side of the selected button used for animating
+    // For example, if the currentPosition was 2.25, then the lastPosition would be set to 2
+    private int lastPosition;
 
     private Drawable dividerBackgroundDrawable;
     private int dividerSize;
@@ -143,6 +148,9 @@ public class SegmentedButtonGroup extends LinearLayout {
     // TODO UNUSED VARIABLES, FIX UP LATER
     private int selectorColor, animateSelector, animateSelectorDuration, dividerColor, rippleColor;
     private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
+
+    // TODO Do I need this
+    private ArrayList<BackgroundView> ripples = new ArrayList<>();
 
     // TODO Add these
 //    private OnPositionChangedListener onPositionChangedListener;
@@ -204,7 +212,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         addView(container);
 
         buttonLayout = new LinearLayout(getContext());
-        buttonLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        buttonLayout
+                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(buttonLayout);
 
@@ -237,7 +246,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // TODO Need to find way to have dividers shown on top of the buttons
         dividerLayout.setDividerPadding(25);
-//        dividerLayout.setBackgroundColor(Color.YELLOW);
 
         GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.RED,
                 Color.RED});
@@ -248,7 +256,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerLayout.setDividerDrawable(drawable);
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
 
-//        initInterpolations();
 //        setDividerAttrs();
     }
 
@@ -558,13 +565,14 @@ public class SegmentedButtonGroup extends LinearLayout {
             buttons.get(lastPosition).clipRight(1.0f);
         }
 
+        final int lastEndPosition = lastPosition + 1;
+
         if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
                 && lastEndPosition < buttons.size()) {
             buttons.get(lastEndPosition).clipRight(1.0f);
         }
 
         lastPosition = currentButtonPosition;
-        lastEndPosition = currentEndButtonPosition;
     }
 
     private void updatePositions(final int position) {
