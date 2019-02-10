@@ -128,9 +128,6 @@ public class SegmentedButton extends View {
     private int rippleColor;
     private boolean hasRipple;
 
-    private int buttonWidth;
-    private float buttonWeight;
-
     // endregion
 
     // region Constructor
@@ -195,27 +192,6 @@ public class SegmentedButton extends View {
         super.drawableStateChanged();
 
         rippleDrawable.setState(getDrawableState());
-
-        ArrayList<String> x = new ArrayList<>();
-        for (int y : getDrawableState()) {
-            if (y == android.R.attr.state_pressed) {
-                x.add("pressed");
-            } else if (y == android.R.attr.state_enabled) {
-                x.add("enabled");
-            } else if (y == android.R.attr.state_enabled) {
-                x.add("enabled");
-            } else if (y == android.R.attr.state_hovered) {
-                x.add("hover");
-            } else if (y == android.R.attr.state_active) {
-                x.add("active");
-            } else if (y == android.R.attr.state_focused) {
-                x.add("focused");
-            } else {
-                x.add("unknown" + Integer.toString(y));
-            }
-        }
-
-        Log.v(TAG, "drawableStateChanged " + String.join(",", x));
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -759,14 +735,6 @@ public class SegmentedButton extends View {
     // TODO Create getters and setters, test them though!
 
     // TODO Go through and add docstrings to each function
-
-    float getWeight() {
-        return buttonWeight;
-    }
-
-    int getButtonWidth() {
-        return buttonWidth;
-    }
 
 //    /**
 //     * Typeface.NORMAL: 0
