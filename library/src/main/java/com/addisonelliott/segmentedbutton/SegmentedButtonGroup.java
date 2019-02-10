@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -410,6 +409,13 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @Override
     public boolean dispatchTouchEvent(final MotionEvent ev) {
+        // TODO Discuss in docstring
+        // Note: dispatchTouchEvent is used here rather than onTouchEvent to allow for touch events to be handled by
+        // the SegmentedButtonGroup AND SegmentedButton (for ripple). This cannot be done with onTouchEvent because
+        // one View must intercept and consume the events.
+        //
+        // This method handles the touch event and then passes to the SegmentedButton to consume the touch event
+
         // Do not handle touch events if the view is disabled or not clickable
         // Oddly enough, the enabled and clickable states don't do anything unless specifically programmed into the
         // custom views
@@ -450,56 +456,19 @@ public class SegmentedButtonGroup extends LinearLayout {
                     break;
                 }
 
-                float newPosition = ev.getX() - dragOffsetX;
-                float finalPosition = 0.0f;
+                // Get X coordinate of where the selected button should be by taking user's X location and subtract
+                // the offset
+                float xCoord = ev.getX() - dragOffsetX;
 
-                for (int i = 0; i < buttons.size(); ++i) {
-                    final SegmentedButton button_ = buttons.get(i);
+                // Convert X coordinate to a position with the appropriate offset as well
+                final float newPosition = getButtonPositionFromXF(xCoord);
 
-                    if (newPosition < button_.getRight()) {
-                        finalPosition = i + (newPosition - button_.getLeft()) / button_.getWidth();
-                        break;
-                    }
-                }
-
-                Log.v(TAG, String.format("move: %f %f %f %f", ev.getX(), dragOffsetX, newPosition, finalPosition));
-                moveSelectedButton(finalPosition);
+                // Update the selected button to the new position
+                moveSelectedButton(newPosition);
                 break;
         }
 
         return super.dispatchTouchEvent(ev);
-    }
-
-    // TODO Better name?
-    public void setPosition(final int position, boolean animate) {
-        // Do nothing and return if our current position is already the position given
-        if (position == this.position && (buttonAnimator != null && !buttonAnimator.isRunning())) {
-            return;
-        }
-
-        if (!animate || selectionAnimationInterpolator == null) {
-            updatePositions(position);
-            return;
-        }
-
-        // Animate value from current position to the new position
-        // Fraction positions such as 1.25 means we are 75% in button 1 and 25% in button 2.
-        buttonAnimator = ValueAnimator.ofFloat(currentPosition, position);
-
-        // Buttons are animated from this listener
-        buttonAnimator.addUpdateListener(animation -> {
-            moveSelectedButton((float) animation.getAnimatedValue());
-        });
-
-        buttonAnimator.setDuration(selectionAnimationDuration);
-        buttonAnimator.setInterpolator(selectionAnimationInterpolator);
-        buttonAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(final Animator animation, final boolean isReverse) {
-                updatePositions(position);
-            }
-        });
-        buttonAnimator.start();
     }
 
     private void moveSelectedButton(float position) {
@@ -708,6 +677,48 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerLayout.setDividerDrawable(drawable);
         dividerLayout.setDividerPadding(padding);
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+    }
+
+    public void setPosition(final int position, boolean animate) {
+        // Return and do nothing in two cases
+        // First, if the position is out of bounds.
+        // Second, if the desired position is equal to the current position do nothing. But, only do this under two
+        // additional requirements. If the selected button is not being animated, since the position is not updated
+        // until AFTER animation, it basically means the user cannot select the old button until the animation is done.
+        // Also if the user is not dragging the button. If the user lets go from dragging and the button is still on
+        // the same position but slightly offset, then we want to snap back to normal.
+        if (position < 0 || position >= buttons.size() || (position == this.position && (buttonAnimator != null
+                && !buttonAnimator.isRunning()) && Float.isNaN(dragOffsetX))) {
+            return;
+        }
+
+        if (!animate || selectionAnimationInterpolator == null) {
+            updatePositions(position);
+            return;
+        }
+
+        // Animate value from current position to the new position
+        // Fraction positions such as 1.25 means we are 75% in button 1 and 25% in button 2.
+        // The position indicates the position of the left side of the selected button
+        buttonAnimator = ValueAnimator.ofFloat(currentPosition, position);
+
+        // For each update to the animation value, move the button
+        buttonAnimator.addUpdateListener(animation -> moveSelectedButton((float) animation.getAnimatedValue()));
+
+        // Set the parameters for the button animation
+        buttonAnimator.setDuration(selectionAnimationDuration);
+        buttonAnimator.setInterpolator(selectionAnimationInterpolator);
+        buttonAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(final Animator animation, final boolean isReverse) {
+                // Update the position of the button at the end of the animation
+                // Also resets all buttons to their appropriate state in case the animation went wrong in any way
+                updatePositions(position);
+            }
+        });
+
+        // Start the animation
+        buttonAnimator.start();
     }
 
     // endregion
