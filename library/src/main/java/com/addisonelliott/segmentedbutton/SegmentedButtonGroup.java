@@ -34,7 +34,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -124,12 +123,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     private boolean hasRippleColor;
     private int rippleColor;
 
-    // TODO Explain these
-    private Drawable dividerBackgroundDrawable;
-    private int dividerWidth;
-    private int dividerPadding;
-    private int dividerRadius;
-
     // Animation interpolator for animating button movement
     // Android has some standard interpolator, e.g. BounceInterpolator, but also easy to create custom interpolator
     private Interpolator selectionAnimationInterpolator;
@@ -148,10 +141,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Value that contains the last location of the left side of the selected button used for animating
     // For example, if the currentPosition was 2.25, then the lastPosition would be set to 2
     private int lastPosition;
-
-    // TODO UNUSED VARIABLES, FIX UP LATER
-    private int selectorColor, animateSelector, animateSelectorDuration, dividerColor;
-    private boolean hasDivider;
 
     // TODO Add these
 //    private OnPositionChangedListener onPositionChangedListener;
@@ -206,8 +195,10 @@ public class SegmentedButtonGroup extends LinearLayout {
         // the SegmentedButtonGroup with layout weight parameters. If SegmentedButtonGroup subclassed FrameLayout,
         // the layout weight would be ignored even though the SegmentedButtons are passed to buttonLayout.
         FrameLayout container = new FrameLayout(getContext());
-        container.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        addView(container);
+        // Call super addView so that we do not trigger an Exception since only SegmentedButton instances can be
+        // added to this view
+        super.addView(container, -1, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
 
         // Layout that contains all SegmentedButton's
         buttonLayout = new LinearLayout(getContext());
@@ -285,6 +276,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         // while keeping the clickable value if specified in the layouot XML
         setClickable(ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true));
 
+        // TODO Handle me
         ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
         hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
         rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
@@ -304,18 +296,7 @@ public class SegmentedButtonGroup extends LinearLayout {
                 throw new IllegalArgumentException("Invalid type for SegmentedButtonGroup divider in layout XML "
                         + "resource. Must be a color or drawable");
             }
-        } else {
-            setDivider(null, 0, 0, 0);
         }
-
-//        hasDivider = ta.hasValue(R.styleable.SegmentedButtonGroup_dividerSize);
-//        dividerBackgroundDrawable = ta
-//                .getDrawable(R.styleable.SegmentedButtonGroup_dividerBackgroundDrawable);
-//        dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
-//        dividerSize = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerSize, 0);
-//        dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
-
-//        dividerColor = ta.getColor(R.styleable.SegmentedButtonGroup_dividerColor, Color.WHITE);
 
         int selectionAnimationInterpolator = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationInterpolator,
                 ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN);
@@ -335,9 +316,14 @@ public class SegmentedButtonGroup extends LinearLayout {
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (child instanceof SegmentedButton) {
             SegmentedButton button = (SegmentedButton) child;
+
+            // New position of the button will be the size of the buttons before the button is added
+            // For example, if there are 5 buttons, then the indices are 0, 1, 2, 3, 4, so the next index is 5!
             final int position = buttons.size();
 
             // Give radius, default background and default selected background to the button
+            // The default backgrounds will only update the background of the button if there is not a background set
+            // on that button explicitly
             button.setBackgroundRadius(radius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
@@ -352,7 +338,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
                 oldButton.setIsRightButton(false);
 
-                // Update the background clip path for that button
+                // Update the background clip path for that button (removes rounding edges since it's not the
+                // right-most)
                 oldButton.setupBackgroundClipPath();
             }
 
@@ -371,18 +358,12 @@ public class SegmentedButtonGroup extends LinearLayout {
                 updatePositions(position);
             }
 
-//            if (!hasDivider) {
-//                return;
-//            }
-//
             BackgroundView dividerView = new BackgroundView(getContext());
             dividerLayout.addView(dividerView, params);
             // TODO On update setLayoutParams
-            // On update weightsum, well that won't happen, well sure it could I guess
-
         } else {
-            // TODO Throw exception here, safe to require SegmentedButton
-            super.addView(child, index, params);
+            throw new IllegalArgumentException("Invalid child view for SegmentedButtonGroup. Only SegmentedButton's "
+                    + "are valid children of the group");
         }
     }
 
@@ -392,16 +373,39 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     int getButtonPositionFromX(float x) {
         // TODO Comment me
+
+        // Loop through each button
         for (int i = 0; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
 
+            // If x value is less than the right-hand side of the button, this is the selected button
+            // Note: No need to check the left side of button because we assume each button is directly connected
+            // from left to right
             if (x <= button.getRight()) {
                 return i;
             }
         }
 
-        // TODO Throw an exception here maybe
-        return -1;
+        // No reason it should ever reach this part
+        throw new IllegalStateException(String.format("X position does not have a button in getButtonPositionFromX "
+                + "(X = %f)", x));
+    }
+
+    float getButtonPositionFromXF(float x) {
+        // TODO Comment me
+
+        // Loop through each button
+        for (int i = 0; i < buttons.size(); ++i) {
+            final SegmentedButton button = buttons.get(i);
+
+            if (x < button.getRight()) {
+                return i + (x - button.getLeft()) / button.getWidth();
+            }
+        }
+
+        // No reason it should ever reach this part
+        throw new IllegalStateException(String.format("X position does not have a button in getButtonPositionFromXF "
+                + "(X = %f)", x));
     }
 
     @Override
@@ -413,27 +417,36 @@ public class SegmentedButtonGroup extends LinearLayout {
             return false;
         }
 
-        int position = getButtonPositionFromX(ev.getX());
+        // Selected button position
+        final int position = getButtonPositionFromX(ev.getX());
 
         switch (ev.getAction()) {
             case MotionEvent.ACTION_UP:
+                // Go to the selected button on touch up and animate too
                 setPosition(position, true);
                 break;
 
             case MotionEvent.ACTION_DOWN:
+                // If buttons cannot be dragged or if the user is NOT pressing the currently selected button, then
+                // just set the drag offset to be NaN meaning drag is not activated
                 if (!draggable || this.position != position) {
                     dragOffsetX = Float.NaN;
                     break;
                 }
 
+                // Set drag offset in case user moves finger to initiate drag
+                // Drag offset is the difference between finger current X location and the location of the selected
+                // button
+                //
+                // Used in touch move for calculating the location of the button. Think of it as a delta. If the user
+                // moves their finger 50px, then the button should move 50px. Thus, this delta will be subtracted
+                // from the user's X value to get the location of where the button position should be.
                 dragOffsetX = ev.getX() - buttons.get(position).getLeft();
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
-                // TODO Move invalidate into the moveSelectedButton function
-                // Only can drag when starting on the selected button
-                if (dragOffsetX == Float.NaN) {
+                // Only drag if the drag offset is not NaN
+                if (Float.isNaN(dragOffsetX)) {
                     break;
                 }
 
@@ -451,7 +464,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
                 Log.v(TAG, String.format("move: %f %f %f %f", ev.getX(), dragOffsetX, newPosition, finalPosition));
                 moveSelectedButton(finalPosition);
-                invalidate();
                 break;
         }
 
@@ -543,6 +555,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
 
         lastPosition = currentButtonPosition;
+
+        // Notify to redraw buttons
+        invalidate();
     }
 
     private void updatePositions(final int position) {
@@ -655,6 +670,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
+        // TODO Explain these
+
         // Drawable of null indicates that we want to hide dividers
         if (drawable == null) {
             dividerLayout.setDividerDrawable(null);
@@ -679,6 +696,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     public void setDivider(@ColorInt int color, int width, int radius, int padding) {
+        // TODO Explain these
+
         GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
                 new int[]{color, color});
 

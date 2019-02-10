@@ -38,6 +38,7 @@
         app:dividerRadius="10dp"
         app:dividerWidth="4dp"
         app:position="1"
+        app:draggable="true"
         app:radius="10dp"
         app:ripple="true"
         app:rippleColor="@color/blue_300"
