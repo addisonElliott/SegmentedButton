@@ -57,4 +57,5 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation "androidx.appcompat:appcompat:$androidXLibraryVersion"
+    implementation 'com.github.addisonElliott:RippleDrawable:2.0.2'
 }

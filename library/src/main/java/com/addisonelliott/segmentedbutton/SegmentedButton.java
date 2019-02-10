@@ -1,6 +1,7 @@
 package com.addisonelliott.segmentedbutton;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -15,26 +16,20 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Drawable.Callback;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.SystemClock;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.util.StateSet;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
-import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -42,7 +37,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
 
 @SuppressLint("RtlHardcoded")
 public class SegmentedButton extends View {
@@ -87,7 +81,11 @@ public class SegmentedButton extends View {
     private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
     // TODO Testing ripple
-    private RippleDrawable rippleDrawable;
+    // TODO Unable to select the middle ghost, not sure why?
+    // TODO Fix issues on API 16
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private RippleDrawable rippleDrawableLollipop;
+    private codetail.graphics.drawables.RippleDrawable rippleDrawable;
 
     @IntDef(flag = true, value = {
             Gravity.LEFT,
@@ -174,9 +172,24 @@ public class SegmentedButton extends View {
         ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape());
         shapeDrawable.getPaint().setColor(Color.BLUE);
 
-        rippleDrawable = new RippleDrawable(ColorStateList.valueOf(Color.RED), null, null);
-        rippleDrawable.setVisible(true, false);
-        rippleDrawable.setCallback(this);
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            rippleDrawableLollipop = new RippleDrawable(ColorStateList.valueOf(Color.RED), null, null);
+
+            rippleDrawableLollipop.setVisible(true, false);
+            rippleDrawableLollipop.setCallback(this);
+        } else {
+            rippleDrawable = new codetail.graphics.drawables.RippleDrawable(ColorStateList.valueOf(Color.RED), null,
+                    null);
+            rippleDrawable.setCallback(this);
+//            rippleDrawable = new StateListDrawable();
+//            rippleDrawable.addState(new int[] {android.R.attr.state_pressed}, new ColorDrawable(Color.MAGENTA));
+////            rippleDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(Color.BLUE));
+//
+//            rippleDrawable.setVisible(true, false);
+//            rippleDrawable.setCallback(this);
+        }
+
+        // TODO Do I need this?
         this.setClickable(true);
     }
 
@@ -184,14 +197,28 @@ public class SegmentedButton extends View {
     public void drawableHotspotChanged(final float x, final float y) {
         super.drawableHotspotChanged(x, y);
 
-        rippleDrawable.setHotspot(x, y);
+        if (rippleDrawableLollipop != null && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            rippleDrawableLollipop.setHotspot(x, y);
+        }
+
+        if (rippleDrawable != null) {
+            rippleDrawable.setHotspot(x, y);
+        }
     }
 
     @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
 
-        rippleDrawable.setState(getDrawableState());
+        // TODO Organize these functions
+
+        if (rippleDrawableLollipop != null && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            rippleDrawableLollipop.setState(getDrawableState());
+        }
+
+        if (rippleDrawable != null) {
+            rippleDrawable.setState(getDrawableState());
+        }
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -377,10 +404,6 @@ public class SegmentedButton extends View {
         //      - MeasureSpec.UNSPECIFIED: Set height to desired size
         height = resolveSize(desiredHeight, heightMeasureSpec);
 
-        Log.d(TAG, String.format("onMeasure called with mode (%d, %d) and size (%d, %d). Desired size (%d, %d) "
-                        + "Resulting size (%d, %d).", widthMode, heightMode, widthSize, heightSize, desiredWidth,
-                desiredHeight, width, height));
-
         // Required to be called to notify the View of the width & height decided
         setMeasuredDimension(width, height);
     }
@@ -501,12 +524,18 @@ public class SegmentedButton extends View {
             selectedBackgroundDrawable.setBounds(0, 0, width, height);
         }
 
-        rippleDrawable.setBounds(0, 0, width, height);
+        if (rippleDrawableLollipop != null) {
+            rippleDrawableLollipop.setBounds(0, 0, width, height);
+        }
+
+        if (rippleDrawable != null) {
+            rippleDrawable.setBounds(0, 0, width, height);
+        }
     }
 
     @Override
     protected boolean verifyDrawable(@NonNull final Drawable who) {
-        return (who == rippleDrawable) || super.verifyDrawable(who);
+        return who == rippleDrawableLollipop || who == rippleDrawable || super.verifyDrawable(who);
     }
 
     // endregion
@@ -584,7 +613,13 @@ public class SegmentedButton extends View {
 
         canvas.restore();
 
-        rippleDrawable.draw(canvas);
+        if (rippleDrawableLollipop != null) {
+            rippleDrawableLollipop.draw(canvas);
+        }
+
+        if (rippleDrawable != null) {
+            rippleDrawable.draw(canvas);
+        }
     }
 
     /**
