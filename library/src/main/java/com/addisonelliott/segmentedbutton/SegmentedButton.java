@@ -77,8 +77,6 @@ public class SegmentedButton extends View {
     // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
     private Drawable selectedBackgroundDrawable;
 
-    // Whether or not ripple is enabled for animating when this button is pressed (default is true)
-    private boolean ripple;
     // Color of the ripple to display over the button (default value is gray)
     private int rippleColor;
 
@@ -122,7 +120,7 @@ public class SegmentedButton extends View {
     private boolean hasSelectedTextColor;
     // Text color and selected text color
     private int textColor, selectedTextColor;
-    // Font size in pixels of the text
+    // Font size of the text in pixels
     private float textSize;
     // Typeface (font) to use for displaying the text
     private Typeface textTypeface;
@@ -169,12 +167,6 @@ public class SegmentedButton extends View {
 
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
-
-        // Set ripple to default to true, did not make this an attribute because the ripple should be enabled or
-        // disabled for the entire segmented button group. The ripple color is adjustable per button though which
-        // could prove useful
-        // TODO Remove ripple if not necessary
-        ripple = true;
 
         // Required in order for this button to 'consume' the ripple touch event
         setClickable(true);
@@ -780,9 +772,8 @@ public class SegmentedButton extends View {
     }
 
     void setRipple(boolean enabled) {
-        // TODO Note that this is package-private because I dont want people enabling or disbaling the ripple effect
+        // TODO Note that this is package-private because I dont want people enabling or disabling the ripple effect
         // on a button by button basis
-        ripple = enabled;
 
         if (enabled) {
             // Recreate the ripple drawable and setup with the ripple color

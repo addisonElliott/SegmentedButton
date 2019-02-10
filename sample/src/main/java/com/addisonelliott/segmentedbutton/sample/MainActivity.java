@@ -11,12 +11,14 @@ import android.view.View;
 import android.widget.Button;
 
 import androidx.core.content.res.ResourcesCompat;
+import butterknife.BindView;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
 
 public class MainActivity extends AppCompatActivity {
 
+    @BindView(R.id.buttonGroup_lotr) SegmentedButtonGroup lotrButtonGroup;
 //    private Button button;
 //    private SegmentedButtonGroup group;
 

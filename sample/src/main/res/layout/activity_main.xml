@@ -83,6 +83,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_margin="8dp"
         android:clipChildren="false"
+        android:id="@+id/buttonGroup_lotr"
         android:elevation="8dp"
         app:borderColor="@color/orange_700"
         app:selectionAnimationDuration="5000"
@@ -475,6 +476,8 @@
         android:elevation="3dp"
         app:background="@color/white"
         app:position="0"
+        app:ripple="true"
+        app:rippleColor="@color/green_800"
         app:radius="20dp"
         app:selectedBackground="@color/blue_600">
 

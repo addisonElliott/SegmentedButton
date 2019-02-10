@@ -6,11 +6,13 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -119,8 +121,11 @@ public class SegmentedButtonGroup extends LinearLayout {
     private float dragOffsetX;
 
     // TODO Explain these
+    // Whether or not ripple is enabled for animating when any button is pressed (default is true)
     private boolean ripple;
+    // Whether or not a ripple color was specified
     private boolean hasRippleColor;
+    // Color of the ripple to display over the buttons (default value is gray)
     private int rippleColor;
 
     // Animation interpolator for animating button movement
@@ -278,9 +283,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         // while keeping the clickable value if specified in the layouot XML
         setClickable(ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true));
 
-        // TODO Handle me
         ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, true);
-        hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
+        hasRippleColor = ta.hasValue(R.styleable.SegmentedButton_rippleColor);
         rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
 
         final int dividerWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerWidth, 1);
@@ -290,6 +294,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         final TypedValue value = new TypedValue();
         if (ta.getValue(R.styleable.SegmentedButtonGroup_divider, value)) {
             if (value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_STRING) {
+                // TODO Issue here with divider when preloading...
                 setDivider(ContextCompat.getDrawable(context, value.resourceId), dividerWidth, dividerRadius,
                         dividerPadding);
             } else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
@@ -329,6 +334,14 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setBackgroundRadius(radius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
+
+            if (ripple && hasRippleColor) {
+                // Set button ripple color only if a value was given globally
+                button.setRipple(rippleColor);
+            } else if (!ripple) {
+                // Disable the ripple on the button
+                button.setRipple(false);
+            }
 
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
@@ -755,6 +768,24 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
         this.onPositionChangedListener = onPositionChangedListener;
+    }
+
+    void setRipple(boolean enabled) {
+        ripple = enabled;
+
+        for (SegmentedButton button : buttons) {
+            button.setRipple(enabled);
+        }
+    }
+
+    public void setRipple(@ColorInt int color) {
+        if (!ripple) {
+            return;
+        }
+
+        for (SegmentedButton button : buttons) {
+            button.setRipple(color);
+        }
     }
 
     // endregion
