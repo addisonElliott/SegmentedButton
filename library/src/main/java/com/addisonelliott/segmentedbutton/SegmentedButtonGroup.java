@@ -819,24 +819,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //                dividerBackgroundDrawable);
 //    }
 
-//    private void setRipple(View v, boolean isClickable) {
-//        if (isClickable) {
-//            if (hasRippleColor) {
-//                RippleHelper.setRipple(v, rippleColor, radius);
-//            } else if (ripple) {
-//                RippleHelper.setSelectableItemBackground(getContext(), v);
-//            } else {
-//                for (View button : buttons) {
-//                    if (button instanceof SegmentedButton && ((SegmentedButton) button).hasRipple()) {
-//                        RippleHelper.setRipple(v, ((SegmentedButton) button).getRippleColor(), radius);
-//                    }
-//                }
-//            }
-//        } else {
-//            BackgroundHelper.setBackground(v, null);
-//        }
-//    }
-//
 //    /**
 //     * @param onPositionChangedListener set your instance that you have created to listen any position change
 //     */
