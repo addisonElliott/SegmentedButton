@@ -24,6 +24,11 @@
     <!--android:layout_marginRight="10dp"-->
     <!--android:text="Position: 1"/>-->
 
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:id="@+id/segmentedButtonGroup"
         android:layout_width="match_parent"

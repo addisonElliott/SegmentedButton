@@ -4,6 +4,10 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,13 +16,19 @@ import android.widget.Button;
 
 import androidx.core.content.res.ResourcesCompat;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemSelectedListener {
 
-    @BindView(R.id.buttonGroup_lotr) SegmentedButtonGroup lotrButtonGroup;
+    private static final String TAG = "SegmentedButtonSample";
+
+    @BindView(R.id.buttonGroup_lotr)
+    SegmentedButtonGroup lotrButtonGroup;
+    @BindView(R.id.spinner)
+    Spinner spinner;
 //    private Button button;
 //    private SegmentedButtonGroup group;
 
@@ -26,6 +36,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Initialize all variables annotated with @BindView and other variants
+        ButterKnife.bind(this);
+
+        String[] items = {
+                "",
+                "Change ripple color to red",
+                "Change ripple color to green",
+                "Change ripple color to blue",
+                "Query ripple color"
+        };
+        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
 
 //        group = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
 //        button = (Button) findViewById(R.id.button);
@@ -62,6 +87,42 @@ public class MainActivity extends AppCompatActivity {
 //        handler.postDelayed(runnable, 5000);
 //
 //        setupDynamicDrawables();
+    }
+
+    @Override
+    public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
+        switch (position) {
+            // Change ripple color to red
+            case 1:
+                lotrButtonGroup.setRipple(Color.RED);
+                break;
+
+            // Change ripple color to green
+            case 2:
+                lotrButtonGroup.setRipple(Color.GREEN);
+                break;
+
+            // Change ripple color to blue
+            case 3:
+                lotrButtonGroup.setRipple(Color.BLUE);
+                break;
+
+            // Query ripple color
+            case 4:
+                Log.v(TAG, "Ripple color is: " + Boolean.toString(lotrButtonGroup.getRippleEnabled()) + " " +
+                        Integer.toHexString(lotrButtonGroup.getRippleColor()));
+                break;
+
+            default:
+                break;
+        }
+
+        spinner.setSelection(0);
+    }
+
+    @Override
+    public void onNothingSelected(final AdapterView<?> parent) {
+
     }
 
 //    private void setupDynamicDrawables() {

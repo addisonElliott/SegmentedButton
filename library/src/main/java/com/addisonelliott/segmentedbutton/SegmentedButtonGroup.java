@@ -770,7 +770,15 @@ public class SegmentedButtonGroup extends LinearLayout {
         this.onPositionChangedListener = onPositionChangedListener;
     }
 
-    void setRipple(boolean enabled) {
+    public boolean getRippleEnabled() {
+        return ripple;
+    }
+
+    public int getRippleColor() {
+        return rippleColor;
+    }
+
+    void setRipple(final boolean enabled) {
         ripple = enabled;
 
         for (SegmentedButton button : buttons) {
@@ -778,11 +786,12 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
-    public void setRipple(@ColorInt int color) {
+    public void setRipple(final @ColorInt int color) {
         if (!ripple) {
             return;
         }
 
+        Log.v(TAG, "setRipple to color " + Integer.toHexString(color));
         for (SegmentedButton button : buttons) {
             button.setRipple(color);
         }
