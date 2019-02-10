@@ -36,7 +36,7 @@
         app:divider="@drawable/gradient_drawable_divider"
         app:dividerPadding="10dp"
         app:dividerRadius="10dp"
-        app:dividerSize="4dp"
+        app:dividerWidth="4dp"
         app:position="1"
         app:radius="10dp"
         app:ripple="true"
@@ -88,7 +88,7 @@
         app:borderWidth="2dp"
         app:divider="@color/orange_700"
         app:dividerPadding="10dp"
-        app:dividerSize="1dp"
+        app:dividerWidth="1dp"
         app:position="1"
         app:radius="30dp"
         app:rippleColor="@color/green_800"
@@ -149,7 +149,7 @@
     <!--app:sbg_dividerColor="@color/black"-->
     <!--app:sbg_dividerPadding="10dp"-->
     <!--app:sbg_dividerRadius="10dp"-->
-    <!--app:sbg_dividerSize="1dp"-->
+    <!--app:sbg_dividerWidth="1dp"-->
     <!--app:sbg_radius="2dp"-->
     <!--app:sbg_selectorColor="@color/black">-->
 
@@ -276,7 +276,7 @@
     <!--app:sbg_dividerColor="@color/white"-->
     <!--app:sbg_dividerPadding="10dp"-->
     <!--app:sbg_dividerRadius="10dp"-->
-    <!--app:sbg_dividerSize="12dp"-->
+    <!--app:sbg_dividerWidth="12dp"-->
     <!--app:sbg_position="0"-->
     <!--app:sbg_radius="2dp"-->
     <!--app:sbg_rippleColor="@color/red_200"-->

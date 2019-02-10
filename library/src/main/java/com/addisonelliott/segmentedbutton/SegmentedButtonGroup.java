@@ -93,27 +93,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Array containing the buttons
     private ArrayList<SegmentedButton> buttons;
 
-    // Whether or not the button can be dragged to a different position (default value is false)
-    private boolean draggable;
-    // When a user touches down on the currently selected button, this is set to be the difference between their
-    // current X location of tapping and the currently selected button's left X coordinate
-    // When user drags their finger across the button group, this value will be used to offset the current X location
-    // with how much the button should have moved
-    //
-    // This value will be NaN when dragging is disabled
-    private float dragOffsetX;
-
-    // Position of the currently selected button, zero-indexed (default value is 0)
-    // When animating, the position will be the previous value until after animation is finished
-    private int position;
-
     // Drawable for the background, this will be a ColorDrawable in case a solid color is given
     private Drawable backgroundDrawable;
     // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
     private Drawable selectedBackgroundDrawable;
-
-    // Radius for rounding edges of the button group, in pixels (default value is 0)
-    private int radius;
 
     // Drawable for the border (default value is null)
     private GradientDrawable borderDrawable;
@@ -125,6 +108,34 @@ public class SegmentedButtonGroup extends LinearLayout {
     // The border dash width is the width, in pixels, of the dash while the border dash gap is the width of the gap
     // between dashes, in pixels.
     private int borderDashWidth, borderDashGap;
+
+    // Radius for rounding edges of the button group, in pixels (default value is 0)
+    private int radius;
+
+    // Position of the currently selected button, zero-indexed (default value is 0)
+    // When animating, the position will be the previous value until after animation is finished
+    private int position;
+
+    // Whether or not the button can be dragged to a different position (default value is false)
+    private boolean draggable;
+    // When a user touches down on the currently selected button, this is set to be the difference between their
+    // current X location of tapping and the currently selected button's left X coordinate
+    // When user drags their finger across the button group, this value will be used to offset the current X location
+    // with how much the button should have moved
+    //
+    // This value will be NaN when dragging is disabled
+    private float dragOffsetX;
+
+    // TODO Explain these
+    private boolean ripple;
+    private boolean hasRippleColor;
+    private int rippleColor;
+
+    // TODO Explain these
+    private Drawable dividerBackgroundDrawable;
+    private int dividerWidth;
+    private int dividerPadding;
+    private int dividerRadius;
 
     // Animation interpolator for animating button movement
     // Android has some standard interpolator, e.g. BounceInterpolator, but also easy to create custom interpolator
@@ -145,18 +156,9 @@ public class SegmentedButtonGroup extends LinearLayout {
     // For example, if the currentPosition was 2.25, then the lastPosition would be set to 2
     private int lastPosition;
 
-    // TODO Explain these
-    private Drawable dividerBackgroundDrawable;
-    private int dividerSize;
-    private int dividerPadding;
-    private int dividerRadius;
-
     // TODO UNUSED VARIABLES, FIX UP LATER
-    private int selectorColor, animateSelector, animateSelectorDuration, dividerColor, rippleColor;
-    private boolean clickable, enabled, ripple, hasRippleColor, hasDivider;
-
-    // TODO Do I need this
-    private ArrayList<BackgroundView> ripples = new ArrayList<>();
+    private int selectorColor, animateSelector, animateSelectorDuration, dividerColor;
+    private boolean hasDivider;
 
     // TODO Add these
 //    private OnPositionChangedListener onPositionChangedListener;
@@ -224,6 +226,10 @@ public class SegmentedButtonGroup extends LinearLayout {
         buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(buttonLayout);
 
+        this.setAlpha(0.5f);
+        this.setClickable(false);
+        this.setEnabled(false);
+
         // Create layout that contains dividers for each button
         // This layout will essentially mirror the number of elements, size, weight of each element with the only
         // difference being that the elements will be transparent and that a divider will be placed between each one
@@ -274,8 +280,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
         // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
         // to the default
-        TypedArray ta = context.getTheme()
-                .obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
+        TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
         // Load background if available, this can be a drawable or a color
         // In the instance of a color, a ColorDrawable is created and used instead
@@ -329,15 +334,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         setSelectionAnimationInterpolator(selectionAnimationInterpolator);
         selectionAnimationDuration = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationDuration, 500);
 
-        enabled = ta.getBoolean(R.styleable.SegmentedButtonGroup_enabled, true);
         draggable = ta.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
-
-        // TODO Why is clickable needed and why is it in a try/catch?
-        try {
-            clickable = ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true);
-        } catch (Exception ex) {
-            Log.d(TAG, ex.toString());
-        }
 
         // Recycle the typed array, required once done using it
         ta.recycle();
@@ -423,6 +420,13 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @Override
     public boolean dispatchTouchEvent(final MotionEvent ev) {
+        // Do not handle touch events if the view is disabled or not clickable
+        // Oddly enough, the enabled and clickable states don't do anything unless specifically programmed into the
+        // custom views
+        if (!isEnabled() || !isClickable()) {
+            return false;
+        }
+
         int position = getButtonPositionFromX(ev.getX());
 
         switch (ev.getAction()) {

@@ -7,10 +7,10 @@
     </declare-styleable>
 
     <declare-styleable name="SegmentedButton">
-        <attr name="rippleColor" />
-
         <attr name="background" />
         <attr name="selectedBackground" />
+
+        <attr name="rippleColor" />
 
         <attr name="drawable" format="reference" />
         <attr name="drawablePadding" format="dimension" />
@@ -42,10 +42,6 @@
             <flag name="right" value="0x05" />
             <flag name="center" value="0x11" />
         </attr>
-
-        <attr name="android:layout_width" />
-        <attr name="android:layout_height" />
-        <attr name="android:layout_weight" />
     </declare-styleable>
 
     <declare-styleable name="SegmentedButtonGroup">
@@ -57,20 +53,17 @@
         <attr name="borderDashWidth" format="dimension" />
         <attr name="borderDashGap" format="dimension" />
 
-        <attr name="position" format="integer" />
         <attr name="radius" format="dimension" />
+        <attr name="position" format="integer" />
+        <attr name="draggable" format="boolean" />
 
         <attr name="ripple" format="boolean" />
         <attr name="rippleColor" />
 
         <attr name="divider" />
         <attr name="dividerRadius" format="dimension" />
-        <attr name="dividerSize" format="dimension" />
+        <attr name="dividerWidth" format="dimension" />
         <attr name="dividerPadding" format="dimension" />
-
-        <attr name="enabled" format="boolean" />
-        <attr name="android:clickable" />
-        <attr name="draggable" format="boolean" />
 
         <attr name="selectionAnimationDuration" format="integer" />
         <attr name="selectionAnimationInterpolator" format="enum">

@@ -280,10 +280,6 @@ public class SegmentedButton extends View {
             textTypeface = Typeface.create((Typeface) null, textStyle);
         }
 
-        buttonWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_width, 0);
-//        buttonHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_android_layout_height, 0);
-        buttonWeight = ta.getFloat(R.styleable.SegmentedButton_android_layout_weight, 0.0f);
-
         ta.recycle();
     }
 
