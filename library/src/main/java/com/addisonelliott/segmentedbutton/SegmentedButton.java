@@ -81,7 +81,6 @@ public class SegmentedButton extends View {
     private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
     // TODO Testing ripple
-    // TODO Unable to select the middle ghost, not sure why?
     // TODO Fix issues on API 16
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private RippleDrawable rippleDrawableLollipop;

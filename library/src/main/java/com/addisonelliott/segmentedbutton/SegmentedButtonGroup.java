@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -698,6 +699,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     public void setPosition(final int position, boolean animate) {
+        Log.v(TAG, String.format("setPosition %d %d", position, this.position));
+
         // Return and do nothing in two cases
         // First, if the position is out of bounds.
         // Second, if the desired position is equal to the current position do nothing. But, only do this under two
@@ -710,10 +713,14 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
+        Log.v(TAG, "setPosition passed");
+
         if (!animate || selectionAnimationInterpolator == null) {
             updatePositions(position);
             return;
         }
+
+        Log.v(TAG, "setPosition passed2");
 
         // Animate value from current position to the new position
         // Fraction positions such as 1.25 means we are 75% in button 1 and 25% in button 2.
@@ -729,10 +736,14 @@ public class SegmentedButtonGroup extends LinearLayout {
         buttonAnimator.setInterpolator(selectionAnimationInterpolator);
         buttonAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
-            public void onAnimationEnd(final Animator animation, final boolean isReverse) {
+            public void onAnimationEnd(final Animator animation) {
                 // Update the position of the button at the end of the animation
                 // Also resets all buttons to their appropriate state in case the animation went wrong in any way
                 updatePositions(position);
+
+                // Note: Odd bug where this specific onAnimationEnd has to be overridden in order for the animation
+                // end to be called. Originally the onAnimationEnd(animation, isReserve) operator was used but this
+                // was not called on pre-lollipop devices.
             }
         });
 
