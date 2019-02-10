@@ -214,6 +214,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         borderView = new BackgroundView(context);
         borderView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
+
         container.addView(borderView);
 
         // Create layout that contains dividers for each button
@@ -645,6 +646,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Border width of 0 indicates to hide borders
         if (width > 0) {
             GradientDrawable borderDrawable = new GradientDrawable();
+            // Set background color to be transparent so that buttons and everything underneath the border view is
+            // still visible. This was an issue on API 16 Android where it would default to a black background
+            borderDrawable.setColor(Color.TRANSPARENT);
             // Corner radius is the radius minus half of the border width because the drawable will draw the stroke
             // from the center, so the actual corner radius is reduced
             // If the half border width is left out, the border radius does not follow the curve of the background
@@ -699,8 +703,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     public void setPosition(final int position, boolean animate) {
-        Log.v(TAG, String.format("setPosition %d %d", position, this.position));
-
         // Return and do nothing in two cases
         // First, if the position is out of bounds.
         // Second, if the desired position is equal to the current position do nothing. But, only do this under two
@@ -713,14 +715,10 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
-        Log.v(TAG, "setPosition passed");
-
         if (!animate || selectionAnimationInterpolator == null) {
             updatePositions(position);
             return;
         }
-
-        Log.v(TAG, "setPosition passed2");
 
         // Animate value from current position to the new position
         // Fraction positions such as 1.25 means we are 75% in button 1 and 25% in button 2.

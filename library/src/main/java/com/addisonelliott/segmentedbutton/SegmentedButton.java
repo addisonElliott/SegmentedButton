@@ -80,10 +80,9 @@ public class SegmentedButton extends View {
     // tint
     private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
-    // TODO Testing ripple
-    // TODO Fix issues on API 16
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    // RippleDrawable is used for drawing ripple animation when tapping buttons on Lollipop and above devices (API 21+)
     private RippleDrawable rippleDrawableLollipop;
+    // Backport for RippleDrawable for API 16-20 devices
     private codetail.graphics.drawables.RippleDrawable rippleDrawable;
 
     @IntDef(flag = true, value = {
@@ -710,6 +709,17 @@ public class SegmentedButton extends View {
             backgroundClipPath.addRoundRect(rectF, new float[]{0, 0, br, br, br, br, 0, 0}, Direction.CW);
         } else {
             backgroundClipPath = null;
+        }
+
+        // Canvas.clipPath, used in onDraw for drawing the background clip path (rounding the edges for left-most and
+        // right-most buttons) is not supported with hardware acceleration until API 18
+        // Thus, switch to software acceleration if the background clip path is not null (meaning the edges are
+        // rounded) and the current version is less than 18
+        // Otherwise, switch to hardware acceleration
+        if (backgroundClipPath != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        } else {
+            setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
     }
 
