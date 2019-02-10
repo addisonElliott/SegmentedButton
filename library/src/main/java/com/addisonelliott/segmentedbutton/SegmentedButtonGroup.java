@@ -195,7 +195,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Retrieve custom attributes
         getAttributes(context, attrs);
 
-        // TODO Analyze these parts below to see what is necessary
         // Create and set outline provider for the segmented button group
         // This is used to provide an outline for the layout because it may have rounded corners
         // The primary benefit to using this is that shadows will follow the contour of the outline rather than the
@@ -204,27 +203,57 @@ public class SegmentedButtonGroup extends LinearLayout {
             setOutlineProvider(new OutlineProvider());
         }
 
-        // Initial setup
-        // TODO Describe me
-        currentPosition = position;
-        lastPosition = position;
-
         buttons = new ArrayList<>();
 
-        // TODO Explain why we need this and why the parent class has to be a LinearLayout
+        // This FrameLayout is used in order to stack the button layout, border view & divider layout on top of each
+        // other rather than horizontally or vertically like this SegmentedButtonGroup would do(it inherits from
+        // LinearLayout)
+        //
+        // Why have a LinearLayout(SegmentedButtonGroup) with only one child of FrameLayout?
+        // Although it seems redundant, it is so that SegmentedButton children can be specified in the layout XML of
+        // the SegmentedButtonGroup with layout weight parameters. If SegmentedButtonGroup subclassed FrameLayout,
+        // the layout weight would be ignored even though the SegmentedButtons are passed to buttonLayout.
         FrameLayout container = new FrameLayout(getContext());
         container.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(container);
 
+        // Layout that contains all SegmentedButton's
         buttonLayout = new LinearLayout(getContext());
-        buttonLayout
-                .setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        buttonLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.WRAP_CONTENT));
         buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(buttonLayout);
 
+        // Create layout that contains dividers for each button
+        // This layout will essentially mirror the number of elements, size, weight of each element with the only
+        // difference being that the elements will be transparent and that a divider will be placed between each one
+        //
+        // The benefit to placing the dividers in this dummy layout is so that the dividers appear on top of the
+        // buttons without taking up additional width, which is what happens if the dividers are added to the
+        // buttonLayout
+        dividerLayout = new LinearLayout(getContext());
+        dividerLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+                LayoutParams.MATCH_PARENT));
+        dividerLayout.setOrientation(LinearLayout.HORIZONTAL);
+        dividerLayout.setClickable(false);
+        dividerLayout.setFocusable(false);
+        container.addView(dividerLayout);
+
+        // TODO Need to find way to have dividers shown on top of the buttons
+        dividerLayout.setDividerPadding(25);
+        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+
+        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.RED,
+                Color.RED});
+        drawable.setCornerRadius(2);
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setColor(Color.RED);
+        drawable.setSize(10, 75);
+        dividerLayout.setDividerDrawable(drawable);
+
         // Create border view
-        // This is essentially a dummy view that is drawn on top of the buttonLayout (contains the buttons) so that the
-        // border appears on top of them
+        // This is essentially a dummy view that is drawn on top of the buttonLayout so that the border appears on
+        // top of them
         borderView = new BackgroundView(context);
         borderView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -238,28 +267,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             borderView.setBackground(borderDrawable);
         }
-
-        // TODO Struggling to see the purpose of this container
-        // Oh, it probably is so that the divider appears over the ripple container
-        dividerLayout = new LinearLayout(getContext());
-        dividerLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
-        dividerLayout.setOrientation(LinearLayout.HORIZONTAL);
-        dividerLayout.setClickable(false);
-        dividerLayout.setFocusable(false);
-        container.addView(dividerLayout);
-
-        // TODO Need to find way to have dividers shown on top of the buttons
-        dividerLayout.setDividerPadding(25);
-
-        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, new int[]{Color.RED,
-                Color.RED});
-        drawable.setCornerRadius(2);
-        drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setColor(Color.RED);
-        drawable.setSize(10, 75);
-        dividerLayout.setDividerDrawable(drawable);
-        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
 
 //        setDividerAttrs();
     }
