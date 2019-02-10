@@ -56,13 +56,14 @@
         <attr name="radius" format="dimension" />
         <attr name="position" format="integer" />
         <attr name="draggable" format="boolean" />
+        <attr name="android:clickable" />
 
         <attr name="ripple" format="boolean" />
         <attr name="rippleColor" />
 
         <attr name="divider" />
-        <attr name="dividerRadius" format="dimension" />
         <attr name="dividerWidth" format="dimension" />
+        <attr name="dividerRadius" format="dimension" />
         <attr name="dividerPadding" format="dimension" />
 
         <attr name="selectionAnimationDuration" format="integer" />

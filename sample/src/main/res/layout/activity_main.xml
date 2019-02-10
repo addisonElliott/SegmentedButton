@@ -34,7 +34,7 @@
         app:selectionAnimationDuration="1000"
         app:background="@drawable/gradient_drawable"
         app:divider="@drawable/gradient_drawable_divider"
-        app:dividerPadding="10dp"
+        app:dividerPadding="4dp"
         app:dividerRadius="10dp"
         app:dividerWidth="4dp"
         app:position="1"
