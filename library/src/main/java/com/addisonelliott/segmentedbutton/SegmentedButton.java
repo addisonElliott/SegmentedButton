@@ -30,6 +30,7 @@ import android.util.AttributeSet;
 import android.util.StateSet;
 import android.view.Gravity;
 import android.view.View;
+import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
@@ -76,14 +77,21 @@ public class SegmentedButton extends View {
     // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
     private Drawable selectedBackgroundDrawable;
 
-    // Color filters used for tinting the button drawable in normal and when button is selected, will be null for no
-    // tint
-    private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
+    // Whether or not ripple is enabled for animating when this button is pressed (default is true)
+    private boolean ripple;
+    // Color of the ripple to display over the button (default value is gray)
+    private int rippleColor;
+
+    // TODO Annotate default values
 
     // RippleDrawable is used for drawing ripple animation when tapping buttons on Lollipop and above devices (API 21+)
     private RippleDrawable rippleDrawableLollipop;
     // Backport for RippleDrawable for API 16-20 devices
     private codetail.graphics.drawables.RippleDrawable rippleDrawable;
+
+    // Color filters used for tinting the button drawable in normal and when button is selected, will be null for no
+    // tint
+    private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
     @IntDef(flag = true, value = {
             Gravity.LEFT,
@@ -118,11 +126,6 @@ public class SegmentedButton extends View {
     private float textSize;
     // Typeface (font) to use for displaying the text
     private Typeface textTypeface;
-
-    // Custom attributes
-    // TODO Individualized ripple color? That would be cool, not sure I wanna do that though
-    private int rippleColor;
-    private boolean hasRipple;
 
     // endregion
 
@@ -167,66 +170,20 @@ public class SegmentedButton extends View {
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
 
-        ShapeDrawable shapeDrawable = new ShapeDrawable(new RectShape());
-        shapeDrawable.getPaint().setColor(Color.BLUE);
+        // Set ripple to default to true, did not make this an attribute because the ripple should be enabled or
+        // disabled for the entire segmented button group. The ripple color is adjustable per button though which
+        // could prove useful
+        // TODO Remove ripple if not necessary
+        ripple = true;
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            rippleDrawableLollipop = new RippleDrawable(ColorStateList.valueOf(Color.RED), null, null);
-
-            rippleDrawableLollipop.setVisible(true, false);
-            rippleDrawableLollipop.setCallback(this);
-        } else {
-            rippleDrawable = new codetail.graphics.drawables.RippleDrawable(ColorStateList.valueOf(Color.RED), null,
-                    null);
-            rippleDrawable.setCallback(this);
-//            rippleDrawable = new StateListDrawable();
-//            rippleDrawable.addState(new int[] {android.R.attr.state_pressed}, new ColorDrawable(Color.MAGENTA));
-////            rippleDrawable.addState(StateSet.WILD_CARD, new ColorDrawable(Color.BLUE));
-//
-//            rippleDrawable.setVisible(true, false);
-//            rippleDrawable.setCallback(this);
-        }
-
-        // TODO Do I need this?
-        this.setClickable(true);
-    }
-
-    @Override
-    public void drawableHotspotChanged(final float x, final float y) {
-        super.drawableHotspotChanged(x, y);
-
-        if (rippleDrawableLollipop != null && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            rippleDrawableLollipop.setHotspot(x, y);
-        }
-
-        if (rippleDrawable != null) {
-            rippleDrawable.setHotspot(x, y);
-        }
-    }
-
-    @Override
-    protected void drawableStateChanged() {
-        super.drawableStateChanged();
-
-        // TODO Organize these functions
-
-        if (rippleDrawableLollipop != null && VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            rippleDrawableLollipop.setState(getDrawableState());
-        }
-
-        if (rippleDrawable != null) {
-            rippleDrawable.setState(getDrawableState());
-        }
+        // Required in order for this button to 'consume' the ripple touch event
+        setClickable(true);
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
         // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
         // to the default
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SegmentedButton);
-
-        // TODO Look into removing this
-        hasRipple = ta.hasValue(R.styleable.SegmentedButton_rippleColor);
-        rippleColor = ta.getColor(R.styleable.SegmentedButton_rippleColor, 0);
 
         // Load background if available, this can be a drawable or a color
         // In the instance of a color, a ColorDrawable is created and used instead
@@ -240,6 +197,9 @@ public class SegmentedButton extends View {
             selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_selectedBackground);
         }
 
+        // Parse ripple color value and update the ripple
+        setRipple(ta.getColor(R.styleable.SegmentedButton_rippleColor, Color.GRAY));
+
         // Load drawable if available, otherwise variable will be null
         if (ta.hasValue(R.styleable.SegmentedButton_drawable)) {
             drawable = ta.getDrawable(R.styleable.SegmentedButton_drawable);
@@ -248,7 +208,7 @@ public class SegmentedButton extends View {
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
         drawableTint = ta.getColor(R.styleable.SegmentedButton_drawableTint, -1);
         hasSelectedDrawableTint = ta.hasValue(R.styleable.SegmentedButton_selectedDrawableTint);
-        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_selectedDrawableTint, Color.WHITE);
+        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_selectedDrawableTint, -1);
         hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_drawableWidth);
         hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_drawableHeight);
         drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
@@ -531,11 +491,6 @@ public class SegmentedButton extends View {
         }
     }
 
-    @Override
-    protected boolean verifyDrawable(@NonNull final Drawable who) {
-        return who == rippleDrawableLollipop || who == rippleDrawable || super.verifyDrawable(who);
-    }
-
     // endregion
 
     // region Drawing
@@ -674,6 +629,58 @@ public class SegmentedButton extends View {
 
     // endregion
 
+    // region Ripple-related
+
+    @SuppressLint("NewApi")
+    @Override
+    public void drawableHotspotChanged(final float x, final float y) {
+        // This function is called when the hotspot for the drawable changes such as when the user taps on this view,
+        // it will call this with the coordinates.
+        // Normally the super class handles this automatically for the background drawable but the ripple drawable is
+        // not the background in this instance
+        super.drawableHotspotChanged(x, y);
+
+        // Update the hotspot for the ripple drawable
+        if (rippleDrawableLollipop != null) {
+            rippleDrawableLollipop.setHotspot(x, y);
+        }
+
+        // Update the hotspot for the ripple drawable
+        if (rippleDrawable != null) {
+            rippleDrawable.setHotspot(x, y);
+        }
+    }
+
+    @Override
+    protected void drawableStateChanged() {
+        // This function is called when the state of this view changes such as when it is clicked, enabled, disabled,
+        // etc. This is meant to update the state of the drawable.
+        // Normally the super class handles this automatically for the background drawable but the ripple drawable is
+        // not the background in this instance
+        super.drawableStateChanged();
+
+        // Update the state for the ripple drawable
+        if (rippleDrawableLollipop != null) {
+            rippleDrawableLollipop.setState(getDrawableState());
+        }
+
+        // Update the state for the ripple drawable
+        if (rippleDrawable != null) {
+            rippleDrawable.setState(getDrawableState());
+        }
+    }
+
+    @Override
+    protected boolean verifyDrawable(@NonNull final Drawable who) {
+        // Very obscure and difficult to find but it is noted in the source code docstring for this function
+        // Return true if the drawable is the ripple drawable (backport or regular)
+        // Normally the super class handles this automatically for the background drawable but the ripple drawable is
+        // not the background in this instance
+        return who == rippleDrawableLollipop || who == rippleDrawable || super.verifyDrawable(who);
+    }
+
+    // endregion
+
     // region Getters & Setters
 
     void setupBackgroundClipPath() {
@@ -770,6 +777,42 @@ public class SegmentedButton extends View {
             // Make sure to clone the drawable so that we can set the bounds on it
             selectedBackgroundDrawable = drawable.getConstantState().newDrawable();
         }
+    }
+
+    void setRipple(boolean enabled) {
+        // TODO Note that this is package-private because I dont want people enabling or disbaling the ripple effect
+        // on a button by button basis
+        ripple = enabled;
+
+        if (enabled) {
+            // Recreate the ripple drawable and setup with the ripple color
+            setRipple(rippleColor);
+        } else {
+            // Set both ripple drawables to null so that we do not draw the ripple
+            rippleDrawableLollipop = null;
+            rippleDrawable = null;
+        }
+    }
+
+    public void setRipple(@ColorInt int color) {
+        rippleColor = color;
+
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            rippleDrawableLollipop = new RippleDrawable(ColorStateList.valueOf(rippleColor), null, null);
+            rippleDrawableLollipop.setCallback(this);
+
+            // Disable/nullify the pre-lollipop RippleDrawable backport
+            rippleDrawable = null;
+        } else {
+            rippleDrawable = new codetail.graphics.drawables.RippleDrawable(ColorStateList.valueOf(rippleColor), null,
+                    null);
+            rippleDrawable.setCallback(this);
+
+            // Disable/nullify the lollipop RippleDrawable
+            rippleDrawableLollipop = null;
+        }
+
+        invalidate();
     }
 
     // endregion

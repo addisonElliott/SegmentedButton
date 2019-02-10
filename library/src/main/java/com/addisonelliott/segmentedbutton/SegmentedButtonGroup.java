@@ -279,7 +279,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         setClickable(ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true));
 
         // TODO Handle me
-        ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, false);
+        ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, true);
         hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
         rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
 
