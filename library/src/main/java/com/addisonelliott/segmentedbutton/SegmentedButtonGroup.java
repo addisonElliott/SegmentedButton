@@ -141,9 +141,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     // For example, if the currentPosition was 2.25, then the lastPosition would be set to 2
     private int lastPosition;
 
-    // TODO Add these
-//    private OnPositionChangedListener onPositionChangedListener;
-//    private OnClickedButtonListener onClickedButtonListener;
+    // Listener to notify when position is changed
+    // Note: Position change will be notified after animations complete because that is when the position actually
+    // changes
+    private OnPositionChangedListener onPositionChangedListener;
 
     // endregion
 
@@ -477,10 +478,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         // For example, a currentPosition of 1.0 would mean all of button 1 was selected
         // But a currentPosition of 1.5 would mean half of button 1 was selected and half of button 2 (its in
         // between animating the value)
-        //
-        // endPosition is the position where the right side of the button should be and that is always 1 + the
-        // current position. For example, a currentPosition of 1.5 means the right half of the button is at 2.5.
-        // This is always 1.0 because the button selection width is assumed to be the same size as the button
         currentPosition = position;
 
         // Get the current button position and extract the offset. For example, a currentPosition of 2.25 would
@@ -488,14 +485,15 @@ public class SegmentedButtonGroup extends LinearLayout {
         final int currentButtonPosition = (int) currentPosition;
         final float currentOffset = currentPosition - currentButtonPosition;
 
-        // Get the current end button position and extract the offset. For example, a currentEndPosition of 2.25
-        // would result in a currentEndButtonPosition of 2 and the currentEndOffset to 0.25.
+        // Get the current button end position, which will always be the current button position plus 1 because the
+        // width of the selected button is 1
         final int currentEndButtonPosition = currentButtonPosition + 1;
 
         // Grab the current button from the position and clip the right side of the button to show the
-        // appropriate amount
+        // appropriate offset
         //
-        // For example, if the currentOffset was 0.25, then the right 75% of the button would be showing. The
+        // For example, if the currentOffset was 0.25, this means that the left-side of the selected button should
+        // start at 0.25. Clipping at 0.25 means the right 75% of the button would be showing which is as expected. The
         // offset given to the current button is 0.0f -> 1.0f and represents the relative X position to clip the
         // button at (going all the way to the right side of the button, i.e. 0.25 all the way to 1.0)
         final SegmentedButton currentButton = buttons.get(currentButtonPosition);
@@ -503,26 +501,35 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // For the end button, we want to clip the left side of the button to match up with the right side of the
         // previous button. However, there is a slight chance the end button position might be out of range so we
-        // check if it is first
+        // check if it is first (do nothing if out of range, nothing to clip on left side of)
         if (currentEndButtonPosition >= 0 && currentEndButtonPosition < buttons.size()) {
             // Grab the button directly to the right of the current button and clip the left
             final SegmentedButton currentEndButton = buttons.get(currentEndButtonPosition);
             currentEndButton.clipLeft(currentOffset);
-
-            // TODO Add feature for speed per button to make it not so bad?
         }
 
+        // lastPosition is the last button position (whole integer) that the selected button began at in the last
+        // animation frame.
+        // When the selected button moves from one button to the next, we need to hide the old button somehow.
+        // This will do that by checking if the last button position is not equal to the current button position or
+        // the end button position (where the selected button ends = currentButtonPosition + 1). If not equal, then
+        // that means we are done showing the selected view on this button so we clip the entire view to just show
+        // the normal button
         if (lastPosition != currentButtonPosition && lastPosition != currentEndButtonPosition) {
             buttons.get(lastPosition).clipRight(1.0f);
         }
 
+        // Repeat same process above but check with where the last button position ended. Note, we know this is
+        // always 1 plus the lastPosition because the width of the selected button is 1.
         final int lastEndPosition = lastPosition + 1;
 
+        // Clip any views like explained above
         if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
                 && lastEndPosition < buttons.size()) {
             buttons.get(lastEndPosition).clipRight(1.0f);
         }
 
+        // Update the lastPosition for the next animation frame
         lastPosition = currentButtonPosition;
 
         // Notify to redraw buttons
@@ -530,24 +537,35 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     private void updatePositions(final int position) {
+        // Update position, current position and last position to the desired value
         this.position = position;
         this.currentPosition = position;
         this.lastPosition = position;
 
+        // Loop through each button and reset it to the appropriate value
         for (int i = 0; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
 
             if (i == position) {
+                // Show entire selected view
                 button.clipRight(0.0f);
             } else {
+                // Hide entire selected view
                 button.clipRight(1.0f);
             }
+        }
+
+        // Notify listener of position change
+        if (onPositionChangedListener != null) {
+            onPositionChangedListener.onPositionChanged(position);
         }
     }
 
     // endregion
 
     // region Getters & Setters
+
+    // TODO Write getters & setters
 
     public Interpolator getSelectionAnimationInterpolator() {
         return selectionAnimationInterpolator;
@@ -706,6 +724,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         buttonAnimator.addUpdateListener(animation -> moveSelectedButton((float) animation.getAnimatedValue()));
 
         // Set the parameters for the button animation
+        // TODO Add feature for speed per button to make it not so bad?
         buttonAnimator.setDuration(selectionAnimationDuration);
         buttonAnimator.setInterpolator(selectionAnimationInterpolator);
         buttonAnimator.addListener(new AnimatorListenerAdapter() {
@@ -719,6 +738,14 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Start the animation
         buttonAnimator.start();
+    }
+
+    public OnPositionChangedListener getOnPositionChangedListener() {
+        return onPositionChangedListener;
+    }
+
+    public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
+        this.onPositionChangedListener = onPositionChangedListener;
     }
 
     // endregion
@@ -1093,10 +1120,26 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // endregion
 
+    // region Listeners
+
+    /**
+     * Interface definition for a callback that will be invoked when the position of the selection button changes
+     *
+     * This callback will be called AFTER the animation is complete since the position does not change until the
+     * completion of the animation.
+     */
+    public interface OnPositionChangedListener {
+
+        void onPositionChanged(int position);
+    }
+
+    // endregion
+
     // region Classes
 
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     private class OutlineProvider extends ViewOutlineProvider {
+        // TODO Write in docstring
         // This class is used to define an outline for this view
         // This is necessary because the view may have rounded corners
         // Primary benefit is that shadows will follow contours of the outline rather than rectangular bounds
