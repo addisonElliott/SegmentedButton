@@ -117,8 +117,13 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // Drawable for the border (default value is null)
     private GradientDrawable borderDrawable;
+    // Width of the border in pixels (default value is 0px or no border)
     private int borderWidth;
+    // Color of the border (default color is black)
     private int borderColor;
+    // Parameters for defining a dashed border line. If dash width is 0px, then the border will be solid
+    // The border dash width is the width, in pixels, of the dash while the border dash gap is the width of the gap
+    // between dashes, in pixels.
     private int borderDashWidth, borderDashGap;
 
     // Animation interpolator for animating button movement
@@ -127,7 +132,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Duration in milliseconds for animating changing the selected button (default value is 500ms)
     private int selectionAnimationDuration;
 
-    // TODO Explain these
+    // Animation used for storing the current animation for changing the selected button
     ValueAnimator buttonAnimator;
     // Exact position of the currently selected button which includes its location during animation
     // The range is from 0.0f to the number of buttons - 1. (i.e. 0.0f -> 2.0f for 3 buttons)
@@ -140,6 +145,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     // For example, if the currentPosition was 2.25, then the lastPosition would be set to 2
     private int lastPosition;
 
+    // TODO Explain these
     private Drawable dividerBackgroundDrawable;
     private int dividerSize;
     private int dividerPadding;
@@ -202,7 +208,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         // TODO Describe me
         currentPosition = position;
         lastPosition = position;
-        lastEndPosition = position;
 
         buttons = new ArrayList<>();
 
@@ -338,9 +343,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
-//        LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)params;
-//        Log.v(TAG, "View added, params: " + Float.toString(params2.weight));
-
         if (child instanceof SegmentedButton) {
             SegmentedButton button = (SegmentedButton) child;
             final int position = buttons.size();
@@ -379,35 +381,13 @@ public class SegmentedButtonGroup extends LinearLayout {
                 updatePositions(position);
             }
 
-//            // RIPPLE
-//            BackgroundView rippleView = new BackgroundView(getContext());
-//            if (!draggable) {
-//                rippleView.setOnClickListener(new OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (clickable && enabled) {
-//                            toggle(position, animateSelectorDuration, true);
-//                        }
-//                    }
-//                });
-//            }
-//
-//            setRipple(rippleView, enabled && clickable);
-//            rippleContainer.addView(rippleView,
-//                    new LinearLayout.LayoutParams(button.getButtonWidth(), ViewGroup.LayoutParams.MATCH_PARENT,
-//                            button.getWeight()));
-//            ripples.add(rippleView);
-//
 //            if (!hasDivider) {
 //                return;
 //            }
 //
             BackgroundView dividerView = new BackgroundView(getContext());
-//            dividerLayout.addView(dividerView, new LinearLayout.LayoutParams(button.getButtonWidth(),
-//                    ViewGroup.LayoutParams.MATCH_PARENT, button.getWeight()));
             dividerLayout.addView(dividerView, params);
-
-            // On update setLayoutParams
+            // TODO On update setLayoutParams
             // On update weightsum, well that won't happen, well sure it could I guess
 
         } else {
@@ -444,20 +424,19 @@ public class SegmentedButtonGroup extends LinearLayout {
                 break;
 
             case MotionEvent.ACTION_DOWN:
-                if (this.position != position) {
-                    dragOffsetX = -1.0f;
+                if (!draggable || this.position != position) {
+                    dragOffsetX = Float.NaN;
                     break;
                 }
 
                 dragOffsetX = ev.getX() - buttons.get(position).getLeft();
-                Log.v(TAG, String.format("down: %f = %f", ev.getX(), dragOffsetX));
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 // TODO Make this apart of the SegmentedButtonGroup class but need to save position variable
                 // TODO Move invalidate into the moveSelectedButton function
                 // Only can drag when starting on the selected button
-                if (dragOffsetX == -1.0f) {
+                if (dragOffsetX == Float.NaN) {
                     break;
                 }
 
@@ -484,14 +463,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // TODO Better name?
     public void setPosition(final int position, boolean animate) {
-        // TODO Do something special here to update this.position
-//        // Cancel current animation to start another one
-//        if (buttonAnimator.isRunning()) {
-//            buttonAnimator.cancel();
-//        }
-
         // Do nothing and return if our current position is already the position given
-        if (position == this.position) {
+        if (position == this.position && (buttonAnimator != null && !buttonAnimator.isRunning())) {
             return;
         }
 
@@ -579,7 +552,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         this.position = position;
         this.currentPosition = position;
         this.lastPosition = position;
-        this.lastEndPosition = position + 1;
 
         for (int i = 0; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
