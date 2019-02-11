@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -18,7 +19,9 @@ import java.util.ArrayList;
 enum Action {
     None,
     ChangeBorder1,
-    ChangeBorder2;
+    ChangeBorder2,
+    ChangeBackgroundColor,
+    ChangeBackgroundDrawable;
 
     public String getDisplayText() {
         if (this == None) {
@@ -27,6 +30,10 @@ enum Action {
             return "Change border 1";
         } else if (this == ChangeBorder2) {
             return "Change border 2";
+        } else if (this == ChangeBackgroundColor) {
+            return "Change background and selected background to color";
+        } else if (this == ChangeBackgroundDrawable) {
+            return "Change background and selected background to drawable";
         } else {
             return "";
         }
@@ -115,6 +122,20 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case ChangeBorder2:
                 lordOfTheRingsButtonGroup.setBorder(2, Color.RED, 25, 8);
                 marvelSuperherosButtonGroup.setBorder(2, Color.BLACK, 30, 10);
+                break;
+
+            case ChangeBackgroundColor:
+                lordOfTheRingsButtonGroup.setBackground(ContextCompat.getColor(getApplicationContext(),
+                        R.color.brown_600));
+                lordOfTheRingsButtonGroup.setSelectedBackground(ContextCompat.getColor(getApplicationContext(),
+                        R.color.blue_800));
+                break;
+
+            case ChangeBackgroundDrawable:
+                lordOfTheRingsButtonGroup.setBackground(ContextCompat.getDrawable(getApplicationContext(),
+                        R.drawable.gradient_drawable));
+                lordOfTheRingsButtonGroup.setSelectedBackground(ContextCompat.getDrawable(getApplicationContext(),
+                        R.drawable.gradient_drawable_selector));
                 break;
 
             default:

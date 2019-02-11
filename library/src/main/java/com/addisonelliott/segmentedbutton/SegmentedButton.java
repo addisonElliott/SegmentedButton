@@ -13,6 +13,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
@@ -84,8 +85,6 @@ public class SegmentedButton extends View {
 
     // Color of the ripple to display over the button (default value is gray)
     private int rippleColor;
-
-    // TODO Annotate default values
 
     // RippleDrawable is used for drawing ripple animation when tapping buttons on Lollipop and above devices (API 21+)
     private RippleDrawable rippleDrawableLollipop;
@@ -379,7 +378,7 @@ public class SegmentedButton extends View {
      *
      * This does nothing if the button has no text to display
      *
-     * @param width size, in pixels, of the button
+     * @param width         size, in pixels, of the button
      * @param drawableWidth size, in pixels, of the drawable
      */
     private void measureTextWidth(int width, int drawableWidth) {
@@ -696,9 +695,8 @@ public class SegmentedButton extends View {
      * relevant for the ripple drawables in this class.
      *
      * @param who Drawable to verify. Return true if this class is displaying the drawable.
-     *
      * @return Returns true if the drawable is being displayed in this view, else false and it is not allowed to
-     *         animate
+     * animate
      */
     @Override
     protected boolean verifyDrawable(@NonNull final Drawable who) {
@@ -713,6 +711,55 @@ public class SegmentedButton extends View {
 
     // region Getters & Setters
 
+    /**
+     * Set the background radius of the corners of the parent button group in order to round edges
+     *
+     * If isLeftButton is true, this radius will be used to clip the bottom-left and top-left corners.
+     * If isRightButton is true, this radius will be used to clip the bottom-right and top-right corners.
+     * If both are true, then all corners will be rounded with the radius.
+     * If none are set, no corners are rounded and this parameter is not used.
+     *
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
+     * isRightButton & width/height are completed.
+     *
+     * @param backgroundRadius radius of corners of parent button group in pixels
+     */
+    void setBackgroundRadius(int backgroundRadius) {
+        this.backgroundRadius = backgroundRadius;
+    }
+
+    /**
+     * Set whether or not this button is the left-most button in the group
+     *
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
+     * isRightButton & width/height are completed.
+     */
+    @SuppressWarnings("SameParameterValue")
+    void setIsLeftButton(boolean isLeftButton) {
+        this.isLeftButton = isLeftButton;
+    }
+
+    /**
+     * Set whether or not this button is the right-most button in the group
+     *
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
+     * isRightButton & width/height are completed.
+     */
+    void setIsRightButton(boolean isRightButton) {
+        this.isRightButton = isRightButton;
+    }
+
+    /**
+     * Setup the background clip path in order to round the edges of this button
+     *
+     * If isLeftButton is true, this radius will be used to clip the bottom-left and top-left corners.
+     * If isRightButton is true, this radius will be used to clip the bottom-right and top-right corners.
+     * If both are true, then all corners will be rounded with the radius.
+     * If none are set, no corners are rounded and this parameter is not used.
+     *
+     * This function should be called when the size of the button changes, if the background radius changes and/or if
+     * the isLeftButton or isRightButton boolean values change.
+     */
     void setupBackgroundClipPath() {
         // If there is no background radius then skip
         if (backgroundRadius == 0) {
@@ -724,11 +771,6 @@ public class SegmentedButton extends View {
         rectF.set(0, 0, getWidth(), getHeight());
 
         // Background radius, shorthand variable to make code cleaner
-        // Note: In Android Studio previewer, some of the background color a rounded segmented button group along
-        // with a background color in individual buttons may appear. Does not appear when running on actual devices
-        // however.
-        // Recommended approach is to treat button group background and button background as being mutually exclusive.
-        // That is use one or the other but not both.
         final float br = backgroundRadius;
 
         if (isLeftButton && isRightButton) {
@@ -758,19 +800,6 @@ public class SegmentedButton extends View {
         } else {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    void setIsLeftButton(boolean isLeftButton) {
-        this.isLeftButton = isLeftButton;
-    }
-
-    void setIsRightButton(boolean isRightButton) {
-        this.isRightButton = isRightButton;
-    }
-
-    void setBackgroundRadius(int backgroundRadius) {
-        this.backgroundRadius = backgroundRadius;
     }
 
     /**
@@ -808,6 +837,80 @@ public class SegmentedButton extends View {
             selectedBackgroundDrawable = drawable.getConstantState().newDrawable();
         }
     }
+
+    /**
+     * Returns the background drawable that is shown when the button is not selected
+     *
+     * In the case a solid color background is used, this will be a ColorDrawable
+     *
+     * @return the current background drawable when the button is not selected
+     */
+    public Drawable getBackground() {
+        return backgroundDrawable;
+    }
+
+    @Override
+    public void setBackground(final Drawable drawable) {
+        backgroundDrawable = drawable;
+        backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+
+        invalidate();
+    }
+
+    public void setBackground(@ColorInt int color) {
+        if (backgroundDrawable instanceof ColorDrawable) {
+            ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
+        } else {
+            backgroundDrawable = new ColorDrawable(color);
+
+            backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+        }
+
+        invalidate();
+    }
+
+    public void setBackgroundColor(@ColorInt int color) {
+        setBackground(color);
+    }
+
+    /**
+     * Returns the background drawable that is shown when the button is selected
+     *
+     * In the case a solid color background is used, this will be a ColorDrawable
+     *
+     * @return the current background drawable when the button is selected
+     */
+    public Drawable getSelectedBackground() {
+        return selectedBackgroundDrawable;
+    }
+
+    public void setSelectedBackground(final Drawable drawable) {
+        selectedBackgroundDrawable = drawable;
+        selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+
+        invalidate();
+    }
+
+    public void setSelectedBackground(@ColorInt int color) {
+        if (selectedBackgroundDrawable instanceof ColorDrawable) {
+            ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
+
+            // Required to update background for the buttons?
+            // TODO See if necessary
+//            setSelectedBackground(selectedBackgroundDrawable);
+        } else {
+            selectedBackgroundDrawable = new ColorDrawable(color);
+
+            selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+        }
+
+        invalidate();
+    }
+
+    public void setSelectedBackgroundColor(@ColorInt int color) {
+        setSelectedBackground(color);
+    }
+
 
     void setRipple(boolean enabled) {
         // TODO Note that this is package-private because I dont want people enabling or disabling the ripple effect
@@ -855,6 +958,28 @@ public class SegmentedButton extends View {
 
         requestLayout();
     }
+
+    // TODO Getters and setters for these functions
+    // TODO Add button programatically
+//    [X]backgroundClipPath
+//    [X]private int backgroundRadius;
+//    [x]private boolean isLeftButton, isRightButton;
+//    private Drawable backgroundDrawable;
+//    private Drawable selectedBackgroundDrawable;
+//    private int rippleColor;
+//    private Drawable drawable;
+//    private int drawablePadding;
+//    private boolean hasDrawableTint, hasSelectedDrawableTint;
+//    private int drawableTint, selectedDrawableTint;
+//    private boolean hasDrawableWidth, hasDrawableHeight;
+//    private int drawableWidth, drawableHeight;
+//    private int drawableGravity;
+//    private boolean hasText;
+//    private String text;
+//    private boolean hasSelectedTextColor;
+//    private int textColor, selectedTextColor;
+//    private float textSize;
+//    private Typeface textTypeface;
 
     // endregion
 

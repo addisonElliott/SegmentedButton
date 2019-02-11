@@ -725,10 +725,28 @@ public class SegmentedButtonGroup extends LinearLayout {
         return buttons.get(index);
     }
 
+    /**
+     * Returns the background drawable that is the 'global' value for each of the buttons. This is the background
+     * that is shown when the button is not selected
+     *
+     * In the case a solid color background is used, this will be a ColorDrawable
+     *
+     * Note: This value is just passed down to each individual SegmentedButton when added to the view. This value can
+     * be overridden on a per-button basis.
+     *
+     * @return the current background drawable when the button is not selected
+     */
     public Drawable getBackground() {
         return backgroundDrawable;
     }
 
+    /**
+     * Set the background displayed when a button is not selected to a given drawable for each button
+     *
+     * Note: This is a convenience function that sets the background for each individual button.
+     *
+     * @param drawable drawable to set the background to
+     */
     @Override
     public void setBackground(final Drawable drawable) {
         backgroundDrawable = drawable;
@@ -738,46 +756,102 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
+    /**
+     * Set the background to be a solid color when a button is not selected for each button
+     *
+     * This will create a ColorDrawable or modify the current background if it is a ColorDrawable.
+     *
+     * Note: This is a convenience function that sets the background for each individual button.
+     *
+     * @param color color to set the background to
+     */
     public void setBackground(@ColorInt int color) {
         if (backgroundDrawable instanceof ColorDrawable) {
             ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
 
-            // Required to update background for the buttons?
-            // TODO See if necessary
-//            setBackground(backgroundDrawable);
+            // Required to update background for the buttons
+            setBackground(backgroundDrawable);
         } else {
             setBackground(new ColorDrawable(color));
         }
     }
 
+    /**
+     * Convenience function for setting the background color
+     *
+     * This function already exists in the base View class so it is overridden to prevent confusion as to why
+     * setBackground works but not setBackgroundColor.
+     *
+     * @param color color to set the background to
+     *
+     * @see #setBackground(int)
+     */
+    @Override
     public void setBackgroundColor(@ColorInt int color) {
         setBackground(color);
     }
 
+    /**
+     * Returns the background drawable that is the 'global' value for each of the buttons. This is the background
+     * that is shown when the button is selected
+     *
+     * In the case a solid color background is used, this will be a ColorDrawable
+     *
+     * Note: This value is just passed down to each individual SegmentedButton when added to the view. This value can
+     * be overridden on a per-button basis.
+     *
+     * @return the current background drawable when the button is selected
+     */
     public Drawable getSelectedBackground() {
         return selectedBackgroundDrawable;
     }
 
+    /**
+     * Set the background displayed when a button is selected to a given drawable for each button
+     *
+     * Note: This is a convenience function that sets the background for each individual button.
+     *
+     * @param drawable drawable to set the background to
+     */
     public void setSelectedBackground(final Drawable drawable) {
         selectedBackgroundDrawable = drawable;
 
         for (SegmentedButton button : buttons) {
-//            button.setSelectedBackground(drawable);
+            button.setSelectedBackground(drawable);
         }
     }
 
+    /**
+     * Set the background to be a solid color when a button is selected for each button
+     *
+     * This will create a ColorDrawable or modify the current background if it is a ColorDrawable.
+     *
+     * Note: This is a convenience function that sets the background for each individual button.
+     *
+     * @param color color to set the background to
+     */
     public void setSelectedBackground(@ColorInt int color) {
         if (selectedBackgroundDrawable instanceof ColorDrawable) {
             ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
 
             // Required to update background for the buttons?
             // TODO See if necessary
-//            setSelectedBackground(selectedBackgroundDrawable);
+            setSelectedBackground(selectedBackgroundDrawable);
         } else {
             setSelectedBackground(new ColorDrawable(color));
         }
     }
 
+    /**
+     * Convenience function for setting the background color
+     *
+     * This function already exists in the base View class so it is overridden to prevent confusion as to why
+     * setBackground works but not setBackgroundColor.
+     *
+     * @param color color to set the background to
+     *
+     * @see #setBackground(int)
+     */
     public void setSelectedBackgroundColor(@ColorInt int color) {
         setSelectedBackground(color);
     }
