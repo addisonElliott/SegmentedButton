@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_300"
+        android:paddingBottom="16dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -277,7 +278,7 @@
             app:dividerPadding="10dp"
             app:dividerRadius="10dp"
             app:dividerWidth="2dp"
-            app:position="0"
+            app:position="1"
             app:radius="2dp"
             app:rippleColor="@color/red_200"
             app:selectedBackground="@color/green_200">
