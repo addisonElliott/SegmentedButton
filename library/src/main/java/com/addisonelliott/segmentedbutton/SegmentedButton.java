@@ -788,12 +788,10 @@ public class SegmentedButton extends View {
 
     public void setRipple(@ColorInt int color) {
         rippleColor = color;
-        Log.v(TAG, "setRipple2 to color " + Integer.toHexString(color));
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             rippleDrawableLollipop = new RippleDrawable(ColorStateList.valueOf(rippleColor), null, null);
             rippleDrawableLollipop.setCallback(this);
-            Log.v(TAG, "setRipple3 to color " + Integer.toHexString(color));
             rippleDrawableLollipop.setBounds(0, 0, getWidth(), getHeight());
 
             // Disable/nullify the pre-lollipop RippleDrawable backport
@@ -802,7 +800,6 @@ public class SegmentedButton extends View {
             rippleDrawable = new codetail.graphics.drawables.RippleDrawable(ColorStateList.valueOf(rippleColor), null,
                     null);
             rippleDrawable.setCallback(this);
-            Log.v(TAG, "setRipple4 to color " + Integer.toHexString(color));
             rippleDrawable.setBounds(0, 0, getWidth(), getHeight());
 
             // Disable/nullify the lollipop RippleDrawable

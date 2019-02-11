@@ -6,20 +6,17 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -122,7 +119,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     // This value will be NaN when dragging is disabled
     private float dragOffsetX;
 
-    // TODO Explain these
     // Whether or not ripple is enabled for animating when any button is pressed (default is true)
     private boolean ripple;
     // Whether or not a ripple color was specified
@@ -221,7 +217,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         borderView = new BackgroundView(context);
         borderView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-
         container.addView(borderView);
 
         // Create layout that contains dividers for each button
@@ -249,7 +244,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         final TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
         // Load background if available, this can be a drawable or a color
-        // In the instance of a color, a ColorDrawable is created and used instead
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
         if (ta.hasValue(R.styleable.SegmentedButtonGroup_background)) {
             backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_background);
@@ -272,9 +266,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         final int borderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
         final int borderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
 
-        // Set the border to the read values, we don't store these border values because they just are just used to
-        // create a GradientDrawable to set as the background. Not sure it's that likely that someone will want to
-        // retrieve these values
+        // Set the border to the read values, we don't store these border values because they are just used to create
+        // a GradientDrawable to set as the background. Not sure it's that likely that someone will want to retrieve
+        // these values
         setBorder(borderWidth, borderColor, borderDashWidth, borderDashGap);
 
         position = ta.getInt(R.styleable.SegmentedButtonGroup_position, 0);
@@ -293,15 +287,27 @@ public class SegmentedButtonGroup extends LinearLayout {
         final int dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
         final int dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
 
+        // Load divider value if available, the divider can be either a drawable resource or a color
+        // Load the TypedValue first and check the type to determine if color or drawable
         final TypedValue value = new TypedValue();
         if (ta.getValue(R.styleable.SegmentedButtonGroup_divider, value)) {
             if (value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_STRING) {
-                // TODO Issue here with divider when preloading...
-                setDivider(ContextCompat.getDrawable(context, value.resourceId), dividerWidth, dividerRadius,
-                        dividerPadding);
+                // Note: Odd case where Android Studio layout preview editor will fail to display a
+                // SegmentedButtonGroup with a divider drawable because value.resourceId returns 0 and thus
+                // ContextCompat.getDrawable will return NullPointerException
+                // Loading drawable TypedArray.getDrawable or doing TypedArray.getResourceId fixes the problem
+                if (isInEditMode()) {
+                    setDivider(ta.getDrawable(R.styleable.SegmentedButtonGroup_divider), dividerWidth, dividerRadius,
+                            dividerPadding);
+                } else {
+                    setDivider(ContextCompat.getDrawable(context, value.resourceId), dividerWidth, dividerRadius,
+                            dividerPadding);
+                }
             } else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+                // Divider is a color, value.data is the color value
                 setDivider(value.data, dividerWidth, dividerRadius, dividerPadding);
             } else {
+                // Invalid type for the divider, throw an exception
                 throw new IllegalArgumentException("Invalid type for SegmentedButtonGroup divider in layout XML "
                         + "resource. Must be a color or drawable");
             }
@@ -828,7 +834,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
-        Log.v(TAG, "setRipple to color " + Integer.toHexString(color));
         for (SegmentedButton button : buttons) {
             button.setRipple(color);
         }
