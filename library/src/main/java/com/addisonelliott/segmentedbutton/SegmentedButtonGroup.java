@@ -400,9 +400,18 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Events
 
+    /**
+     * Return button position for corresponding button that contains the X coordinate within its bounds
+     *
+     * This returns a whole-number indicating the index of the button that corresponds to the given X coordinate.
+     *
+     * @param x X screen coordinate
+     *
+     * @return int representing index of the corresponding button
+     *
+     * @throws IllegalStateException if no button contains the coordinate within its bounds
+     */
     int getButtonPositionFromX(float x) {
-        // TODO Comment me
-
         // Loop through each button
         for (int i = 0; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
@@ -420,13 +429,30 @@ public class SegmentedButtonGroup extends LinearLayout {
                 + "(X = %f)", x));
     }
 
+    /**
+     * Return fractional button position for corresponding button that contains the X coordinate within its bounds
+     *
+     * The whole part of the floating number returned indicates the index of the button that contains the coordinate.
+     * The fractional part of the returned floating number represents the position of the coordinate within the buttons
+     * bounds relative to its width.
+     *
+     * For example, a returned button position of 2.25 would indicate that the coordinate was within the 3rd button
+     * and 1/4 (25%) of the width of the button.
+     *
+     * @param x X screen coordinate
+     *
+     * @return float representing the fractional position of the corresponding button
+     *
+     * @throws IllegalStateException if no button contains the coordinate within its bounds
+     */
     float getButtonPositionFromXF(float x) {
-        // TODO Comment me
-
         // Loop through each button
         for (int i = 0; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
 
+            // If x value is less than the right-hand side of the button, this is the selected button
+            // Note: No need to check the left side of button because we assume each button is directly connected
+            // from left to right
             if (x < button.getRight()) {
                 return i + (x - button.getLeft()) / button.getWidth();
             }
