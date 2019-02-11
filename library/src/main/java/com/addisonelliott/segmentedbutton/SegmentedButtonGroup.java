@@ -17,6 +17,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -280,7 +281,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         setClickable(ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true));
 
         ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, true);
-        hasRippleColor = ta.hasValue(R.styleable.SegmentedButton_rippleColor);
+        hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
         rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
 
         final int dividerWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerWidth, 1);
