@@ -682,70 +682,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // TODO Write getters & setters
 
-    public Interpolator getSelectionAnimationInterpolator() {
-        return selectionAnimationInterpolator;
-    }
-
-    public void setSelectionAnimationInterpolator(@Nullable Interpolator interpolator) {
-        selectionAnimationInterpolator = interpolator;
-    }
-
-    public void setSelectionAnimationInterpolator(@AnimationInterpolator int interpolator) {
-        switch (interpolator) {
-            case ANIM_INTERPOLATOR_NONE:
-                selectionAnimationInterpolator = null;
-                break;
-
-            case ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN:
-                selectionAnimationInterpolator = new FastOutSlowInInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_BOUNCE:
-                selectionAnimationInterpolator = new BounceInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_LINEAR:
-                selectionAnimationInterpolator = new LinearInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_DECELERATE:
-                selectionAnimationInterpolator = new DecelerateInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_CYCLE:
-                selectionAnimationInterpolator = new CycleInterpolator(1.0f);
-                break;
-
-            case ANIM_INTERPOLATOR_ANTICIPATE:
-                selectionAnimationInterpolator = new AnticipateInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_ACCELERATE_DECELERATE:
-                selectionAnimationInterpolator = new AccelerateDecelerateInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_ACCELERATE:
-                selectionAnimationInterpolator = new AccelerateInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT:
-                selectionAnimationInterpolator = new AnticipateOvershootInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN:
-                selectionAnimationInterpolator = new FastOutLinearInInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN:
-                selectionAnimationInterpolator = new LinearOutSlowInInterpolator();
-                break;
-
-            case ANIM_INTERPOLATOR_OVERSHOOT:
-                selectionAnimationInterpolator = new OvershootInterpolator();
-                break;
-        }
-    }
-
     public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
         // Width of the border in pixels (default value is 0px or no border)
 //        private int borderWidth;
@@ -895,6 +831,85 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
+    public Interpolator getSelectionAnimationInterpolator() {
+        return selectionAnimationInterpolator;
+    }
+
+    public void setSelectionAnimationInterpolator(@Nullable Interpolator interpolator) {
+        selectionAnimationInterpolator = interpolator;
+    }
+
+    public void setSelectionAnimationInterpolator(@AnimationInterpolator int interpolator) {
+        switch (interpolator) {
+            case ANIM_INTERPOLATOR_NONE:
+                selectionAnimationInterpolator = null;
+                break;
+
+            case ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN:
+                selectionAnimationInterpolator = new FastOutSlowInInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_BOUNCE:
+                selectionAnimationInterpolator = new BounceInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_LINEAR:
+                selectionAnimationInterpolator = new LinearInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_DECELERATE:
+                selectionAnimationInterpolator = new DecelerateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_CYCLE:
+                selectionAnimationInterpolator = new CycleInterpolator(1.0f);
+                break;
+
+            case ANIM_INTERPOLATOR_ANTICIPATE:
+                selectionAnimationInterpolator = new AnticipateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_ACCELERATE_DECELERATE:
+                selectionAnimationInterpolator = new AccelerateDecelerateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_ACCELERATE:
+                selectionAnimationInterpolator = new AccelerateInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT:
+                selectionAnimationInterpolator = new AnticipateOvershootInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN:
+                selectionAnimationInterpolator = new FastOutLinearInInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN:
+                selectionAnimationInterpolator = new LinearOutSlowInInterpolator();
+                break;
+
+            case ANIM_INTERPOLATOR_OVERSHOOT:
+                selectionAnimationInterpolator = new OvershootInterpolator();
+                break;
+        }
+    }
+
+    // TODO Getters and setters to implement
+//    private EmptyView borderView;
+//    private ArrayList<SegmentedButton> buttons;
+//    private Drawable backgroundDrawable;
+//    private Drawable selectedBackgroundDrawable;
+//    private int radius;
+//    private int position;
+//    private boolean draggable;
+//    private boolean ripple;
+//    private int rippleColor;
+//    divider
+//    private Interpolator selectionAnimationInterpolator;
+//    private int selectionAnimationDuration;
+//    private OnPositionChangedListener onPositionChangedListener;
+
     // endregion
 
     // region Untouched
@@ -907,46 +922,11 @@ public class SegmentedButtonGroup extends LinearLayout {
 //        }
 //    }
 //
-//    private void setDividerAttrs() {
-//        if (!hasDivider) {
-//            return;
-//        }
-//        dividerLayout.setShowDividers(LinearLayout.SHOW_DIVIDER_MIDDLE);
-//        // Divider Views
-//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
-//                dividerBackgroundDrawable);
-//    }
-
 //    /**
 //     * @param onPositionChangedListener set your instance that you have created to listen any position change
 //     */
 //    public void setOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener) {
 //        this.onPositionChangedListener = onPositionChangedListener;
-//    }
-//
-//    /**
-//     * Use this listener if you want to know any position change.
-//     * Listener is called when one of segmented button is clicked or setPosition is called.
-//     */
-//    public interface OnPositionChangedListener {
-//
-//        void onPositionChanged(int position);
-//    }
-//
-//    /**
-//     * @param onClickedButtonListener set your instance that you have created to listen clicked positions
-//     */
-//    public void setOnClickedButtonListener(OnClickedButtonListener onClickedButtonListener) {
-//        this.onClickedButtonListener = onClickedButtonListener;
-//    }
-//
-//    /**
-//     * Use this listener if  you want to know which button is clicked.
-//     * Listener is called when one of segmented button is clicked
-//     */
-//    public interface OnClickedButtonListener {
-//
-//        void onClickedButton(int position);
 //    }
 //
 //    /**

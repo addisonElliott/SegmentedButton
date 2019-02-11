@@ -26,12 +26,12 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     private static final String TAG = "SegmentedButtonSample";
 
-    @BindView(R.id.buttonGroup_lotr)
-    SegmentedButtonGroup lotrButtonGroup;
-    @BindView(R.id.button_aragorn)
-    SegmentedButton aragornButton;
-    @BindView(R.id.spinner)
-    Spinner spinner;
+//    @BindView(R.id.buttonGroup_lotr)
+//    SegmentedButtonGroup lotrButtonGroup;
+//    @BindView(R.id.button_aragorn)
+//    SegmentedButton aragornButton;
+//    @BindView(R.id.spinner)
+//    Spinner spinner;
 //    private Button button;
 //    private SegmentedButtonGroup group;
 
@@ -40,22 +40,22 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize all variables annotated with @BindView and other variants
-        ButterKnife.bind(this);
-
-        String[] items = {
-                "",
-                "Change ripple color to red",
-                "Change ripple color to green",
-                "Change ripple color to blue",
-                "Query ripple color",
-                "Manually add a new view",
-                "Update text for button"
-        };
-        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
+//        // Initialize all variables annotated with @BindView and other variants
+//        ButterKnife.bind(this);
+//
+//        String[] items = {
+//                "",
+//                "Change ripple color to red",
+//                "Change ripple color to green",
+//                "Change ripple color to blue",
+//                "Query ripple color",
+//                "Manually add a new view",
+//                "Update text for button"
+//        };
+//        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
+//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        spinner.setAdapter(adapter);
+//        spinner.setOnItemSelectedListener(this);
 
 //        group = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
 //        button = (Button) findViewById(R.id.button);
@@ -96,46 +96,46 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     @Override
     public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
-        switch (position) {
-            // Change ripple color to red
-            case 1:
-                lotrButtonGroup.setRipple(Color.RED);
-                break;
-
-            // Change ripple color to green
-            case 2:
-                lotrButtonGroup.setRipple(Color.GREEN);
-                break;
-
-            // Change ripple color to blue
-            case 3:
-                lotrButtonGroup.setRipple(Color.BLUE);
-                break;
-
-            // Query ripple color
-            case 4:
-                Log.v(TAG, "Ripple color is: " + Boolean.toString(lotrButtonGroup.getRippleEnabled()) + " " +
-                        Integer.toHexString(lotrButtonGroup.getRippleColor()));
-                break;
-
-            // Manually add a new view
-            case 5:
-                SegmentedButton newButton = new SegmentedButton(getBaseContext());
-                newButton.setId(20202);
-
-                lotrButtonGroup.addView(newButton, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f));
-                break;
-
-            // Update text for button
-            case 6:
-                aragornButton.setText("Test");
-                break;
-
-            default:
-                break;
-        }
-
-        spinner.setSelection(0);
+//        switch (position) {
+//            // Change ripple color to red
+//            case 1:
+//                lotrButtonGroup.setRipple(Color.RED);
+//                break;
+//
+//            // Change ripple color to green
+//            case 2:
+//                lotrButtonGroup.setRipple(Color.GREEN);
+//                break;
+//
+//            // Change ripple color to blue
+//            case 3:
+//                lotrButtonGroup.setRipple(Color.BLUE);
+//                break;
+//
+//            // Query ripple color
+//            case 4:
+//                Log.v(TAG, "Ripple color is: " + Boolean.toString(lotrButtonGroup.getRippleEnabled()) + " " +
+//                        Integer.toHexString(lotrButtonGroup.getRippleColor()));
+//                break;
+//
+//            // Manually add a new view
+//            case 5:
+//                SegmentedButton newButton = new SegmentedButton(getBaseContext());
+//                newButton.setId(20202);
+//
+//                lotrButtonGroup.addView(newButton, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f));
+//                break;
+//
+//            // Update text for button
+//            case 6:
+//                aragornButton.setText("Test");
+//                break;
+//
+//            default:
+//                break;
+//        }
+//
+//        spinner.setSelection(0);
     }
 
     @Override
