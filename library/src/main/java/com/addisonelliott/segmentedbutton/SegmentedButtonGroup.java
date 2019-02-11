@@ -382,7 +382,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             // If the given position to start at is this button, select it
             if (this.position == position) {
-                updatePositions(position);
+                updateSelectedPosition(position);
             }
 
             // Add a divider view to the divider layout that mimics the size of the button
@@ -463,15 +463,20 @@ public class SegmentedButtonGroup extends LinearLayout {
                 + "(X = %f)", x));
     }
 
+    /**
+     * Handles touch events by the user in order to handle tapping a new button or dragging the selected button
+     *
+     * Note: dispatchTouchEvent is used here rather than onTouchEvent to allow for touch events to be handled by the
+     * SegmentedButtonGroup AND SegmentedButton. SegmentedButton needs onTouch events in order to correctly
+     * displaying ripple animations on tap.
+     *
+     * This cannot be done with onTouchEvent because one View must intercept and consume the events. This method
+     * handles the touch event and then passes to the SegmentedButton to consume the touch event.
+     *
+     * @hide
+     */
     @Override
     public boolean dispatchTouchEvent(final MotionEvent ev) {
-        // TODO Discuss in docstring
-        // Note: dispatchTouchEvent is used here rather than onTouchEvent to allow for touch events to be handled by
-        // the SegmentedButtonGroup AND SegmentedButton (for ripple). This cannot be done with onTouchEvent because
-        // one View must intercept and consume the events.
-        //
-        // This method handles the touch event and then passes to the SegmentedButton to consume the touch event
-
         // Do not handle touch events if the view is disabled or not clickable
         // Oddly enough, the enabled and clickable states don't do anything unless specifically programmed into the
         // custom views
@@ -485,6 +490,9 @@ public class SegmentedButtonGroup extends LinearLayout {
         switch (ev.getAction()) {
             case MotionEvent.ACTION_UP:
                 // Go to the selected button on touch up and animate too
+                //
+                // In the case that the user has been dragging the button, this will have the effect of "snapping" to
+                // the nearest button
                 setPosition(position, true);
                 break;
 
@@ -507,7 +515,7 @@ public class SegmentedButtonGroup extends LinearLayout {
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                // Only drag if the drag offset is not NaN
+                // Only drag if drag has been activated and hence is allowed
                 if (Float.isNaN(dragOffsetX)) {
                     break;
                 }
@@ -516,7 +524,7 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // the offset
                 float xCoord = ev.getX() - dragOffsetX;
 
-                // Convert X coordinate to a position with the appropriate offset as well
+                // Convert X coordinate to a position containing the relative offset within the button as well
                 final float newPosition = getButtonPositionFromXF(xCoord);
 
                 // Update the selected button to the new position
@@ -524,10 +532,20 @@ public class SegmentedButtonGroup extends LinearLayout {
                 break;
         }
 
+        // Pretend like we never handled the touch event and pass to children (SegmentedButton)
         return super.dispatchTouchEvent(ev);
     }
 
-    private void moveSelectedButton(float position) {
+    /**
+     * Move the selected button to a new position, used for animating and dragging the selected button
+     *
+     * The position parameter is a relative index with the whole part of the number indicating the button index and the
+     * fractional part of the number indicating the relative position of the starting point of the selected button.
+     *
+     * For example, a position of 2.25 would indicate that the selected button should START, i.e. the left side of
+     * the selected button, at 1/4 of the width of the 3rd button.
+     */
+    private void moveSelectedButton(final float position) {
         // Update current position to be the animated value
         // This is a float value indicating where the left-side of the button is located
         // For example, a currentPosition of 1.0 would mean all of button 1 was selected
@@ -544,8 +562,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         // width of the selected button is 1
         final int currentEndButtonPosition = currentButtonPosition + 1;
 
-        // Grab the current button from the position and clip the right side of the button to show the
-        // appropriate offset
+        // Grab the current button from the position and clip the right side of the button to show the appropriate
+        // offset
         //
         // For example, if the currentOffset was 0.25, this means that the left-side of the selected button should
         // start at 0.25. Clipping at 0.25 means the right 75% of the button would be showing which is as expected. The
@@ -591,7 +609,16 @@ public class SegmentedButtonGroup extends LinearLayout {
         invalidate();
     }
 
-    private void updatePositions(final int position) {
+    /**
+     * Update the currently selected position
+     *
+     * This will "refresh" the buttons, so to speak, such that they accurately show the correct selected button.
+     * During animation and dragging operations, there is the chance that intermediate buttons are showing parts of
+     * the selected view. This shouldn't happen, but if it does this will refresh it to how it should look.
+     *
+     * In addition, the onPositionChangedListener will be called with the updated position.
+     */
+    private void updateSelectedPosition(final int position) {
         // Update position, current position and last position to the desired value
         this.position = position;
         this.currentPosition = position;
@@ -633,6 +660,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @Override
     protected void onRestoreInstanceState(final Parcelable state) {
+        // On off chance that the state is not a Bundle, just pass it to the parent class
+        // Not sure why this would ever happen, but prevents a casting exception
         if (!(state instanceof Bundle)) {
             super.onRestoreInstanceState(state);
             return;
@@ -800,7 +829,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
 
         if (!animate || selectionAnimationInterpolator == null) {
-            updatePositions(position);
+            updateSelectedPosition(position);
             return;
         }
 
@@ -821,7 +850,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             public void onAnimationEnd(final Animator animation) {
                 // Update the position of the button at the end of the animation
                 // Also resets all buttons to their appropriate state in case the animation went wrong in any way
-                updatePositions(position);
+                updateSelectedPosition(position);
 
                 // Note: Odd bug where this specific onAnimationEnd has to be overridden in order for the animation
                 // end to be called. Originally the onAnimationEnd(animation, isReserve) operator was used but this
@@ -1218,13 +1247,15 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Classes
 
+    /**
+     * Outline that creates a rounded rectangle with the radius set to the specified corner radius from layout
+     *
+     * Primary benefit of this class is that shadows will follow contours of the outline rather than the rectangular
+     * bounds. Since shadows are only available from Lollipop and beyond (21+), outlines are only available from the
+     * same API.
+     */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     private class OutlineProvider extends ViewOutlineProvider {
-        // TODO Write in docstring
-        // This class is used to define an outline for this view
-        // This is necessary because the view may have rounded corners
-        // Primary benefit is that shadows will follow contours of the outline rather than rectangular bounds
-
         @Override
         public void getOutline(final View view, final Outline outline) {
             outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
