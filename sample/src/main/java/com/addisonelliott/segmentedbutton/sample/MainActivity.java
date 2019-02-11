@@ -18,6 +18,7 @@ import android.widget.Button;
 import androidx.core.content.res.ResourcesCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
@@ -26,23 +27,41 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     private static final String TAG = "SegmentedButtonSample";
 
-//    @BindView(R.id.buttonGroup_lotr)
-//    SegmentedButtonGroup lotrButtonGroup;
-//    @BindView(R.id.button_aragorn)
-//    SegmentedButton aragornButton;
-//    @BindView(R.id.spinner)
-//    Spinner spinner;
-//    private Button button;
-//    private SegmentedButtonGroup group;
+    @BindView(R.id.spinner)
+    Spinner spinner;
+    @BindView(R.id.button_changePosition)
+    Button changePositionButton;
+    @BindView(R.id.buttonGroup_gradient)
+    SegmentedButtonGroup gradientButtonGroup;
+    @BindView(R.id.buttonGroup_lordOfTheRings)
+    SegmentedButtonGroup lordOfTheRingsButtonGroup;
+    @BindView(R.id.buttonGroup_DCSuperheros)
+    SegmentedButtonGroup DCSuperHerosButtonGroup;
+    @BindView(R.id.buttonGroup_marvelSuperheros)
+    SegmentedButtonGroup marvelSuperherosButtonGroup;
+    @BindView(R.id.buttonGroup_guys)
+    SegmentedButtonGroup guysButtonGroup;
+    @BindView(R.id.buttonGroup_starWars)
+    SegmentedButtonGroup starWarsButtonGroup;
+    @BindView(R.id.buttonGroup_darthVader)
+    SegmentedButtonGroup darthVaderButtonGroup;
+    @BindView(R.id.buttonGroup_draggable)
+    SegmentedButtonGroup draggableButtonGroup;
+    @BindView(R.id.buttonGroup_dynamic)
+    SegmentedButtonGroup dynamicButtonGroup;
+    @BindView(R.id.buttonGroup_pickupDropoffBoth)
+    SegmentedButtonGroup pickupDropoffButtonGroup;
+    @BindView(R.id.buttonGroup_starWarsAlt)
+    SegmentedButtonGroup starWarsAltButtonGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        // Initialize all variables annotated with @BindView and other variants
-//        ButterKnife.bind(this);
-//
+        // Initialize all variables annotated with @BindView and other variants
+        ButterKnife.bind(this);
+
 //        String[] items = {
 //                "",
 //                "Change ripple color to red",
@@ -60,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 //        group = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
 //        button = (Button) findViewById(R.id.button);
 //
-//        updateButton(group.getPosition());
+        updateButton(gradientButtonGroup.getPosition());
 //
 //        group.setOnClickedButtonListener(new SegmentedButtonGroup.OnClickedButtonListener() {
 //            @Override
@@ -68,17 +87,6 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 //                updateButton(position);
 //            }
 //        });
-//
-//        button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int position = group.getPosition();
-//                position = ++position % 3;
-//                updateButton(position);
-//                group.setPosition(position, true);
-//            }
-//        });
-//
 //
 //        group.setEnabled(false);
 //
@@ -143,6 +151,15 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     }
 
+    @OnClick(R.id.button_changePosition)
+    public void changePositionButton_onClick(View view) {
+        int position = gradientButtonGroup.getPosition();
+        position = ++position % 3;
+        updateButton(position);
+
+        gradientButtonGroup.setPosition(position, true);
+    }
+
 //    private void setupDynamicDrawables() {
 //        final BadgeDrawable drawable = new BadgeDrawable(Color.RED, 80, 50, 3, 3);
 //        final SegmentedButton leftButton = (SegmentedButton) findViewById(R.id.left_button);
@@ -162,8 +179,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 //        final SegmentedButton rightButton = (SegmentedButton) findViewById(R.id.right_button);
 //        rightButton.setDrawable(R.drawable.ic_b1);
 //    }
-//
-//    private void updateButton(int position) {
-//        button.setText("Position: " + position);
-//    }
+
+    private void updateButton(int position) {
+        changePositionButton.setText("Position: " + position);
+    }
 }

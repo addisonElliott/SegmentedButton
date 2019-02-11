@@ -750,6 +750,10 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
     }
 
+    public int getPosition() {
+        return position;
+    }
+
     public void setPosition(final int position, boolean animate) {
         // Return and do nothing in two cases
         // First, if the position is out of bounds.
