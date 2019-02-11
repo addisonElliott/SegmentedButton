@@ -812,6 +812,16 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    public String getText() {
+        return text;
+    }
+
+    public void setText(final String text) {
+        this.text = text;
+
+        requestLayout();
+    }
+
     // endregion
 
     // region Unused

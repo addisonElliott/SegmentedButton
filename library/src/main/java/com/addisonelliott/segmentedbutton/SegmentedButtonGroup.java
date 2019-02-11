@@ -16,6 +16,8 @@ import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -335,6 +337,10 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
 
+            // Setup button with ripple if enabled and a color is given
+            // Otherwise disable ripple on the button if ripple is disabled
+            // The ripple color is only passed to the buttons if a color is specified, otherwise the default color is
+            // used from the button itself
             if (ripple && hasRippleColor) {
                 // Set button ripple color only if a value was given globally
                 button.setRipple(rippleColor);
@@ -574,6 +580,37 @@ public class SegmentedButtonGroup extends LinearLayout {
         if (onPositionChangedListener != null) {
             onPositionChangedListener.onPositionChanged(position);
         }
+    }
+
+    // endregion
+
+    // region Save & Restore State
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", super.onSaveInstanceState());
+
+        // Save position of selected button
+        bundle.putInt("position", position);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(final Parcelable state) {
+        if (!(state instanceof Bundle)) {
+            super.onRestoreInstanceState(state);
+            return;
+        }
+
+        final Bundle bundle = (Bundle) state;
+
+        // Restore position of selected button
+        final int position = bundle.getInt("position");
+        setPosition(position, false);
+
+        super.onRestoreInstanceState(bundle.getParcelable("superState"));
     }
 
     // endregion
@@ -1127,26 +1164,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    public void setClickable(boolean clickable) {
 //        this.clickable = clickable;
 //        setRippleState(clickable);
-//    }
-//
-//    @Override
-//    public Parcelable onSaveInstanceState() {
-//        Bundle bundle = new Bundle();
-//        bundle.putParcelable("state", super.onSaveInstanceState());
-//        bundle.putInt("position", position);
-//        return bundle;
-//    }
-//
-//    @Override
-//    public void onRestoreInstanceState(Parcelable state) {
-//        if (state instanceof Bundle) {
-//            Bundle bundle = (Bundle) state;
-//            position = bundle.getInt("position");
-//            state = bundle.getParcelable("state");
-//
-//            setPosition(position, false);
-//        }
-//        super.onRestoreInstanceState(state);
 //    }
 
     // endregion

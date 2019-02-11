@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     @BindView(R.id.buttonGroup_lotr)
     SegmentedButtonGroup lotrButtonGroup;
+    @BindView(R.id.button_aragorn)
+    SegmentedButton aragornButton;
     @BindView(R.id.spinner)
     Spinner spinner;
 //    private Button button;
@@ -45,7 +48,9 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 "Change ripple color to red",
                 "Change ripple color to green",
                 "Change ripple color to blue",
-                "Query ripple color"
+                "Query ripple color",
+                "Manually add a new view",
+                "Update text for button"
         };
         ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -111,6 +116,19 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case 4:
                 Log.v(TAG, "Ripple color is: " + Boolean.toString(lotrButtonGroup.getRippleEnabled()) + " " +
                         Integer.toHexString(lotrButtonGroup.getRippleColor()));
+                break;
+
+            // Manually add a new view
+            case 5:
+                SegmentedButton newButton = new SegmentedButton(getBaseContext());
+                newButton.setId(20202);
+
+                lotrButtonGroup.addView(newButton, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f));
+                break;
+
+            // Update text for button
+            case 6:
+                aragornButton.setText("Test");
                 break;
 
             default:
