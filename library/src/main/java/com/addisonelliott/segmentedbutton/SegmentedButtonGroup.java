@@ -92,7 +92,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // View for placing border on top of the buttons
     // Background view for placing border on top of the buttons, background is transparent to see everything but border
-    private BackgroundView borderView;
+    private EmptyView borderView;
 
     // Array containing the buttons
     private ArrayList<SegmentedButton> buttons;
@@ -214,7 +214,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Create border view
         // This is essentially a dummy view that is drawn on top of the buttonLayout so that the border appears on
         // top of them
-        borderView = new BackgroundView(context);
+        borderView = new EmptyView(context);
         borderView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
         container.addView(borderView);
@@ -330,7 +330,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (child instanceof SegmentedButton) {
-            SegmentedButton button = (SegmentedButton) child;
+            final SegmentedButton button = (SegmentedButton) child;
 
             // New position of the button will be the size of the buttons before the button is added
             // For example, if there are 5 buttons, then the indices are 0, 1, 2, 3, 4, so the next index is 5!
@@ -366,11 +366,11 @@ public class SegmentedButtonGroup extends LinearLayout {
                 oldButton.setIsRightButton(false);
 
                 // Update the background clip path for that button (removes rounding edges since it's not the
-                // right-most)
+                // right-most button anymore)
                 oldButton.setupBackgroundClipPath();
             }
 
-            // Set current button as right-most regardless
+            // Set current button as right-most
             button.setIsRightButton(true);
 
             // Sets up the background clip path in order to correctly round background to match the radius
@@ -385,10 +385,12 @@ public class SegmentedButtonGroup extends LinearLayout {
                 updatePositions(position);
             }
 
-            BackgroundView dividerView = new BackgroundView(getContext());
+            // Add a divider view to the divider layout that mimics the size of the button
+            // This view is used as essentially a spacer for the dividers in the divider layout
+            EmptyView dividerView = new EmptyView(getContext());
             dividerLayout.addView(dividerView, params);
-            // TODO On update setLayoutParams
         } else {
+            // Not allowed to have children of any type besides SegmentedButton
             throw new IllegalArgumentException("Invalid child view for SegmentedButtonGroup. Only SegmentedButton's "
                     + "are valid children of the group");
         }
