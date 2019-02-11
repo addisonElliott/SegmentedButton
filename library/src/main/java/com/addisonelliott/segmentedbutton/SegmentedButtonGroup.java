@@ -842,7 +842,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         buttonAnimator.addUpdateListener(animation -> moveSelectedButton((float) animation.getAnimatedValue()));
 
         // Set the parameters for the button animation
-        // TODO Add feature for speed per button to make it not so bad?
         buttonAnimator.setDuration(selectionAnimationDuration);
         buttonAnimator.setInterpolator(selectionAnimationInterpolator);
         buttonAnimator.addListener(new AnimatorListenerAdapter() {
