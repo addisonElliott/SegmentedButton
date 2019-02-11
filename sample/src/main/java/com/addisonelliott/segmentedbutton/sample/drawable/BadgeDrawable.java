@@ -68,8 +68,7 @@ public class BadgeDrawable extends Drawable {
         Rect textBounds = new Rect();
         String countString = String.valueOf(count);
         paint.getTextBounds(countString, 0, countString.length(), textBounds);
-        canvas.drawText(
-                countString,
+        canvas.drawText(countString,
                 rect.right - (rect.right - rect.left) / 2 - textBounds.width() / 2,
                 rect.top + textBounds.height() / 2 + (rect.bottom - rect.top) / 2,
                 paint

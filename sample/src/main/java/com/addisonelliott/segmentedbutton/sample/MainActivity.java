@@ -21,7 +21,28 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
+import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
+import java.util.ArrayList;
+
+enum Action {
+    None,
+    ChangeBorder1,
+    ChangeBorder2;
+
+    public String getDisplayText() {
+        if (this == None) {
+            return "";
+        } else if (this == ChangeBorder1) {
+            return "Change border 1";
+        } else if (this == ChangeBorder2) {
+            return "Change border 2";
+        }
+        else {
+            return "";
+        }
+    }
+}
 
 public class MainActivity extends AppCompatActivity implements OnItemSelectedListener {
 
@@ -62,88 +83,48 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         // Initialize all variables annotated with @BindView and other variants
         ButterKnife.bind(this);
 
-//        String[] items = {
-//                "",
-//                "Change ripple color to red",
-//                "Change ripple color to green",
-//                "Change ripple color to blue",
-//                "Query ripple color",
-//                "Manually add a new view",
-//                "Update text for button"
-//        };
-//        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, items);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        spinner.setAdapter(adapter);
-//        spinner.setOnItemSelectedListener(this);
+        ArrayList<String> spinnerItems = new ArrayList<>();
 
-//        group = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
-//        button = (Button) findViewById(R.id.button);
-//
+        for (Action action : Action.values()) {
+            spinnerItems.add(action.getDisplayText());
+        }
+
+        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerItems);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
         updateButton(gradientButtonGroup.getPosition());
-//
-//        group.setOnClickedButtonListener(new SegmentedButtonGroup.OnClickedButtonListener() {
-//            @Override
-//            public void onClickedButton(int position) {
-//                updateButton(position);
-//            }
-//        });
-//
-//        group.setEnabled(false);
-//
-//        Handler handler = new Handler();
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                group.setEnabled(true);
-//            }
-//        };
-//        handler.postDelayed(runnable, 5000);
-//
-//        setupDynamicDrawables();
+        gradientButtonGroup.setOnPositionChangedListener(position -> updateButton(position));
+
+        // TODO Get this working
+        setupDynamicDrawables();
     }
 
     @Override
     public void onItemSelected(final AdapterView<?> parent, final View view, final int position, final long id) {
-//        switch (position) {
-//            // Change ripple color to red
-//            case 1:
-//                lotrButtonGroup.setRipple(Color.RED);
-//                break;
-//
-//            // Change ripple color to green
-//            case 2:
-//                lotrButtonGroup.setRipple(Color.GREEN);
-//                break;
-//
-//            // Change ripple color to blue
-//            case 3:
-//                lotrButtonGroup.setRipple(Color.BLUE);
-//                break;
-//
-//            // Query ripple color
-//            case 4:
-//                Log.v(TAG, "Ripple color is: " + Boolean.toString(lotrButtonGroup.getRippleEnabled()) + " " +
-//                        Integer.toHexString(lotrButtonGroup.getRippleColor()));
-//                break;
-//
-//            // Manually add a new view
-//            case 5:
-//                SegmentedButton newButton = new SegmentedButton(getBaseContext());
-//                newButton.setId(20202);
-//
-//                lotrButtonGroup.addView(newButton, new LayoutParams(0, LayoutParams.MATCH_PARENT, 1.0f));
-//                break;
-//
-//            // Update text for button
-//            case 6:
-//                aragornButton.setText("Test");
-//                break;
-//
-//            default:
-//                break;
-//        }
-//
-//        spinner.setSelection(0);
+        Action action = Action.values()[position];
+
+        switch (action) {
+            case None:
+                break;
+
+            case ChangeBorder1:
+                lordOfTheRingsButtonGroup.setBorder(5, Color.RED, 25, 8);
+                marvelSuperherosButtonGroup.setBorder(5, Color.BLACK, 30, 10);
+                break;
+
+            case ChangeBorder2:
+                lordOfTheRingsButtonGroup.setBorder(2, Color.RED, 25, 8);
+                marvelSuperherosButtonGroup.setBorder(2, Color.BLACK, 30, 10);
+                break;
+
+            default:
+                break;
+        }
+
+        // Reset back to the normal value
+        spinner.setSelection(0);
     }
 
     @Override
@@ -160,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         gradientButtonGroup.setPosition(position, true);
     }
 
-//    private void setupDynamicDrawables() {
+    private void setupDynamicDrawables() {
 //        final BadgeDrawable drawable = new BadgeDrawable(Color.RED, 80, 50, 3, 3);
 //        final SegmentedButton leftButton = (SegmentedButton) findViewById(R.id.left_button);
 //        leftButton.setDrawable(drawable);
@@ -178,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 //
 //        final SegmentedButton rightButton = (SegmentedButton) findViewById(R.id.right_button);
 //        rightButton.setDrawable(R.drawable.ic_b1);
-//    }
+    }
 
     private void updateButton(int position) {
         changePositionButton.setText("Position: " + position);

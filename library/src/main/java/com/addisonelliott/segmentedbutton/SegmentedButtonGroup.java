@@ -681,16 +681,15 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // TODO Write getters & setters
 
+    /**
+     * Set the border for the perimeter of the button group.
+     *
+     * @param width Width of the border in pixels (default value is 0px or no border)
+     * @param color Color of the border (default color is black)
+     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+     * @param dashGap Width of the gap for border, in pixels.
+     */
     public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
-        // Width of the border in pixels (default value is 0px or no border)
-//        private int borderWidth;
-        // Color of the border (default color is black)
-//        private int borderColor;
-        // Parameters for defining a dashed border line. If dash width is 0px, then the border will be solid
-        // The border dash width is the width, in pixels, of the dash while the border dash gap is the width of the gap
-        // between dashes, in pixels.
-//        private int borderDashWidth, borderDashGap;
-
         // Border width of 0 indicates to hide borders
         if (width > 0) {
             GradientDrawable borderDrawable = new GradientDrawable();
@@ -707,6 +706,14 @@ public class SegmentedButtonGroup extends LinearLayout {
         } else {
             borderView.setBackground(null);
         }
+    }
+
+    public ArrayList<SegmentedButton> getButtons() {
+        return buttons;
+    }
+
+    public SegmentedButton getButton(int index) {
+        return buttons.get(index);
     }
 
     public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
