@@ -239,7 +239,7 @@ public class SegmentedButton extends View {
     }
 
     private void initText() {
-        // Text position is calculated regardless of text exists
+        // Text position is calculated regardless of if text exists
         // Not worth extra effort of not setting two float values
         textPosition = new PointF();
 
@@ -266,7 +266,7 @@ public class SegmentedButton extends View {
     }
 
     private void initDrawable() {
-        // Drawable position is calculated regardless of text exists
+        // Drawable position is calculated regardless of if drawable exists
         // Not worth extra effort of not setting two float values
         drawablePosition = new PointF();
 
@@ -298,14 +298,15 @@ public class SegmentedButton extends View {
         final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-        // For the text width, assume that it is in a single line with no wrapping which would be textMaxWidth
-        // This variable is used to calculate the desired width and the desire is for it all to be in a single line
-        final int drawableWidth = drawable != null ? hasDrawableWidth ? this.drawableWidth
-                : drawable.getIntrinsicWidth() : 0;
-        final int textWidth = hasText ? textMaxWidth : 0;
-
         // Measured width & height
         int width, height;
+
+        // Calculate drawable width, 0 if null, drawableWidth if set, otherwise intrinsic width
+        final int drawableWidth = drawable != null ? hasDrawableWidth ? this.drawableWidth
+                : drawable.getIntrinsicWidth() : 0;
+        // For the text width, assume that it is in a single line with no wrapping which would be textMaxWidth
+        // This variable is used to calculate the desired width and the desire is for it all to be in a single line
+        final int textWidth = hasText ? textMaxWidth : 0;
 
         // Desired width will always have left & right padding regardless of horizontal/vertical gravity for the
         // drawable and text.
@@ -324,7 +325,7 @@ public class SegmentedButton extends View {
         // Resolve width with measure spec and desired width
         // Three options:
         //      - MeasureSpec.EXACTLY: Set width to exactly specified size
-        //      - MeasureSpec.AT_MOST: Set width to desired size but dont it exceed specified size
+        //      - MeasureSpec.AT_MOST: Set width to desired size but dont exceed specified size
         //      - MeasureSpec.UNSPECIFIED: Set width to desired size
         width = resolveSize(desiredWidth, widthMeasureSpec);
 
@@ -333,6 +334,7 @@ public class SegmentedButton extends View {
 
         // Repeat measuring process for height now
         // Note that the height is the static layout height which may or may not be multi-lined
+        // Calculate drawable height, 0 if null, drawableHeight if set, otherwise intrinsic height
         final int drawableHeight = drawable != null ? hasDrawableHeight ? this.drawableHeight
                 : drawable.getIntrinsicHeight() : 0;
         final int textHeight = hasText ? textStaticLayout.getHeight() : 0;
@@ -352,7 +354,7 @@ public class SegmentedButton extends View {
         // Resolve height with measure spec and desired height
         // Three options:
         //      - MeasureSpec.EXACTLY: Set height to exactly specified size
-        //      - MeasureSpec.AT_MOST: Set height to desired size but dont it exceed specified size
+        //      - MeasureSpec.AT_MOST: Set height to desired size but dont exceed specified size
         //      - MeasureSpec.UNSPECIFIED: Set height to desired size
         height = resolveSize(desiredHeight, heightMeasureSpec);
 
@@ -371,8 +373,10 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
-    // Measures the text width given entire width of the segmented button
     private void measureTextWidth(int width, int drawableWidth) {
+        // TODO Comment me
+        // Measures the text width given entire width of the segmented button
+
         // If there is no text, then we don't need to do anything
         if (!hasText) {
             return;
