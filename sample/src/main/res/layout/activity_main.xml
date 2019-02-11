@@ -3,14 +3,15 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_300"
-        android:paddingBottom="16dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -20,7 +21,7 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/button_changePosition"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -29,7 +30,7 @@
                 android:text="Position: 1" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
-                android:id="@+id/segmentedButtonGroup"
+                android:id="@+id/buttonGroup_gradient"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -78,6 +79,7 @@
         </LinearLayout>
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_lordOfTheRings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -133,6 +135,7 @@
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_DCSuperheros"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -201,6 +204,7 @@
             android:orientation="horizontal">
 
             <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+                android:id="@+id/buttonGroup_marvelSuperheros"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
@@ -237,6 +241,7 @@
             </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
             <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+                android:id="@+id/buttonGroup_guys"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
@@ -268,6 +273,7 @@
         </LinearLayout>
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_starWars"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -287,29 +293,36 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:paddingBottom="6dp"
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
+                android:paddingTop="6dp"
                 app:drawable="@drawable/ic_b8" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingBottom="6dp"
+                android:paddingLeft="45dp"
+                android:paddingRight="45dp"
+                android:paddingTop="6dp"
                 app:drawable="@drawable/ic_b9" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
+                android:paddingBottom="6dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="6dp"
                 app:drawable="@drawable/ic_b11" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_darthVader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -374,6 +387,7 @@
             android:textSize="12sp" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_draggable"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -433,7 +447,7 @@
             android:textSize="12sp" />
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
-            android:id="@+id/dynamic_drawable_group"
+            android:id="@+id/buttonGroup_dynamic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -496,8 +510,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                app:background="@color/green_100"
                 android:padding="8dp"
+                app:background="@color/green_100"
                 app:selectedTextColor="@color/white"
                 app:text="Pickup"
                 app:textColor="@color/black" />
@@ -511,6 +525,46 @@
                 app:selectedTextColor="@color/white"
                 app:text="Dropoff"
                 app:textColor="@color/black" />
+
+        </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+
+        <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_starWarsAlt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            app:background="@color/red_400"
+            app:divider="@color/white"
+            app:dividerPadding="10dp"
+            app:dividerRadius="10dp"
+            app:dividerWidth="2dp"
+            app:position="0"
+            app:radius="2dp"
+            app:rippleColor="@color/red_200"
+            app:selectedBackground="@color/green_200">
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:paddingTop="6dp"
+                app:drawable="@drawable/ic_b8" />
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:layout_width="128dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:paddingTop="6dp"
+                app:drawable="@drawable/ic_b9" />
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:paddingBottom="6dp"
+                android:paddingTop="6dp"
+                app:drawable="@drawable/ic_b11" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     </LinearLayout>

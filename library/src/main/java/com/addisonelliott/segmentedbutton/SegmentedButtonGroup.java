@@ -17,7 +17,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -388,6 +387,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             // Add a divider view to the divider layout that mimics the size of the button
             // This view is used as essentially a spacer for the dividers in the divider layout
+            // TODO If layout_weight is not used then the alignment of the dividers are off, need to subtract
+            // dividerWidth from the width to center them.
+            // TODO Divider not appropriately aligned for wrap_content, need to find a handler to update the layout on
             EmptyView dividerView = new EmptyView(getContext());
             dividerLayout.addView(dividerView, params);
         } else {
@@ -407,9 +409,7 @@ public class SegmentedButtonGroup extends LinearLayout {
      * This returns a whole-number indicating the index of the button that corresponds to the given X coordinate.
      *
      * @param x X screen coordinate
-     *
      * @return int representing index of the corresponding button
-     *
      * @throws IllegalStateException if no button contains the coordinate within its bounds
      */
     int getButtonPositionFromX(float x) {
@@ -441,9 +441,7 @@ public class SegmentedButtonGroup extends LinearLayout {
      * and 1/4 (25%) of the width of the button.
      *
      * @param x X screen coordinate
-     *
      * @return float representing the fractional position of the corresponding button
-     *
      * @throws IllegalStateException if no button contains the coordinate within its bounds
      */
     float getButtonPositionFromXF(float x) {
@@ -1236,6 +1234,7 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
     private class OutlineProvider extends ViewOutlineProvider {
+
         @Override
         public void getOutline(final View view, final Outline outline) {
             outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
