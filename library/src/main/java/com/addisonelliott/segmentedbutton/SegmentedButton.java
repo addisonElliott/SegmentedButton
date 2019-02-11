@@ -292,11 +292,6 @@ public class SegmentedButton extends View {
     @SuppressLint("DrawAllocation")
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
         // Measured width & height
         int width, height;
 
@@ -849,6 +844,11 @@ public class SegmentedButton extends View {
         return backgroundDrawable;
     }
 
+    /**
+     * Set the background displayed when not selected to a given drawable
+     *
+     * @param drawable drawable to set the background to
+     */
     @Override
     public void setBackground(final Drawable drawable) {
         backgroundDrawable = drawable;
@@ -857,18 +857,33 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    /**
+     * Set the background displayed when not selected to a given color
+     *
+     * This will create a ColorDrawable or modify the current background if it is a ColorDrawable
+     *
+     * @param color color to set the background to
+     */
     public void setBackground(@ColorInt int color) {
         if (backgroundDrawable instanceof ColorDrawable) {
             ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
         } else {
             backgroundDrawable = new ColorDrawable(color);
-
             backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
 
         invalidate();
     }
 
+    /**
+     * Convenience function for setting the background color when not selected
+     *
+     * This function already exists in the base View class so it is overridden to prevent confusion as to why
+     * setBackground works but not setBackgroundColor.
+     *
+     * @param color color to set the background to
+     */
+    @Override
     public void setBackgroundColor(@ColorInt int color) {
         setBackground(color);
     }
@@ -884,6 +899,11 @@ public class SegmentedButton extends View {
         return selectedBackgroundDrawable;
     }
 
+    /**
+     * Set the background displayed when selected to a given drawable
+     *
+     * @param drawable drawable to set the background to
+     */
     public void setSelectedBackground(final Drawable drawable) {
         selectedBackgroundDrawable = drawable;
         selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
@@ -891,26 +911,32 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    /**
+     * Set the background displayed when selected to a given color
+     *
+     * This will create a ColorDrawable or modify the current background if it is a ColorDrawable
+     *
+     * @param color color to set the background to
+     */
     public void setSelectedBackground(@ColorInt int color) {
         if (selectedBackgroundDrawable instanceof ColorDrawable) {
             ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
-
-            // Required to update background for the buttons?
-            // TODO See if necessary
-//            setSelectedBackground(selectedBackgroundDrawable);
         } else {
             selectedBackgroundDrawable = new ColorDrawable(color);
-
             selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
 
         invalidate();
     }
 
+    /**
+     * Convenience function for setting the background color when selected
+     *
+     * @param color color to set the background to
+     */
     public void setSelectedBackgroundColor(@ColorInt int color) {
         setSelectedBackground(color);
     }
-
 
     void setRipple(boolean enabled) {
         // TODO Note that this is package-private because I dont want people enabling or disabling the ripple effect
@@ -964,8 +990,8 @@ public class SegmentedButton extends View {
 //    [X]backgroundClipPath
 //    [X]private int backgroundRadius;
 //    [x]private boolean isLeftButton, isRightButton;
-//    private Drawable backgroundDrawable;
-//    private Drawable selectedBackgroundDrawable;
+//    [x]private Drawable backgroundDrawable;
+//    [x]private Drawable selectedBackgroundDrawable;
 //    private int rippleColor;
 //    private Drawable drawable;
 //    private int drawablePadding;

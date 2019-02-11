@@ -834,8 +834,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         if (selectedBackgroundDrawable instanceof ColorDrawable) {
             ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
 
-            // Required to update background for the buttons?
-            // TODO See if necessary
+            // Required to update background for the buttons
             setSelectedBackground(selectedBackgroundDrawable);
         } else {
             setSelectedBackground(new ColorDrawable(color));
@@ -845,12 +844,9 @@ public class SegmentedButtonGroup extends LinearLayout {
     /**
      * Convenience function for setting the background color
      *
-     * This function already exists in the base View class so it is overridden to prevent confusion as to why
-     * setBackground works but not setBackgroundColor.
-     *
      * @param color color to set the background to
      *
-     * @see #setBackground(int)
+     * @see #setSelectedBackground(int)
      */
     public void setSelectedBackgroundColor(@ColorInt int color) {
         setSelectedBackground(color);
@@ -1048,8 +1044,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     // TODO Getters and setters to implement
 //    [x]private EmptyView borderView;
 //    [x]private ArrayList<SegmentedButton> buttons;
-//    private Drawable backgroundDrawable;
-//    private Drawable selectedBackgroundDrawable;
+//    [x]private Drawable backgroundDrawable;
+//    [x]private Drawable selectedBackgroundDrawable;
 //    private int radius;
 //    private int position;
 //    private boolean draggable;
@@ -1064,14 +1060,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Untouched
 
-//    private void setBackgroundColor(View v, Drawable d, int c) {
-//        if (null != d) {
-//            BackgroundHelper.setBackground(v, d);
-//        } else {
-//            v.setBackgroundColor(c);
-//        }
-//    }
-//
 //    /**
 //     * @param onPositionChangedListener set your instance that you have created to listen any position change
 //     */
@@ -1125,23 +1113,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //                toggle(position, 1, false);
 //            }
 //        }
-//    }
-//
-//    /**
-//     * @param selectorColor sets color to selector
-//     *                      default: Color.GRAY
-//     */
-//    public void setSelectorColor(int selectorColor) {
-//        this.selectorColor = selectorColor;
-//    }
-//
-//    /**
-//     * @param backgroundColor sets background color of whole layout including buttons on top of it
-//     *                        default: Color.WHITE
-//     */
-//    @Override
-//    public void setBackgroundColor(int backgroundColor) {
-//        this.backgroundColor = backgroundColor;
 //    }
 //
 //    /**
@@ -1266,10 +1237,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //        return rippleColor;
 //    }
 //
-//    public int getSelectorColor() {
-//        return selectorColor;
-//    }
-//
 //    public int getSelectorAnimation() {
 //        return animateSelector;
 //    }
@@ -1280,10 +1247,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //
 //    public int getPosition() {
 //        return position;
-//    }
-//
-//    public int getBackgroundColor() {
-//        return backgroundColor;
 //    }
 //
 //    public int getDividerColor() {
