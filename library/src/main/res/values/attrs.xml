@@ -18,7 +18,6 @@
         <attr name="selectedDrawableTint" format="color" />
         <attr name="drawableWidth" format="dimension" />
         <attr name="drawableHeight" format="dimension" />
-        <attr name="drawableKeepAspectRatio" format="boolean" />
         <attr name="drawableGravity" format="integer">
             <flag name="top" value="0x30" />
             <flag name="bottom" value="0x50" />
@@ -30,17 +29,11 @@
         <attr name="textColor" format="color" />
         <attr name="selectedTextColor" format="color" />
         <attr name="textSize" format="dimension" />
-        <attr name="textFillSpace" format="boolean" />
         <attr name="android:fontFamily" format="string" />
         <attr name="textStyle" format="integer">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
-        </attr>
-        <attr name="textGravity" format="integer">
-            <flag name="left" value="0x03" />
-            <flag name="right" value="0x05" />
-            <flag name="center" value="0x11" />
         </attr>
     </declare-styleable>
 

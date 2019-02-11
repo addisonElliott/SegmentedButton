@@ -1,28 +1,18 @@
 package com.addisonelliott.segmentedbutton.sample;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
-import android.os.Handler;
-import android.util.Log;
+import android.os.Bundle;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.Spinner;
-import android.widget.TextView;
-import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
-
-import androidx.core.content.res.ResourcesCompat;
+import android.widget.Spinner;
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
-import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener;
-import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
 import java.util.ArrayList;
 
 enum Action {
@@ -37,8 +27,7 @@ enum Action {
             return "Change border 1";
         } else if (this == ChangeBorder2) {
             return "Change border 2";
-        }
-        else {
+        } else {
             return "";
         }
     }
@@ -99,6 +88,15 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
         // TODO Get this working
         setupDynamicDrawables();
+
+        // Basic checks
+        if (starWarsButtonGroup.getButtons().size() != 3) {
+            throw new AssertionError("Buttons size incorrect");
+        }
+
+        if (!lordOfTheRingsButtonGroup.getButton(1).getText().equals("Gimli")) {
+            throw new AssertionError("Button name is incorrect");
+        }
     }
 
     @Override

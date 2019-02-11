@@ -1,7 +1,6 @@
 package com.addisonelliott.segmentedbutton;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -14,12 +13,8 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.StateListDrawable;
-import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -27,8 +22,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.util.StateSet;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import androidx.annotation.ColorInt;
@@ -46,6 +40,16 @@ public class SegmentedButton extends View {
     // region Variables & Constants
     private static final String TAG = "SegmentedButton";
 
+    @IntDef(flag = true, value = {
+            Gravity.LEFT,
+            Gravity.RIGHT,
+            Gravity.TOP,
+            Gravity.BOTTOM,
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface GravityOptions {}
+    // TODO Use this eventually
+
     // General purpose rectangle to prevent memory allocation in onDraw
     private RectF rectF;
 
@@ -59,23 +63,23 @@ public class SegmentedButton extends View {
     // Position (X/Y) of the text and drawable
     private PointF textPosition, drawablePosition;
 
-    // Clip path used to round background drawable edges to match segmented button group radius
+    // Clip path used to round background drawable edges to create rounded button group
     private Path backgroundClipPath;
     // Radius of the segmented button group used for creating background clip path
     private int backgroundRadius;
     // Whether this button is on the left or right side of the segmented group, determines which side to round out
     private boolean isLeftButton, isRightButton;
 
-    // Horizontal relative clip position from 0.0f to 1.0f. This value is scaled by this views width to get a value from
-    // 0.0f to the width of the view
+    // Horizontal relative clip position from 0.0f to 1.0f.
+    // Value is scaled by the width of this view to get the actual clip X coordinate
     private float relativeClipPosition;
     // Whether or not the clipping is occurring from the left (true) or right (false). In simpler terms, if true,
     // then the start clipping relative position is 0.0f, otherwise, if clipping from the right, the position is 1.0f
     private boolean isClippingLeft;
 
-    // Drawable for the background, this will be a ColorDrawable in case a solid color is given
+    // Drawable for the background, this will be a ColorDrawable in the case a solid color is given
     private Drawable backgroundDrawable;
-    // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
+    // Drawable for the background when selected, this will be a ColorDrawable in the case a solid color is given
     private Drawable selectedBackgroundDrawable;
 
     // Color of the ripple to display over the button (default value is gray)
@@ -92,38 +96,32 @@ public class SegmentedButton extends View {
     // tint
     private PorterDuffColorFilter drawableColorFilter, selectedDrawableColorFilter;
 
-    @IntDef(flag = true, value = {
-            Gravity.LEFT,
-            Gravity.RIGHT,
-            Gravity.TOP,
-            Gravity.BOTTOM,
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    private @interface GravityOptions {}
-    // TODO Use this eventually
-
-    // Drawable is the icon or image to draw. This can be drawn beside text or without text
+    // Drawable to draw for the button. Can be drawn beside text or without text at all
     private Drawable drawable;
-    private int drawableGravity;
-    private boolean hasDrawableTint, hasSelectedDrawableTint;
-    private int drawableTint, selectedDrawableTint;
-    private boolean hasDrawableWidth, hasDrawableHeight;
-    private int drawableWidth, drawableHeight;
+    // Padding for the drawable in pixels, this will only be applied between the drawable and text (default value is 0)
     private int drawablePadding;
-
-    // TODO Text gravity not used?
+    // Whether or not there is a tint color for the drawable when unselected and/or selected
+    private boolean hasDrawableTint, hasSelectedDrawableTint;
+    // Tint color for the drawable when unselected and selected
+    private int drawableTint, selectedDrawableTint;
+    // Whether or not a width or height was specified for the drawable
+    private boolean hasDrawableWidth, hasDrawableHeight;
+    // Width and height for the drawable, in pixels
+    private int drawableWidth, drawableHeight;
+    // Determines where to draw the drawable in relation to the text, can be one of GravityOptions types
+    private int drawableGravity;
 
     // Whether or not we have text, false indicates text should be empty
     private boolean hasText;
-    // Text to display for button
+    // Text to display for button (default value is an empty string meaning no text will be shown)
     private String text;
-    // Whether or not we have a selected text color, if not we use the default text color to display the text
+    // Whether or not we have a selected text color
     private boolean hasSelectedTextColor;
-    // Text color and selected text color
+    // Text color and selected text color (default value is gray for unselected, white for selected text colors)
     private int textColor, selectedTextColor;
-    // Font size of the text in pixels
+    // Font size of the text in pixels (default value is 14sp)
     private float textSize;
-    // Typeface (font) to use for displaying the text
+    // Typeface to use for displaying the text, this is created from the fontFamily & textStyle attributes
     private Typeface textTypeface;
 
     // endregion
@@ -206,7 +204,6 @@ public class SegmentedButton extends View {
         hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_drawableHeight);
         drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
         drawableHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableHeight, -1);
-        // TODO No drawable keep aspect ratio?
         drawableGravity = ta.getInteger(R.styleable.SegmentedButton_drawableGravity, Gravity.LEFT);
 
         hasText = ta.hasValue(R.styleable.SegmentedButton_text);
@@ -214,7 +211,11 @@ public class SegmentedButton extends View {
         textColor = ta.getColor(R.styleable.SegmentedButton_textColor, Color.GRAY);
         hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_selectedTextColor);
         selectedTextColor = ta.getColor(R.styleable.SegmentedButton_selectedTextColor, Color.WHITE);
-        textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, ConversionHelper.spToPx(getContext(), 14));
+
+        // Convert 14sp to pixels for default value on text size
+        final float px14sp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14.0f,
+                context.getResources().getDisplayMetrics());
+        textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, px14sp);
 
         final boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
         final int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);

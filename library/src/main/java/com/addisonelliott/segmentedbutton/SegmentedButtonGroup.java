@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
@@ -684,10 +685,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     /**
      * Set the border for the perimeter of the button group.
      *
-     * @param width Width of the border in pixels (default value is 0px or no border)
-     * @param color Color of the border (default color is black)
+     * @param width     Width of the border in pixels (default value is 0px or no border)
+     * @param color     Color of the border (default color is black)
      * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
-     * @param dashGap Width of the gap for border, in pixels.
+     * @param dashGap   Width of the gap for border, in pixels.
      */
     public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
         // Border width of 0 indicates to hide borders
@@ -708,12 +709,77 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
+    /**
+     * List of segmented buttons that are attached to this button group
+     */
     public ArrayList<SegmentedButton> getButtons() {
         return buttons;
     }
 
+    /**
+     * Get segmented button at specified index
+     *
+     * Segmented buttons are indexed according to their order of being added to this group
+     */
     public SegmentedButton getButton(int index) {
         return buttons.get(index);
+    }
+
+    public Drawable getBackground() {
+        return backgroundDrawable;
+    }
+
+    @Override
+    public void setBackground(final Drawable drawable) {
+        backgroundDrawable = drawable;
+
+        for (SegmentedButton button : buttons) {
+            button.setBackground(drawable);
+        }
+    }
+
+    public void setBackground(@ColorInt int color) {
+        if (backgroundDrawable instanceof ColorDrawable) {
+            ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
+
+            // Required to update background for the buttons?
+            // TODO See if necessary
+//            setBackground(backgroundDrawable);
+        } else {
+            setBackground(new ColorDrawable(color));
+        }
+    }
+
+    public void setBackgroundColor(@ColorInt int color) {
+        setBackground(color);
+    }
+
+    public Drawable getSelectedBackground() {
+        return selectedBackgroundDrawable;
+    }
+
+    public void setSelectedBackground(final Drawable drawable) {
+        selectedBackgroundDrawable = drawable;
+
+        for (SegmentedButton button : buttons) {
+//            button.setSelectedBackground(drawable);
+        }
+    }
+
+    public void setSelectedBackground(@ColorInt int color) {
+        if (selectedBackgroundDrawable instanceof ColorDrawable) {
+            ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
+
+            // Required to update background for the buttons?
+            // TODO See if necessary
+//            setSelectedBackground(selectedBackgroundDrawable);
+        } else {
+            setSelectedBackground(new ColorDrawable(color));
+        }
+    }
+
+    public void setSelectedBackgroundColor(@ColorInt int color) {
+        setSelectedBackground(color);
     }
 
     public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
@@ -906,8 +972,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     // TODO Getters and setters to implement
-//    private EmptyView borderView;
-//    private ArrayList<SegmentedButton> buttons;
+//    [x]private EmptyView borderView;
+//    [x]private ArrayList<SegmentedButton> buttons;
 //    private Drawable backgroundDrawable;
 //    private Drawable selectedBackgroundDrawable;
 //    private int radius;
