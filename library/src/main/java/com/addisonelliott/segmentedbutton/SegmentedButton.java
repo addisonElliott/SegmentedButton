@@ -373,10 +373,16 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
+    /**
+     * Create new static text layout with new measured text width based off the total width of the button and the
+     * drawable width.
+     *
+     * This does nothing if the button has no text to display
+     *
+     * @param width size, in pixels, of the button
+     * @param drawableWidth size, in pixels, of the drawable
+     */
     private void measureTextWidth(int width, int drawableWidth) {
-        // TODO Comment me
-        // Measures the text width given entire width of the segmented button
-
         // If there is no text, then we don't need to do anything
         if (!hasText) {
             return;
@@ -407,11 +413,13 @@ public class SegmentedButton extends View {
 
     /**
      * Calculate new bounds for all elements in the button
+     *
+     * This will be called on onSizeChanged, which is called less frequently than onMeasure which will speed things up
      */
     private void updateSize() {
         final int width = getWidth(), height = getHeight();
-        final int textWidth = textStaticLayout != null ? textStaticLayout.getWidth() : 0,
-                textHeight = textStaticLayout != null ? textStaticLayout.getHeight() : 0;
+        final int textWidth = textStaticLayout != null ? textStaticLayout.getWidth() : 0;
+        final int textHeight = textStaticLayout != null ? textStaticLayout.getHeight() : 0;
         final int drawableWidth = drawable != null ? hasDrawableWidth ? this.drawableWidth
                 : drawable.getIntrinsicWidth() : 0;
         final int drawableHeight = drawable != null ? hasDrawableHeight ? this.drawableHeight
@@ -420,16 +428,13 @@ public class SegmentedButton extends View {
         // Calculates the X/Y positions of the text and drawable now that the measured size is known
         if (Gravity.isHorizontal(drawableGravity)) {
             // Calculate Y position for horizontal gravity, i.e. center the drawable and/or text if necessary
-            // Fancy way of centering the two objects vertically, the last 2 if statements are special cases where
-            // either the drawable or text is taking up the full height so there is no need to calculate the center
             textPosition.y = getPaddingTop()
                     + (height - getPaddingTop() - getPaddingBottom() - textHeight) / 2.0f;
             drawablePosition.y = getPaddingTop()
                     + (height - getPaddingTop() - getPaddingBottom() - drawableHeight) / 2.0f;
 
             // Calculate the starting X position with horizontal gravity
-            // If the exact amount of width is used (meaning useDesiredWidth is true), then the start position is set
-            // to be the left padding. Otherwise, the start position is half of the remaining space to center it
+            // startPosition is half of the remaining space to center the drawable and text
             final float startPosition = (width - textWidth - drawableWidth - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
@@ -442,16 +447,13 @@ public class SegmentedButton extends View {
             }
         } else {
             // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
-            // Fancy way of centering the two objects horizontally, the last 2 if statements are special cases where
-            // either the drawable or text is taking up the full height so there is no need to calculate the center
             textPosition.x = getPaddingLeft()
                     + (width - getPaddingLeft() - getPaddingRight() - textWidth) / 2.0f;
             drawablePosition.x = getPaddingLeft()
                     + (width - getPaddingLeft() - getPaddingRight() - drawableWidth) / 2.0f;
 
             // Calculate the starting Y position with vertical gravity
-            // If the exact amount of height is used (meaning useDesiredHeight is true), then the start position is set
-            // to be the top padding. Otherwise, the start position is half of the remaining space to center it
+            // startPosition is half of the remaining space to center the drawable and text
             final float startPosition = (height - textHeight - drawableHeight - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
@@ -480,10 +482,12 @@ public class SegmentedButton extends View {
             selectedBackgroundDrawable.setBounds(0, 0, width, height);
         }
 
+        // Set bounds of ripple drawable if it exists
         if (rippleDrawableLollipop != null) {
             rippleDrawableLollipop.setBounds(0, 0, width, height);
         }
 
+        // Set bounds of ripple drawable if it exists
         if (rippleDrawable != null) {
             rippleDrawable.setBounds(0, 0, width, height);
         }
@@ -506,7 +510,7 @@ public class SegmentedButton extends View {
             canvas.clipPath(backgroundClipPath);
         }
 
-        // Draw background
+        // Draw background (unselected)
         if (backgroundDrawable != null) {
             backgroundDrawable.draw(canvas);
         }
@@ -564,10 +568,12 @@ public class SegmentedButton extends View {
 
         canvas.restore();
 
+        // Draw ripple drawable to show ripple effect on click
         if (rippleDrawableLollipop != null) {
             rippleDrawableLollipop.draw(canvas);
         }
 
+        // Draw ripple drawable to show ripple effect on click
         if (rippleDrawable != null) {
             rippleDrawable.draw(canvas);
         }
@@ -576,10 +582,10 @@ public class SegmentedButton extends View {
     /**
      * Horizontally clips selected button view from the left side (0.0f) to relativePosition
      *
-     * For example, a relativePosition of 0.0f would mean the entire selected button view would be available and no
+     * For example, a relativePosition of 1.0f would mean the entire selected button view would be available and no
      * clipping would occur.
      *
-     * However, a relative position of 1.0f would mean the entire selected button view is clipped and the normal
+     * However, a relative position of 0.0f would mean the entire selected button view is clipped and the normal
      * button view is entirely visible.
      *
      * This can be thought of as the selected button view being clipped from 0.0f on the left to the relativePosition
@@ -588,7 +594,7 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 0.0f
      *                         would represent no clipping and 1.0f would represent clipping the entire view
      */
-    public void clipLeft(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
+    void clipLeft(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
         // Clipping from the left side, set to true
         isClippingLeft = true;
 
@@ -602,10 +608,10 @@ public class SegmentedButton extends View {
     /**
      * Horizontally clips selected button view from the right side (1.0f) to relativePosition
      *
-     * For example, a relativePosition of 1.0f would mean the entire selected button view would be available and no
+     * For example, a relativePosition of 0.0f would mean the entire selected button view would be available and no
      * clipping would occur.
      *
-     * However, a relative position of 0.0f would mean the entire selected button view is clipped and the normal
+     * However, a relative position of 1.0f would mean the entire selected button view is clipped and the normal
      * button view is entirely visible.
      *
      * This can be thought of as the selected button view being clipped from 0.0f on the left to the relativePosition
@@ -614,7 +620,7 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 1.0f
      *                         would represent no clipping and 0.0f would represent clipping the entire view
      */
-    public void clipRight(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
+    void clipRight(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
         // Clipping from the right side, set to false
         isClippingLeft = false;
 
@@ -629,13 +635,22 @@ public class SegmentedButton extends View {
 
     // region Ripple-related
 
+    /**
+     * Updates hotspot for drawable
+     *
+     * This function is called by the base View class when the user taps on a location. The base View class handles
+     * this automatically for the background drawable. The primary advantage of this function and a hotspot in
+     * general is for the ripple effect to show where the ripple show originate from.
+     *
+     * Updates the hotspot for the ripple drawable manually since the base View class does not know about the ripple
+     * drawable.
+     *
+     * @param x X coordinate of the new hotspot
+     * @param y Y coordinate of the new hotspot
+     */
     @SuppressLint("NewApi")
     @Override
     public void drawableHotspotChanged(final float x, final float y) {
-        // This function is called when the hotspot for the drawable changes such as when the user taps on this view,
-        // it will call this with the coordinates.
-        // Normally the super class handles this automatically for the background drawable but the ripple drawable is
-        // not the background in this instance
         super.drawableHotspotChanged(x, y);
 
         // Update the hotspot for the ripple drawable
@@ -649,12 +664,18 @@ public class SegmentedButton extends View {
         }
     }
 
+    /**
+     * Updates state for drawable
+     *
+     * This function is called by the base View class when the state of the View changes. The state of the View is
+     * how state-lists and the ripple drawable work, by monitoring the state for a change in the pressed state and
+     * having different drawable states or actions when the state changes.
+     *
+     * The base View class handles updating the state for the background drawable but the ripple drawable state is
+     * updated manually here since the base View class does not know about the ripple drawable.
+     */
     @Override
     protected void drawableStateChanged() {
-        // This function is called when the state of this view changes such as when it is clicked, enabled, disabled,
-        // etc. This is meant to update the state of the drawable.
-        // Normally the super class handles this automatically for the background drawable but the ripple drawable is
-        // not the background in this instance
         super.drawableStateChanged();
 
         // Update the state for the ripple drawable
@@ -668,6 +689,17 @@ public class SegmentedButton extends View {
         }
     }
 
+    /**
+     * Validate Drawables and whether or not they are allowed to animate
+     *
+     * By returning true for a Drawable, this will allow animations to be scheduled for that Drawable, which is
+     * relevant for the ripple drawables in this class.
+     *
+     * @param who Drawable to verify. Return true if this class is displaying the drawable.
+     *
+     * @return Returns true if the drawable is being displayed in this view, else false and it is not allowed to
+     *         animate
+     */
     @Override
     protected boolean verifyDrawable(@NonNull final Drawable who) {
         // Very obscure and difficult to find but it is noted in the source code docstring for this function
