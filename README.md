@@ -108,7 +108,7 @@ These animations can be set using the attribute noted above like so: `app:sbg_an
 ##### In Xml Layout
 
 ```xml
-    <co.ceryle.segmentedbutton.SegmentedButtonGroup
+    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -150,7 +150,7 @@ These animations can be set using the attribute noted above like so: `app:sbg_an
             android:text="Button 3"
             android:textAllCaps="false" />
 
-    </co.ceryle.segmentedbutton.SegmentedButtonGroup>
+    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 ```
 
 ##### Listener Example
@@ -181,8 +181,26 @@ This project is still under a major rehaul. The following is a list of items lef
     * [ ] Include better previews with just simple segmented controls
     * [ ] Have a description for each preview option to see what this contains
     * [ ] Contain a note that the code for these previews can be found in the examples
+* [ ] Consider switching to Maven from JitPack in future
 
 ## License
 
-This project is licensed under the Apache License Version 2.0 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
+
+```
+Copyright (C) 2016 ceryle
+Copyright (C) 2019 Addison Elliott
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
 

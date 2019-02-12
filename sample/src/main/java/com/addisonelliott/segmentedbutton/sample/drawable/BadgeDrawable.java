@@ -1,4 +1,4 @@
-package co.ceryle.segmentedbutton.sample.drawable;
+package com.addisonelliott.segmentedbutton.sample.drawable;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -8,7 +8,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class BadgeDrawable extends Drawable {
 
@@ -68,8 +68,7 @@ public class BadgeDrawable extends Drawable {
         Rect textBounds = new Rect();
         String countString = String.valueOf(count);
         paint.getTextBounds(countString, 0, countString.length(), textBounds);
-        canvas.drawText(
-                countString,
+        canvas.drawText(countString,
                 rect.right - (rect.right - rect.left) / 2 - textBounds.width() / 2,
                 rect.top + textBounds.height() / 2 + (rect.bottom - rect.top) / 2,
                 paint
