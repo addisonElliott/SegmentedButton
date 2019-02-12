@@ -1008,6 +1008,25 @@ public class SegmentedButtonGroup extends LinearLayout {
         buttonAnimator.start();
     }
 
+    /**
+     * Returns whether or not the currently selected button can be moved via dragging
+     */
+    public boolean isDraggable() {
+        return draggable;
+    }
+
+    /**
+     * Sets whether or not the currently selected button can be moved via dragging
+     *
+     * If true, the user can drag their finger starting from the selected button to a different button and the
+     * selected button will follow the users finger. When the user lets go, the selected button will snap to the
+     * nearest button
+     */
+    public void setDraggable(final boolean draggable) {
+        // TODO Fix draggable bug where finger leaves button group, exit focus event?
+        this.draggable = draggable;
+    }
+
     public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
         // TODO Explain these
 
@@ -1048,8 +1067,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerLayout.setDividerPadding(padding);
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
     }
-
-
 
     public OnPositionChangedListener getOnPositionChangedListener() {
         return onPositionChangedListener;
@@ -1156,7 +1173,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    [x]private Drawable selectedBackgroundDrawable;
 //    [x]private int radius;
 //    [x]private int position;
-//    private boolean draggable;
+//    [x]private boolean draggable;
 //    private boolean ripple;
 //    private int rippleColor;
 //    divider

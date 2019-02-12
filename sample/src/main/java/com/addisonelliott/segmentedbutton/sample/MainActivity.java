@@ -24,7 +24,8 @@ enum Action {
     ChangeBackgroundDrawable,
     ChangeRadius,
     ChangePositionAnimated,
-    ChangePosition;
+    ChangePosition,
+    ToggleDraggable;
 
     public String getDisplayText() {
         if (this == None) {
@@ -43,6 +44,8 @@ enum Action {
             return "Change position and animate movement";
         } else if (this == ChangePosition) {
             return "Change position without animating";
+        } else if (this == ToggleDraggable) {
+            return "Toggle draggable boolean";
         } else {
             return "";
         }
@@ -158,6 +161,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
             case ChangePosition:
                 lordOfTheRingsButtonGroup.setPosition(((lordOfTheRingsButtonGroup.getPosition() + 1) % 3), false);
+                break;
+
+            case ToggleDraggable:
+                darthVaderButtonGroup.setDraggable(!darthVaderButtonGroup.isDraggable());
                 break;
 
             default:
