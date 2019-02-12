@@ -14,7 +14,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
+import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.AnimationInterpolator;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 enum Action {
     None,
@@ -28,7 +31,8 @@ enum Action {
     ToggleDraggable,
     ToggleRipple,
     ToggleRippleColor,
-    ChangeDivider;
+    ChangeDivider,
+    ChangeAnimation;
 
     public String getDisplayText() {
         if (this == None) {
@@ -55,6 +59,8 @@ enum Action {
             return "Toggle ripple color between black/white";
         } else if (this == ChangeDivider) {
             return "Change divider";
+        } else if (this == ChangeAnimation) {
+            return "Change animation duration & interpolator";
         } else {
             return "";
         }
@@ -189,6 +195,14 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 lordOfTheRingsButtonGroup.setDivider(Color.MAGENTA, 10, 10, 10);
                 guysButtonGroup.setDivider(ContextCompat.getDrawable(getApplicationContext(),
                         R.drawable.gradient_drawable_divider), 20, 0, 0);
+                break;
+
+            case ChangeAnimation:
+                lordOfTheRingsButtonGroup.setSelectionAnimationDuration(
+                        lordOfTheRingsButtonGroup.getSelectionAnimationDuration() == 500 ? 5000 : 500);
+
+                final int random = new Random().nextInt(12);
+                lordOfTheRingsButtonGroup.setSelectionAnimationInterpolator(random);
                 break;
 
             default:

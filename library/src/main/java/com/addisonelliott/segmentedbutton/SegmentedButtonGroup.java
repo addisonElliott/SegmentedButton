@@ -105,7 +105,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // Width of the border in pixels (default value is 0px for no border)
     private int borderWidth;
-     // Color of the border (default color is black)
+    // Color of the border (default color is black)
     private int borderColor;
     // Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
     private int borderDashWidth;
@@ -960,7 +960,7 @@ public class SegmentedButtonGroup extends LinearLayout {
      * animation will begin from the current location.
      *
      * @param position index of new button to select
-     * @param animate whether or not to animate moving to the button
+     * @param animate  whether or not to animate moving to the button
      */
     public void setPosition(final int position, final boolean animate) {
         // Return and do nothing in two cases
@@ -975,6 +975,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
+        // If not animating or if the animation interpolator is null, then just update the selected position
         if (!animate || selectionAnimationInterpolator == null) {
             updateSelectedPosition(position);
             return;
@@ -1093,9 +1094,9 @@ public class SegmentedButtonGroup extends LinearLayout {
      * If the drawable is null, then the divider will be removed and hidden
      *
      * @param drawable divider drawable that will be displayed between buttons
-     * @param width width of the divider drawable, in pixels
-     * @param radius corner radius of the divider drawable to round the corners, in pixels
-     * @param padding space above and below the divider drawable within the button group, in pixels
+     * @param width    width of the divider drawable, in pixels
+     * @param radius   corner radius of the divider drawable to round the corners, in pixels
+     * @param padding  space above and below the divider drawable within the button group, in pixels
      */
     public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
         // Drawable of null indicates that we want to hide dividers
@@ -1124,9 +1125,9 @@ public class SegmentedButtonGroup extends LinearLayout {
     /**
      * Set divider between buttons with a specified solid color, width, radius and padding
      *
-     * @param color color of the divider
-     * @param width width of the divider drawable, in pixels
-     * @param radius corner radius of the divider drawable to round the corners, in pixels
+     * @param color   color of the divider
+     * @param width   width of the divider drawable, in pixels
+     * @param radius  corner radius of the divider drawable to round the corners, in pixels
      * @param padding space above and below the divider drawable within the button group, in pixels
      */
     public void setDivider(@ColorInt int color, int width, int radius, int padding) {
@@ -1144,22 +1145,31 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
     }
 
-    public OnPositionChangedListener getOnPositionChangedListener() {
-        return onPositionChangedListener;
-    }
-
-    public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
-        this.onPositionChangedListener = onPositionChangedListener;
-    }
-
+    /**
+     * Return the current animation interpolator used when animating button movement
+     *
+     * This will return null if no animation is being used
+     */
     public Interpolator getSelectionAnimationInterpolator() {
         return selectionAnimationInterpolator;
     }
 
+    /**
+     * Set the current animation interpolator used when animating button movement
+     *
+     * If interpolator is null, no animation will be used
+     */
     public void setSelectionAnimationInterpolator(@Nullable Interpolator interpolator) {
         selectionAnimationInterpolator = interpolator;
     }
 
+    /**
+     * Set the current animation interpolator used when animating button movement
+     *
+     * The interpolator given must be one of the predefined Android interpolators
+     *
+     * @param interpolator int value indicating which predefined Android interpolator to use
+     */
     public void setSelectionAnimationInterpolator(@AnimationInterpolator int interpolator) {
         switch (interpolator) {
             case ANIM_INTERPOLATOR_NONE:
@@ -1216,6 +1226,36 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
     }
 
+    /**
+     * Return the duration, in milliseconds, it takes to complete the animation to change selected button
+     */
+    public int getSelectionAnimationDuration() {
+        return selectionAnimationDuration;
+    }
+
+    /**
+     * Set the duration for animating changing the selected button
+     *
+     * @param selectionAnimationDuration duration in milliseconds for animation to complete
+     */
+    public void setSelectionAnimationDuration(final int selectionAnimationDuration) {
+        this.selectionAnimationDuration = selectionAnimationDuration;
+    }
+
+    /**
+     * Returns the listener used for notifying position changes
+     */
+    public OnPositionChangedListener getOnPositionChangedListener() {
+        return onPositionChangedListener;
+    }
+
+    /**
+     * Sets the listeners used for notifying position changes
+     */
+    public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
+        this.onPositionChangedListener = onPositionChangedListener;
+    }
+
     // TODO Getters and setters to implement
 //    [x]private EmptyView borderView;
 //    [x]private ArrayList<SegmentedButton> buttons;
@@ -1227,225 +1267,9 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    [x]private boolean ripple;
 //    [x]private int rippleColor;
 //    [x]divider
-//    private Interpolator selectionAnimationInterpolator;
-//    private int selectionAnimationDuration;
-//    private OnPositionChangedListener onPositionChangedListener;
-
-    // endregion
-
-    // region Untouched
-
-//    /**
-//     * @param onPositionChangedListener set your instance that you have created to listen any position change
-//     */
-//    public void setOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener) {
-//        this.onPositionChangedListener = onPositionChangedListener;
-//    }
-//
-//    /**
-//     * @param ripple applies android's default ripple on layout
-//     */
-//    public void setRipple(boolean ripple) {
-//        this.ripple = ripple;
-//    }
-//
-//    /**
-//     * @param rippleColor sets ripple color and adds ripple when a button is hovered
-//     *                    default: Color.GRAY
-//     */
-//    public void setRippleColor(int rippleColor) {
-//        this.rippleColor = rippleColor;
-//    }
-//
-//    /**
-//     * @param hasRippleColor if true ripple will be shown.
-//     *                       if setRipple(boolean) is also set to false, there will be no ripple
-//     */
-//    public void setRippleColor(boolean hasRippleColor) {
-//        this.hasRippleColor = hasRippleColor;
-//    }
-//
-//    /**
-//     * @param radius determines how round layout's corners should be
-//     */
-//    public void setRadius(int radius) {
-//        this.radius = radius;
-//    }
-//
-//    /**
-//     * @param dividerPadding adjusts divider's top and bottom distance to its container
-//     */
-//    public void setDividerPadding(int dividerPadding) {
-//        this.dividerPadding = dividerPadding;
-//    }
-//
-//    /**
-//     * @param animateSelectorDuration sets how long selector animation should last
-//     */
-//    public void setSelectorAnimationDuration(int animateSelectorDuration) {
-//        this.animateSelectorDuration = animateSelectorDuration;
-//    }
-//
-//    /**
-//     * @param animateSelector is used to give an animation to selector with the given interpolator constant
-//     */
-//    public void setSelectorAnimation(int animateSelector) {
-//        this.animateSelector = animateSelector;
-//    }
-//
-//    /**
-//     * @param interpolatorSelector is used to give an animation to selector with the given one of android's
-//     *                             interpolator.
-//     *                             Ex: {@link FastOutSlowInInterpolator}, {@link BounceInterpolator}, {@link
-//     *                             LinearInterpolator}
-//     */
-//    public void setInterpolatorSelector(Interpolator interpolatorSelector) {
-//        this.interpolatorSelector = interpolatorSelector;
-//    }
-//
-//    /**
-//     * @param dividerColor changes divider's color with the given one
-//     *                     default: Color.WHITE
-//     */
-//    public void setDividerColor(int dividerColor) {
-//        this.dividerColor = dividerColor;
-//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
-//                dividerBackgroundDrawable);
-//    }
-//
-//    /**
-//     * @param dividerSize sets thickness of divider
-//     *                    default: 0
-//     */
-//    public void setDividerSize(int dividerSize) {
-//        this.dividerSize = dividerSize;
-//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
-//                dividerBackgroundDrawable);
-//    }
-//
-//    /**
-//     * @param dividerRadius determines how round divider should be
-//     *                      default: 0
-//     */
-//    public void setDividerRadius(int dividerRadius) {
-//        this.dividerRadius = dividerRadius;
-//        RoundHelper.makeDividerRound(dividerLayout, dividerColor, dividerRadius, dividerSize,
-//                dividerBackgroundDrawable);
-//    }
-//
-//    /**
-//     * @param hasDivider if true divider will be shown.
-//     */
-//    public void setDivider(boolean hasDivider) {
-//        this.hasDivider = hasDivider;
-//    }
-//
-//    /**
-//     * @param borderSize sets thickness of border
-//     *                   default: 0
-//     */
-//    public void setBorderSize(int borderSize) {
-//        this.borderSize = borderSize;
-//    }
-//
-//    /**
-//     * @param borderColor sets border color to the given one
-//     *                    default: Color.BLACK
-//     */
-//    public void setBorderColor(int borderColor) {
-//        this.borderColor = borderColor;
-//    }
-//
-//    public int getDividerSize() {
-//        return dividerSize;
-//    }
-//
-//    public int getRippleColor() {
-//        return rippleColor;
-//    }
-//
-//    public int getSelectorAnimation() {
-//        return animateSelector;
-//    }
-//
-//    public int getSelectorAnimationDuration() {
-//        return animateSelectorDuration;
-//    }
-//
-//    public int getPosition() {
-//        return position;
-//    }
-//
-//    public int getDividerColor() {
-//        return dividerColor;
-//    }
-//
-//    public float getRadius() {
-//        return radius;
-//    }
-//
-//    public int getDividerPadding() {
-//        return dividerPadding;
-//    }
-//
-//    public float getDividerRadius() {
-//        return dividerRadius;
-//    }
-//
-//    public boolean isHasDivider() {
-//        return hasDivider;
-//    }
-//
-//    public boolean isHasRippleColor() {
-//        return hasRippleColor;
-//    }
-//
-//    public boolean isRipple() {
-//        return ripple;
-//    }
-//
-//    public Interpolator getInterpolatorSelector() {
-//        return interpolatorSelector;
-//    }
-
-//    private void setRippleState(boolean state) {
-//        for (View v : ripples) {
-//            setRipple(v, state);
-//        }
-//    }
-//
-//    private void setEnabledAlpha(boolean enabled) {
-//        float alpha = 1f;
-//        if (!enabled) {
-//            alpha = 0.5f;
-//        }
-//
-//        setAlpha(alpha);
-//    }
-//
-//
-//    /**
-//     * @param enabled set it to:
-//     *                false, if you want buttons to be unclickable and add grayish looking which gives disabled look,
-//     *                true, if you want buttons to be clickable and remove grayish looking
-//     */
-//    @Override
-//    public void setEnabled(boolean enabled) {
-//        this.enabled = enabled;
-//        setRippleState(enabled);
-//        setEnabledAlpha(enabled);
-//    }
-//
-//    /**
-//     * @param clickable set it to:
-//     *                  false for unclickable buttons,
-//     *                  true for clickable buttons
-//     */
-//    @Override
-//    public void setClickable(boolean clickable) {
-//        this.clickable = clickable;
-//        setRippleState(clickable);
-//    }
+//    [x]private Interpolator selectionAnimationInterpolator;
+//    [x]private int selectionAnimationDuration;
+//    [x]private OnPositionChangedListener onPositionChangedListener;
 
     // endregion
 
