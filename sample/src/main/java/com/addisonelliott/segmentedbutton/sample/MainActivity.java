@@ -2,6 +2,9 @@ package com.addisonelliott.segmentedbutton.sample;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -13,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.AnimationInterpolator;
 import java.util.ArrayList;
@@ -35,7 +39,9 @@ enum Action {
     ChangeAnimation,
     RemoveButtonDrawable,
     ChangeButtonDrawable,
-    ChangeDrawableTint;
+    ChangeDrawableTint,
+    ToggleDrawableSize,
+    ChangeDrawableGravity;
 
     public String getDisplayText() {
         if (this == None) {
@@ -70,6 +76,10 @@ enum Action {
             return "Change button drawable";
         } else if (this == ChangeDrawableTint) {
             return "Change drawable tint color";
+        } else if (this == ToggleDrawableSize) {
+            return "Toggle drawable size";
+        } else if (this == ChangeDrawableGravity) {
+            return "Change drawable gravity";
         } else {
             return "";
         }
@@ -230,6 +240,33 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 lordOfTheRingsButtonGroup.getButton(1).setDrawableTint(Color.GREEN);
                 lordOfTheRingsButtonGroup.getButton(2).setDrawableTint(Color.BLUE);
                 darthVaderButtonGroup.getButton(1).removeDrawableTint();
+                break;
+
+            case ToggleDrawableSize:
+                final boolean setSize = !DCSuperHerosButtonGroup.getButton(0).hasDrawableWidth();
+                final float size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 96.0f,
+                        getApplicationContext().getResources().getDisplayMetrics());
+
+                for (SegmentedButton button : DCSuperHerosButtonGroup.getButtons()) {
+                    button.setDrawableWidth(setSize ? (int)size : -1);
+                    button.setDrawableHeight(setSize ? (int)size : -1);
+                }
+                break;
+
+            case ChangeDrawableGravity:
+                gradientButtonGroup.getButton(0).setDrawableGravity(Gravity.LEFT);
+                starWarsButtonGroup.getButton(0).setDrawableGravity(Gravity.RIGHT);
+
+                int currentGravity = DCSuperHerosButtonGroup.getButton(0).getDrawableGravity();
+
+                switch (currentGravity) {
+                    case Gravity.LEFT: currentGravity = Gravity.TOP; break;
+                    case Gravity.TOP: currentGravity = Gravity.RIGHT; break;
+                    case Gravity.RIGHT: currentGravity = Gravity.BOTTOM; break;
+                    case Gravity.BOTTOM: currentGravity = Gravity.LEFT; break;
+                }
+
+                DCSuperHerosButtonGroup.getButton(0).setDrawableGravity(currentGravity);
                 break;
 
             default:

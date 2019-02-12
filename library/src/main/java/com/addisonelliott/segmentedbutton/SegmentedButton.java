@@ -49,7 +49,6 @@ public class SegmentedButton extends View {
     })
     @Retention(RetentionPolicy.SOURCE)
     private @interface GravityOptions {}
-    // TODO Use this eventually
 
     // General purpose rectangle to prevent memory allocation in onDraw
     private RectF rectF;
@@ -1144,28 +1143,113 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    /**
+     * Whether or not the drawable has a width that was explicitly given
+     */
+    public boolean hasDrawableWidth() {
+        return hasDrawableWidth;
+    }
+
+    /**
+     * Returns the drawable width in pixels
+     *
+     * If hasDrawableWidth is false, then this value will be undefined
+     */
     public int getDrawableWidth() {
         return drawableWidth;
     }
 
-    public void setDrawableWidth(final int drawableWidth) {
-        this.drawableWidth = drawableWidth;
+    /**
+     * Set the drawable width in pixels
+     *
+     * If the width is -1, then the drawable width will be removed and the intrinsic drawable width will be used
+     * instead
+     *
+     * @param width size in pixels of the width of the drawable
+     */
+    public void setDrawableWidth(final int width) {
+        hasDrawableWidth = (width != -1);
+        drawableWidth = width;
+
+        // Request relayout because the drawable width is different now
+        requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
     }
 
+    /**
+     * Whether or not the drawable has a height that was explicitly given
+     */
+    public boolean hasDrawableHeight() {
+        return hasDrawableHeight;
+    }
+
+    /**
+     * Returns the drawable height in pixels
+     *
+     * If hasDrawableHeight is false, then this value will be undefined
+     */
     public int getDrawableHeight() {
         return drawableHeight;
     }
 
-    public void setDrawableHeight(final int drawableHeight) {
-        this.drawableHeight = drawableHeight;
+    /**
+     * Set the drawable height in pixels
+     *
+     * If the height is -1, then the drawable height will be removed and the intrinsic drawable height will be used
+     * instead
+     *
+     * @param height size in pixels of the height of the drawable
+     */
+    public void setDrawableHeight(final int height) {
+        hasDrawableHeight = (height != -1);
+        drawableHeight = height;
+
+        // Request relayout because the drawable width is different now
+        requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
     }
 
+    /**
+     * Returns the gravity for the drawable
+     *
+     * The drawable can be placed to the left, top, right, or bottom of the text via this parameter
+     */
     public int getDrawableGravity() {
         return drawableGravity;
     }
 
-    public void setDrawableGravity(final int drawableGravity) {
+    /**
+     * Set the drawable gravity
+     *
+     * Can be one of the following values:
+     *      - Gravity.LEFT
+     *      - Gravity.TOP
+     *      - Gravity.RIGHT
+     *      - Gravity.BOTTOM
+     *
+     * The drawable gravity indicates the location of the drawable in relation to the text. If no text is being
+     * displayed, this property will be ignored.
+     *
+     * @param drawableGravity new drawable gravity
+     */
+    public void setDrawableGravity(final @GravityOptions int drawableGravity) {
         this.drawableGravity = drawableGravity;
+
+        // Request relayout because the drawable width is different now
+        requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
     }
 
     public String getText() {
@@ -1191,9 +1275,9 @@ public class SegmentedButton extends View {
 //    [x]private int drawablePadding;
 //    [x]private boolean hasDrawableTint, hasSelectedDrawableTint;
 //    [x]private int drawableTint, selectedDrawableTint;
-//    private boolean hasDrawableWidth, hasDrawableHeight;
-//    private int drawableWidth, drawableHeight;
-//    private int drawableGravity;
+//    [x]private boolean hasDrawableWidth, hasDrawableHeight;
+//    [x]private int drawableWidth, drawableHeight;
+//    [x]private int drawableGravity;
 //    private boolean hasText;
 //    private String text;
 //    private boolean hasSelectedTextColor;
