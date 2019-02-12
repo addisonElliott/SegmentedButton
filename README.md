@@ -2,7 +2,7 @@
 
 # SegmentedButton
 
-Android view that mimics iOS's SegmentedControl
+Android view that mimics iOS's [SegmentedControl](https://developer.apple.com/design/human-interface-guidelines/ios/controls/segmented-controls/)
 
 ## Features
 * Customizable text color, size and font
