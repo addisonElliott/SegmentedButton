@@ -688,8 +688,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Getters & Setters
 
-    // TODO Write getters & setters
-
     /**
      * List of segmented buttons that are attached to this button group
      */
@@ -1255,21 +1253,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
         this.onPositionChangedListener = onPositionChangedListener;
     }
-
-    // TODO Getters and setters to implement
-//    [x]private EmptyView borderView;
-//    [x]private ArrayList<SegmentedButton> buttons;
-//    [x]private Drawable backgroundDrawable;
-//    [x]private Drawable selectedBackgroundDrawable;
-//    [x]private int radius;
-//    [x]private int position;
-//    [x]private boolean draggable;
-//    [x]private boolean ripple;
-//    [x]private int rippleColor;
-//    [x]divider
-//    [x]private Interpolator selectionAnimationInterpolator;
-//    [x]private int selectionAnimationDuration;
-//    [x]private OnPositionChangedListener onPositionChangedListener;
 
     // endregion
 
