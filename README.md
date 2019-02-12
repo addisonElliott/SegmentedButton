@@ -133,88 +133,48 @@ segmentedButtonGroup.getPosition();
 
 ### SegmentedButtonGroup
 
-| Attribute                          | Format           | Description                              |
-| ---------------------------------- | ---------------- | ---------------------------------------- |
-| app:background                     | `drawable|color` | Set ripple color for every button        |
-| app:selectedBackground             | `drawable|color` | Set ripple color for every button with custom color |
-| app:borderWidth                    | `dimension`      | If selector on it, set tint onto image for every button |
-| app:borderColor                    | `color`          | If selector on it, set text color for every button |
-| app:borderDashWidth                | `dimension`      | Set selector color                       |
-| app:borderDashGap                  | `dimension`      | Set divider size                         |
-| app:radius                         | `dimension`      | Set divider padding for top and bottom   |
-| app:position                       | `integer`        | Change divider color                     |
-| app:draggable                      | `boolean`        | Round divider                            |
-| app:ripple                         | `boolean`        | Shadow for container layout (api21+)     |
-| app:rippleColor                    | `color`          | Shadow for container layout (api21+)     |
-| app:divider                        | `drawable|color` | Set margin to make shadow visible (api21+) |
-| app:dividerWidth                   | `dimension`      | Set selected button position             |
-| app:dividerRadius                  | `dimension`      | Make layout rounder                      |
-| app:dividerPadding                 | `dimension`      | Set background color of container (except transparent color) |
-| app:selectionAnimationDuration     | `integer`        | Set how long selector travels to selected position |
-| app:selectionAnimationInterpolator | `enum`           | Set selector animation (ex. bounce animation) |
-
+| Attribute                          | Format            | Description                                                                |
+| ---------------------------------- | ----------------- | -------------------------------------------------------------------------- |
+| app:background                     | `drawable\|color` | Set background for every button when unselected                            |
+| app:selectedBackground             | `drawable\|color` | Set background for every button when selected                              |
+| app:borderWidth                    | `dimension`       | Width of border around button group                                        |
+| app:borderColor                    | `color`           | Color of border                                                            |
+| app:borderDashWidth                | `dimension`       | Width of dashes, 0 indicates solid line                                    |
+| app:borderDashGap                  | `dimension`       | Width of gaps in dashes                                                    |
+| app:radius                         | `dimension`       | Radius of corners for button group                                         |
+| app:position                       | `integer`         | Default button that is selected                                            |
+| app:draggable                      | `boolean`         | Whether or not buttons can be dragged to change selected state             |
+| app:ripple                         | `boolean`         | Whether or not ripple effect is enabled for all buttons                    |
+| app:rippleColor                    | `color`           | Ripple effect tint color for each button                                   |
+| app:divider                        | `drawable\|color` | Drawable or color to display for divider between buttons                   |
+| app:dividerWidth                   | `dimension`       | Width of the divider between buttons, 0 indicates no dividers              |
+| app:dividerRadius                  | `dimension`       | Corner radius for divider to round edges                                   |
+| app:dividerPadding                 | `dimension`       | Divider padding on top and bottom of divider                               |
+| app:selectionAnimationDuration     | `integer`         | Duration in ms for change button selection animation                       |
+| app:selectionAnimationInterpolator | `enum`            | Type of animation used for changing button. Valid options are listed below |
 
 ### SegmentedButton
 
-| Option Name                     | Format           | Description                              |
-| ------------------------------- | ---------------- | ---------------------------------------- |
-| app:background                  | `drawable|color` | Set ripple color for every button        |
-| app:selectedBackground          | `drawable|color` | Set ripple color for every button with custom color |
-| app:rippleColor                 | `color`          | If selector on it, set tint onto image for every button |
-| app:drawable                    | `drawable`       | If selector on it, set text color for every button |
-| app:drawablePadding             | `dimension`      | Set selector color                       |
-| app:drawableTint                | `color`          | Set divider size                         |
-| app:selectedDrawableTint        | `color`          | Set divider padding for top and bottom   |
-| app:drawableWidth               | `dimension`      | Change divider color                     |
-| app:drawableHeight              | `dimension`      | Round divider                            |
-| app:drawableGravity             | `enum`           | Shadow for container layout (api21+)     |
-| app:text                        | `string`         | Shadow for container layout (api21+)     |
-| app:textColor                   | `color`          | Set margin to make shadow visible (api21+) |
-| app:selectedTextColor           | `color`          | Set selected button position             |
-| app:textSize                    | `dimension`      | Make layout rounder                      |
-| android:fontFamily              | `font`           | Set background color of container (except transparent color) |
-| app:textStyle                   | `flag`           | Set how long selector travels to selected position |
+| Option Name                     | Format            | Description                                                                  |
+| ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
+| app:background                  | `drawable\|color` | Set background for button when unselected                                    |
+| app:selectedBackground          | `drawable\|color` | Set background for button when selected                                      |
+| app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
+| app:drawable                    | `drawable`        | Drawable to display                                                          |
+| app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |
+| app:drawableTint                | `color`           | Tint color for drawable when unselected                                      |
+| app:selectedDrawableTint        | `color`           | Tint color for drawable when selected                                        |
+| app:drawableWidth               | `dimension`       | Width of drawable (default uses intrinsic)                                   |
+| app:drawableHeight              | `dimension`       | Height of drawable (default uses intrinsic)                                  |
+| app:drawableGravity             | `enum`            | Determines where drawable should be placed in relation to the text. Valid options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                                                     |
+| app:text                        | `string`          | Text to display on button                                                    |
+| app:textColor                   | `color`           | Color of text when button is unselected                                      |
+| app:selectedTextColor           | `color`           | Color of text when button is selected                                        |
+| app:textSize                    | `dimension`       | Font size of text                                                            |
+| android:fontFamily              | `font`            | Font for displaying text                                                     |
+| app:textStyle                   | `flag`            | Text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
 
-
-
-
-
-
-### Some Attributes
-
-#### Segmented Button
-| Option Name              | Format  | Description                              |
-| ------------------------ | ------- | ---------------------------------------- |
-| app:sb_imageTint         | `color` | Set tint onto button's image             |
-| app:sb_imageScale        | `float` | Scale button's image                     |
-| app:sb_selectedImageTint | `color` | Set tint onto button's image if selector on it |
-| app:sb_selectedTextColor | `color` | Set color onto button's text if selector on it |
-| app:sb_rippleColor       | `color` | Set ripple color of button               |
-
-#### Segmented Button Group
-| Option Name                     | Format      | Description                              |
-| ------------------------------- | ----------- | ---------------------------------------- |
-| app:sbg_ripple                  | `boolean`   | Set ripple color for every button        |
-| app:sbg_rippleColor             | `color`     | Set ripple color for every button with custom color |
-| app:sbg_selectorImageTint       | `color`     | If selector on it, set tint onto image for every button |
-| app:sbg_selectorTextColor       | `color`     | If selector on it, set text color for every button |
-| app:sbg_selectorColor           | `color`     | Set selector color                       |
-| app:sbg_dividerSize             | `dimension` | Set divider size                         |
-| app:sbg_dividerPadding          | `dimension` | Set divider padding for top and bottom   |
-| app:sbg_dividerColor            | `color`     | Change divider color                     |
-| app:sbg_dividerRadius           | `dimension` | Round divider                            |
-| app:sbg_shadow                  | `boolean`   | Shadow for container layout (api21+)     |
-| app:sbg_shadowElevation         | `dimension` | Shadow for container layout (api21+)     |
-| app:sbg_shadowMargin            | `dimension` | Set margin to make shadow visible (api21+) |
-| app:sbg_position                | `integer`   | Set selected button position             |
-| app:sbg_radius                  | `dimension` | Make layout rounder                      |
-| app:sbg_backgroundColor         | `color`     | Set background color of container (except transparent color) |
-| app:sbg_animateSelectorDuration | `integer`   | Set how long selector travels to selected position |
-| app:sbg_animateSelector         | `integer`   | Set selector animation (ex. bounce animation) |
-| app:sbg_borderSize              | `dimension` | Add border by giving dimension           |
-| app:sbg_borderColor             | `color`     | Change border color (Default: Grey)      |
-
-### Animations Available
+### Available Animations
 
 - fastOutSlowIn
 - bounce
@@ -229,7 +189,7 @@ segmentedButtonGroup.getPosition();
 - linearOutSlowIn
 - overshoot
 
-These animations can be set using the attribute noted above like so: `app:sbg_animateSelector="bounce"`. Also make sure to play with the `app:sbg_animateSelectorDuration` attribute to get the animation to look exactly how you want it.
+These animations can be set using the attribute noted above like so: `app:selectionAnimationInterpolator="bounce"`.
 
 ## Todo List
 
