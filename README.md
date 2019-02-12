@@ -19,20 +19,19 @@ This project is originally forked from [ceryle/SegmentedButton](https://github.c
 
 ## Preview
 ![1](https://cloud.githubusercontent.com/assets/20969019/21565956/9fec9300-cea6-11e6-981f-c5c2a70a2e57.gif)
-<br />
+
 ![2](https://cloud.githubusercontent.com/assets/20969019/21565963/bdda9aba-cea6-11e6-91ba-6e6b0230a512.gif)
-<br />
+
 ![3](https://cloud.githubusercontent.com/assets/20969019/21565967/c3dd51d2-cea6-11e6-91c4-1d3fa0ee6884.gif)
-<br />
+
 ![6](https://cloud.githubusercontent.com/assets/20969019/21565976/df8a7fc2-cea6-11e6-8740-debb45d1aff7.gif)
-<br />
+
 ![4](https://cloud.githubusercontent.com/assets/20969019/21565969/ce06efa6-cea6-11e6-8878-6260054bb3be.gif)
+
 ![5](https://cloud.githubusercontent.com/assets/20969019/21565972/d6df69d2-cea6-11e6-8391-27b1d45b945b.gif)
-<br />
-###### You can also apply your custom drawable on button group
+
 ![7](https://cloud.githubusercontent.com/assets/20969019/21565978/ec2fb698-cea6-11e6-8ae9-54326e3ebdf4.gif)
-<br />
-###### It is now possible to drag selector
+
 ![8](https://cloud.githubusercontent.com/assets/20969019/24909871/6b0a8b10-1ece-11e7-8686-df8276f1ae15.gif)
 
 
@@ -56,7 +55,130 @@ dependencies {
 }
 ```
 
-## Customization
+## Usage
+
+### Layout XML
+```xml
+<com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+    android:id="@+id/buttonGroup_lordOfTheRings"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_margin="4dp"
+    android:elevation="2dp"
+    app:background="@color/white"
+    app:borderColor="@color/orange_700"
+    app:borderWidth="1dp"
+    app:divider="@color/orange_700"
+    app:dividerPadding="10dp"
+    app:dividerWidth="1dp"
+    app:position="0"
+    app:radius="30dp"
+    app:ripple="true"
+    app:rippleColor="@color/green_800"
+    app:selectedBackground="@color/green_900">
+
+    <com.addisonelliott.segmentedbutton.SegmentedButton
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="@font/aniron"
+        android:padding="10dp"
+        app:drawable="@drawable/ic_aragorn"
+        app:drawableGravity="top"
+        app:selectedTextColor="@color/orange_700"
+        app:text="Aragorn"
+        app:textColor="@color/black" />
+
+    <com.addisonelliott.segmentedbutton.SegmentedButton
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="@font/aniron"
+        android:padding="10dp"
+        app:drawable="@drawable/ic_gimli"
+        app:drawableGravity="top"
+        app:selectedTextColor="@color/grey_600"
+        app:text="Gimli"
+        app:textColor="@color/black" />
+
+    <com.addisonelliott.segmentedbutton.SegmentedButton
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:fontFamily="@font/aniron"
+        android:padding="10dp"
+        app:drawable="@drawable/ic_legolas"
+        app:drawableGravity="top"
+        app:selectedTextColor="@color/yellow_200"
+        app:text="Legolas"
+        app:textColor="@color/black" />
+</com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+```
+
+### Java
+```java
+segmentedButtonGroup.setOnPositionChangedListener(new OnPositionChangedListener() {
+    @Override
+    public void onPositionChanged(final int position) {
+        // Handle stuff here
+    }
+});
+
+// Get current position
+segmentedButtonGroup.getPosition();
+```
+
+## Attributes
+
+### SegmentedButtonGroup
+
+| Attribute                          | Format           | Description                              |
+| ---------------------------------- | ---------------- | ---------------------------------------- |
+| app:background                     | `drawable|color` | Set ripple color for every button        |
+| app:selectedBackground             | `drawable|color` | Set ripple color for every button with custom color |
+| app:borderWidth                    | `dimension`      | If selector on it, set tint onto image for every button |
+| app:borderColor                    | `color`          | If selector on it, set text color for every button |
+| app:borderDashWidth                | `dimension`      | Set selector color                       |
+| app:borderDashGap                  | `dimension`      | Set divider size                         |
+| app:radius                         | `dimension`      | Set divider padding for top and bottom   |
+| app:position                       | `integer`        | Change divider color                     |
+| app:draggable                      | `boolean`        | Round divider                            |
+| app:ripple                         | `boolean`        | Shadow for container layout (api21+)     |
+| app:rippleColor                    | `color`          | Shadow for container layout (api21+)     |
+| app:divider                        | `drawable|color` | Set margin to make shadow visible (api21+) |
+| app:dividerWidth                   | `dimension`      | Set selected button position             |
+| app:dividerRadius                  | `dimension`      | Make layout rounder                      |
+| app:dividerPadding                 | `dimension`      | Set background color of container (except transparent color) |
+| app:selectionAnimationDuration     | `integer`        | Set how long selector travels to selected position |
+| app:selectionAnimationInterpolator | `enum`           | Set selector animation (ex. bounce animation) |
+
+
+### SegmentedButton
+
+| Option Name                     | Format           | Description                              |
+| ------------------------------- | ---------------- | ---------------------------------------- |
+| app:background                  | `drawable|color` | Set ripple color for every button        |
+| app:selectedBackground          | `drawable|color` | Set ripple color for every button with custom color |
+| app:rippleColor                 | `color`          | If selector on it, set tint onto image for every button |
+| app:drawable                    | `drawable`       | If selector on it, set text color for every button |
+| app:drawablePadding             | `dimension`      | Set selector color                       |
+| app:drawableTint                | `color`          | Set divider size                         |
+| app:selectedDrawableTint        | `color`          | Set divider padding for top and bottom   |
+| app:drawableWidth               | `dimension`      | Change divider color                     |
+| app:drawableHeight              | `dimension`      | Round divider                            |
+| app:drawableGravity             | `enum`           | Shadow for container layout (api21+)     |
+| app:text                        | `string`         | Shadow for container layout (api21+)     |
+| app:textColor                   | `color`          | Set margin to make shadow visible (api21+) |
+| app:selectedTextColor           | `color`          | Set selected button position             |
+| app:textSize                    | `dimension`      | Make layout rounder                      |
+| android:fontFamily              | `font`           | Set background color of container (except transparent color) |
+| app:textStyle                   | `flag`           | Set how long selector travels to selected position |
+
+
+
+
+
 
 ### Some Attributes
 
@@ -109,74 +231,11 @@ dependencies {
 
 These animations can be set using the attribute noted above like so: `app:sbg_animateSelector="bounce"`. Also make sure to play with the `app:sbg_animateSelectorDuration` attribute to get the animation to look exactly how you want it.
 
-#### Examples
-
-##### In Xml Layout
-
-```xml
-    <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        app:sbg_animateSelector="bounce"
-        app:sbg_animateSelectorDuration="1000"
-        app:sbg_backgroundColor="@color/white"
-        app:sbg_dividerColor="@color/grey_500"
-        app:sbg_dividerPadding="10dp"
-        app:sbg_dividerRadius="10dp"
-        app:sbg_dividerSize="1dp"
-        app:sbg_position="1"
-        app:sbg_radius="2dp"
-        app:sbg_ripple="true"
-        app:sbg_rippleColor="@color/grey_500"
-        app:sbg_selectorColor="@color/grey_500"
-        app:sbg_selectorTextColor="@color/white"
-        app:sbg_shadow="true"
-        app:sbg_shadowElevation="3dp"
-        app:sbg_shadowMargin="4dp">
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"
-            android:text="Button 1"
-            android:textAllCaps="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"
-            android:text="Button 2"
-            android:textAllCaps="false" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"
-            android:text="Button 3"
-            android:textAllCaps="false" />
-
-    </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
-```
-
-##### Listener Example
-```java
-SegmentedButtonGroup segmentedButtonGroup = (SegmentedButtonGroup) findViewById(R.id.segmentedButtonGroup);
-segmentedButtonGroup.setOnClickedButtonPosition(new SegmentedButtonGroup.OnClickedButtonPosition() {
-    @Override
-    public void onClickedButtonPosition(int position) {
-        Toast.makeText(MainActivity.this, "Clicked: " + position, Toast.LENGTH_SHORT).show();
-    }
-});
-segmentedButtonGroup.setPosition(2, 0);
-```
-
 ## Todo List
 
 This project is still under a major rehaul. The following is a list of items left to be done.
 
 * [ ] Upload to JitPack
-* [ ] Include note in README that repository is not original work but updated
 * [ ] Advertise branch via issues and PRs in upstream repo
 * [ ] Update README to include better graphics and docs and real JitPack version
 * [ ] Major rehaul to README
