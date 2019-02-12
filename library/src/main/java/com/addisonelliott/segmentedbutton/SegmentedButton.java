@@ -866,6 +866,7 @@ public class SegmentedButton extends View {
      */
     public void setBackground(@ColorInt int color) {
         if (backgroundDrawable instanceof ColorDrawable) {
+            // If the current drawable is a ColorDrawable, just change the color
             ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
         } else {
             backgroundDrawable = new ColorDrawable(color);
@@ -920,6 +921,7 @@ public class SegmentedButton extends View {
      */
     public void setSelectedBackground(@ColorInt int color) {
         if (selectedBackgroundDrawable instanceof ColorDrawable) {
+            // If the current drawable is a ColorDrawable, just change the color
             ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
         } else {
             selectedBackgroundDrawable = new ColorDrawable(color);
@@ -938,10 +940,27 @@ public class SegmentedButton extends View {
         setSelectedBackground(color);
     }
 
-    void setRipple(boolean enabled) {
-        // TODO Note that this is package-private because I dont want people enabling or disabling the ripple effect
-        // on a button by button basis
+    /**
+     * Returns the ripple color used for displaying the ripple effect on button press
+     *
+     * The ripple color is a tint color applied on top of the button when it is pressed
+     */
+    public int getRippleColor() {
+        return rippleColor;
+    }
 
+    /**
+     * Set ripple effect to be either enabled or disabled on button press
+     *
+     * If enabled, then the ripple color used will be the last ripple color set for this button or the default value
+     * of gray
+     *
+     * Note: This function is package-private because enabling or disabling the ripple effect on a per-button basis
+     * sounds like a terrible idea
+     *
+     * @param enabled whether or not to enable the ripple effect for this button
+     */
+    void setRipple(boolean enabled) {
         if (enabled) {
             // Recreate the ripple drawable and setup with the ripple color
             setRipple(rippleColor);
@@ -952,11 +971,18 @@ public class SegmentedButton extends View {
         }
     }
 
+    /**
+     * Set ripple color used for ripple effect on button press
+     *
+     * @param color color to set for the ripple effect for this button
+     */
     public void setRipple(@ColorInt int color) {
         rippleColor = color;
 
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             rippleDrawableLollipop = new RippleDrawable(ColorStateList.valueOf(rippleColor), null, null);
+            // setCallback on Drawable allows animations to be scheduled and the drawable to invalidate the view on
+            // animation
             rippleDrawableLollipop.setCallback(this);
             rippleDrawableLollipop.setBounds(0, 0, getWidth(), getHeight());
 
@@ -965,6 +991,8 @@ public class SegmentedButton extends View {
         } else {
             rippleDrawable = new codetail.graphics.drawables.RippleDrawable(ColorStateList.valueOf(rippleColor), null,
                     null);
+            // setCallback on Drawable allows animations to be scheduled and the drawable to invalidate the view on
+            // animation
             rippleDrawable.setCallback(this);
             rippleDrawable.setBounds(0, 0, getWidth(), getHeight());
 
@@ -992,7 +1020,7 @@ public class SegmentedButton extends View {
 //    [x]private boolean isLeftButton, isRightButton;
 //    [x]private Drawable backgroundDrawable;
 //    [x]private Drawable selectedBackgroundDrawable;
-//    private int rippleColor;
+//    [x]private int rippleColor;
 //    private Drawable drawable;
 //    private int drawablePadding;
 //    private boolean hasDrawableTint, hasSelectedDrawableTint;

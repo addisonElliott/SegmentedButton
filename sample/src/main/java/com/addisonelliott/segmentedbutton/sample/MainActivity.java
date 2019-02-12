@@ -25,7 +25,9 @@ enum Action {
     ChangeRadius,
     ChangePositionAnimated,
     ChangePosition,
-    ToggleDraggable;
+    ToggleDraggable,
+    ToggleRipple,
+    ToggleRippleColor;
 
     public String getDisplayText() {
         if (this == None) {
@@ -46,6 +48,10 @@ enum Action {
             return "Change position without animating";
         } else if (this == ToggleDraggable) {
             return "Toggle draggable boolean";
+        } else if (this == ToggleRipple) {
+            return "Toggle ripple";
+        } else if (this == ToggleRippleColor) {
+            return "Toggle ripple color between black/white";
         } else {
             return "";
         }
@@ -165,6 +171,15 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
             case ToggleDraggable:
                 darthVaderButtonGroup.setDraggable(!darthVaderButtonGroup.isDraggable());
+                break;
+
+            case ToggleRipple:
+                starWarsButtonGroup.setRipple(!starWarsButtonGroup.hasRipple());
+                break;
+
+            case ToggleRippleColor:
+                starWarsButtonGroup.setRipple(starWarsButtonGroup.getRippleColor() == Color.WHITE ? Color.BLACK :
+                        Color.WHITE);
                 break;
 
             default:

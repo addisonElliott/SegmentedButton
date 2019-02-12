@@ -1027,6 +1027,57 @@ public class SegmentedButtonGroup extends LinearLayout {
         this.draggable = draggable;
     }
 
+    /**
+     * Whether or not the ripple effect is enabled on button tap
+     *
+     * If false, then no animation will be shown if the user taps a button. Otherwise, if true a ripple effect will
+     * be shown on button tap.
+     */
+    public boolean hasRipple() {
+        return ripple;
+    }
+
+    /**
+     * Returns the ripple color used for displaying the ripple effect on button press
+     *
+     * The ripple color is a tint color applied on top of the button when it is pressed
+     */
+    public int getRippleColor() {
+        return rippleColor;
+    }
+
+    /**
+     * Set ripple effect to be either enabled or disabled on button press
+     *
+     * If enabled, then the ripple color used will be the last ripple color set for the buttons or the default value
+     * of gray
+     *
+     * @param enabled whether or not to enable the ripple effect for all buttons in the group
+     */
+    public void setRipple(final boolean enabled) {
+        ripple = enabled;
+
+        for (SegmentedButton button : buttons) {
+            button.setRipple(enabled);
+        }
+    }
+
+    /**
+     * Set ripple color used for ripple effect on button press
+     *
+     * This will automatically enable the ripple effect for all buttons if it is already disabled.
+     *
+     * @param color color to set for the ripple effect for all buttons in the group
+     */
+    public void setRipple(final @ColorInt int color) {
+        ripple = true;
+        rippleColor = color;
+
+        for (SegmentedButton button : buttons) {
+            button.setRipple(color);
+        }
+    }
+
     public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
         // TODO Explain these
 
@@ -1074,32 +1125,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
         this.onPositionChangedListener = onPositionChangedListener;
-    }
-
-    public boolean getRippleEnabled() {
-        return ripple;
-    }
-
-    public int getRippleColor() {
-        return rippleColor;
-    }
-
-    void setRipple(final boolean enabled) {
-        ripple = enabled;
-
-        for (SegmentedButton button : buttons) {
-            button.setRipple(enabled);
-        }
-    }
-
-    public void setRipple(final @ColorInt int color) {
-        if (!ripple) {
-            return;
-        }
-
-        for (SegmentedButton button : buttons) {
-            button.setRipple(color);
-        }
     }
 
     public Interpolator getSelectionAnimationInterpolator() {
@@ -1174,8 +1199,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    [x]private int radius;
 //    [x]private int position;
 //    [x]private boolean draggable;
-//    private boolean ripple;
-//    private int rippleColor;
+//    [x]private boolean ripple;
+//    [x]private int rippleColor;
 //    divider
 //    private Interpolator selectionAnimationInterpolator;
 //    private int selectionAnimationDuration;
