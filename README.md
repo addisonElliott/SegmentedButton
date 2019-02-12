@@ -1,4 +1,6 @@
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SegmentedButton-green.svg?style=true)](https://android-arsenal.com/details/1/4445) [![](https://jitpack.io/v/ceryle/segmentedbutton.svg)](https://jitpack.io/#ceryle/segmentedbutton)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SegmentedButton-green.svg?style=true)]
+(https://android-arsenal.com/details/1/4445) [![](https://jitpack.io/v/addisonelliott/segmentedbutton.svg)]
+(https://jitpack.io/#addisonelliott/segmentedbutton)
 
 # SegmentedButton
 
@@ -169,12 +171,8 @@ segmentedButtonGroup.setPosition(2, 0);
 
 This project is still under a major rehaul. The following is a list of items left to be done.
 
-* [ ] Update onMeasure calculations for height to work in scroll views
-* [ ] Fix issue with multiple buttons selected if changing orientation
-* [ ] Redo formatting for the entire library to better suit what I'm use to
 * [ ] Upload to JitPack
 * [ ] Include note in README that repository is not original work but updated
-* [ ] Include PRs and fix issues from upstream repo
 * [ ] Advertise branch via issues and PRs in upstream repo
 * [ ] Update README to include better graphics and docs and real JitPack version
 * [ ] Major rehaul to README
