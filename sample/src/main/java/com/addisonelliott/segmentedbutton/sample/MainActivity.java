@@ -27,7 +27,8 @@ enum Action {
     ChangePosition,
     ToggleDraggable,
     ToggleRipple,
-    ToggleRippleColor;
+    ToggleRippleColor,
+    ChangeDivider;
 
     public String getDisplayText() {
         if (this == None) {
@@ -52,6 +53,8 @@ enum Action {
             return "Toggle ripple";
         } else if (this == ToggleRippleColor) {
             return "Toggle ripple color between black/white";
+        } else if (this == ChangeDivider) {
+            return "Change divider";
         } else {
             return "";
         }
@@ -180,6 +183,12 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case ToggleRippleColor:
                 starWarsButtonGroup.setRipple(starWarsButtonGroup.getRippleColor() == Color.WHITE ? Color.BLACK :
                         Color.WHITE);
+                break;
+
+            case ChangeDivider:
+                lordOfTheRingsButtonGroup.setDivider(Color.MAGENTA, 10, 10, 10);
+                guysButtonGroup.setDivider(ContextCompat.getDrawable(getApplicationContext(),
+                        R.drawable.gradient_drawable_divider), 20, 0, 0);
                 break;
 
             default:

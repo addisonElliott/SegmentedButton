@@ -1057,6 +1057,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     public void setRipple(final boolean enabled) {
         ripple = enabled;
 
+        // Loop through and set the ripple for each button
         for (SegmentedButton button : buttons) {
             button.setRipple(enabled);
         }
@@ -1073,14 +1074,30 @@ public class SegmentedButtonGroup extends LinearLayout {
         ripple = true;
         rippleColor = color;
 
+        // Loop through and set the ripple color for each button
         for (SegmentedButton button : buttons) {
             button.setRipple(color);
         }
     }
 
-    public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
-        // TODO Explain these
+    /**
+     * Returns divider drawable that is placed between each button in the group, value of null indicates no drawable
+     */
+    public Drawable getDivider() {
+        return dividerLayout.getDividerDrawable();
+    }
 
+    /**
+     * Set drawable as divider between buttons with a specified width, corner radius and padding
+     *
+     * If the drawable is null, then the divider will be removed and hidden
+     *
+     * @param drawable divider drawable that will be displayed between buttons
+     * @param width width of the divider drawable, in pixels
+     * @param radius corner radius of the divider drawable to round the corners, in pixels
+     * @param padding space above and below the divider drawable within the button group, in pixels
+     */
+    public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
         // Drawable of null indicates that we want to hide dividers
         if (drawable == null) {
             dividerLayout.setDividerDrawable(null);
@@ -1104,9 +1121,17 @@ public class SegmentedButtonGroup extends LinearLayout {
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
     }
 
+    /**
+     * Set divider between buttons with a specified solid color, width, radius and padding
+     *
+     * @param color color of the divider
+     * @param width width of the divider drawable, in pixels
+     * @param radius corner radius of the divider drawable to round the corners, in pixels
+     * @param padding space above and below the divider drawable within the button group, in pixels
+     */
     public void setDivider(@ColorInt int color, int width, int radius, int padding) {
-        // TODO Explain these
-
+        // Create GradientDrawable of the specified color
+        // This is used to specify the corner radius, unlike ColorDrawable that does not have that feature
         GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
                 new int[]{color, color});
 
@@ -1201,7 +1226,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    [x]private boolean draggable;
 //    [x]private boolean ripple;
 //    [x]private int rippleColor;
-//    divider
+//    [x]divider
 //    private Interpolator selectionAnimationInterpolator;
 //    private int selectionAnimationDuration;
 //    private OnPositionChangedListener onPositionChangedListener;
