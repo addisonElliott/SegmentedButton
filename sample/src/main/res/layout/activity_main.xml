@@ -470,21 +470,23 @@
             app:selectionAnimationInterpolator="fastOutSlowIn">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
-                android:id="@+id/left_button"
+                android:id="@+id/button_left"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:drawableGravity="right"
                 app:drawablePadding="8dp"
+                android:padding="8dp"
                 app:drawableTint="@color/white"
                 app:selectedDrawableTint="@color/black"
                 app:text="Left" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
-                android:id="@+id/right_button"
+                android:id="@+id/button_right"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:padding="8dp"
                 app:drawableGravity="right"
                 app:drawableTint="@color/white"
                 app:selectedDrawableTint="@color/black"

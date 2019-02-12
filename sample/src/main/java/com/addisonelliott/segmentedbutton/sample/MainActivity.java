@@ -2,6 +2,7 @@ package com.addisonelliott.segmentedbutton.sample;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -20,6 +21,8 @@ import butterknife.OnClick;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.AnimationInterpolator;
+import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener;
+import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -125,6 +128,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     SegmentedButtonGroup draggableButtonGroup;
     @BindView(R.id.buttonGroup_dynamic)
     SegmentedButtonGroup dynamicButtonGroup;
+    @BindView(R.id.button_left)
+    SegmentedButton leftButton;
+    @BindView(R.id.button_right)
+    SegmentedButton rightButton;
     @BindView(R.id.buttonGroup_pickupDropoffBoth)
     SegmentedButtonGroup pickupDropoffButtonGroup;
     @BindView(R.id.buttonGroup_starWarsAlt)
@@ -333,23 +340,20 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     }
 
     private void setupDynamicDrawables() {
-//        final BadgeDrawable drawable = new BadgeDrawable(Color.RED, 80, 50, 3, 3);
-//        final SegmentedButton leftButton = (SegmentedButton) findViewById(R.id.left_button);
-//        leftButton.setDrawable(drawable);
-//
-//        SegmentedButtonGroup group = (SegmentedButtonGroup)findViewById(R.id.dynamic_drawable_group);
-//        group.setOnClickedButtonListener(new SegmentedButtonGroup.OnClickedButtonListener() {
-//            @Override
-//            public void onClickedButton(int position) {
-//                if(position == 0){
-//                    drawable.setCount(drawable.getCount() + 1);
-//                    leftButton.requestLayout();
-//                }
-//            }
-//        });
-//
-//        final SegmentedButton rightButton = (SegmentedButton) findViewById(R.id.right_button);
-//        rightButton.setDrawable(R.drawable.ic_b1);
+        final BadgeDrawable drawable = new BadgeDrawable(Color.RED, 80, 50, 3, 3);
+        leftButton.setDrawable(drawable);
+
+        dynamicButtonGroup.setOnPositionChangedListener(new OnPositionChangedListener() {
+            @Override
+            public void onPositionChanged(final int position) {
+                if (position == 0) {
+                    drawable.setCount(drawable.getCount() + 1);
+                }
+            }
+        });
+
+        final Drawable drawable2 = ContextCompat.getDrawable(getApplicationContext(), R.drawable.ic_b1);
+        rightButton.setDrawable(drawable2);
     }
 
     private void updateButton(int position) {
