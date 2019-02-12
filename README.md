@@ -1,17 +1,21 @@
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SegmentedButton-green.svg?style=true)]
-(https://android-arsenal.com/details/1/4445) [![](https://jitpack.io/v/addisonelliott/segmentedbutton.svg)]
-(https://jitpack.io/#addisonelliott/segmentedbutton)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-SegmentedButton-green.svg?style=true)](https://android-arsenal.com/details/1/4445) [![](https://jitpack.io/v/addisonelliott/segmentedbutton.svg)](https://jitpack.io/#addisonelliott/segmentedbutton)
 
 # SegmentedButton
 
-Segmented Button is an iOS-like "Segmented Control" with animation.<br/>
-For more Android-like segmented control, check [Radio Real Button](https://github.com/ceryle/RadioRealButton).
+Android view that mimics iOS's SegmentedControl
 
-## Forked Repo!
+## Features
+* Customizable text color, size and font
+* Custom button drawables
+* Customizable button dividers
+* Solid and dashed border support
+* Ripple effect on button tap
+* Draggable buttons
+* Animations
 
-This project is forked from [ceryle/SegmentedButton](https://github.com/ceryle/SegmentedButton). The parent repository
-has been stagnant since **October 17th, 2017**. This repository contains bug fixes and features that the parent
-repository does not have.
+## Old Library
+
+This project is originally forked from [ceryle/SegmentedButton](https://github.com/ceryle/SegmentedButton) but has been revamped and given some TLC. The parent repository has been stagnant **October 17th, 2017**.
 
 ## Preview
 ![1](https://cloud.githubusercontent.com/assets/20969019/21565956/9fec9300-cea6-11e6-981f-c5c2a70a2e57.gif)
@@ -48,7 +52,7 @@ and:
 
 ```gradle
 dependencies {
-    compile 'com.github.ceryle:SegmentedButton:v2.0.2'
+    compile 'com.github.addisonelliott:SegmentedButton:v3.0.0'
 }
 ```
 
