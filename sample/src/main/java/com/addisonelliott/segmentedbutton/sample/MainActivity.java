@@ -32,7 +32,9 @@ enum Action {
     ToggleRipple,
     ToggleRippleColor,
     ChangeDivider,
-    ChangeAnimation;
+    ChangeAnimation,
+    RemoveButtonDrawable,
+    ChangeButtonDrawable;
 
     public String getDisplayText() {
         if (this == None) {
@@ -61,6 +63,10 @@ enum Action {
             return "Change divider";
         } else if (this == ChangeAnimation) {
             return "Change animation duration & interpolator";
+        } else if (this == RemoveButtonDrawable) {
+            return "Remove button drawable";
+        } else if (this == ChangeButtonDrawable) {
+            return "Change button drawable";
         } else {
             return "";
         }
@@ -203,6 +209,17 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
                 final int random = new Random().nextInt(12);
                 lordOfTheRingsButtonGroup.setSelectionAnimationInterpolator(random);
+                break;
+
+            case RemoveButtonDrawable:
+                lordOfTheRingsButtonGroup.getButton(0).setDrawable(null);
+                break;
+
+            case ChangeButtonDrawable:
+                lordOfTheRingsButtonGroup.getButton(0).setDrawable(ContextCompat.getDrawable(getApplicationContext(),
+                        R.drawable.ic_b9));
+                DCSuperHerosButtonGroup.getButton(1).setDrawable(ContextCompat.getDrawable(getApplicationContext(),
+                        R.drawable.ic_aragorn));
                 break;
 
             default:

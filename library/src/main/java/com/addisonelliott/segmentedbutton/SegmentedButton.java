@@ -1003,11 +1003,109 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    /**
+     * Returns the drawable for the button or null if no drawable is set
+     */
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    /**
+     * Set the drawable for the button
+     *
+     * If drawable is null, then the drawable is removed from the button
+     *
+     * @param drawable Drawable to set for the button
+     */
+    public void setDrawable(final @Nullable Drawable drawable) {
+        this.drawable = drawable;
+
+        // Request a layout, drawable may have different size and things need to be rearranged
+        requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
+    }
+
+    /**
+     * Returns the drawable padding
+     *
+     * The drawable padding is the space between the drawable and text, in pixels. If the drawable or the text is not
+     * present, then the padding is ignored.
+     */
+    public int getDrawablePadding() {
+        return drawablePadding;
+    }
+
+    /**
+     * Set the drawable padding
+     *
+     * The drawable padding is the space between the drawable and text, in pixels. If the drawable or the text is not
+     * present, then the padding is ignored.
+     *
+     * @param drawablePadding padding in pixels to set for the drawable
+     */
+    public void setDrawablePadding(final int drawablePadding) {
+        this.drawablePadding = drawablePadding;
+
+        requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
+    }
+
+    public int getDrawableTint() {
+        return drawableTint;
+    }
+
+    public void setDrawableTint(final @ColorInt int drawableTint) {
+        this.drawableTint = drawableTint;
+
+        invalidate();
+    }
+
+    public int getSelectedDrawableTint() {
+        return selectedDrawableTint;
+    }
+
+    public void setSelectedDrawableTint(final @ColorInt int selectedDrawableTint) {
+        this.selectedDrawableTint = selectedDrawableTint;
+    }
+
+    public int getDrawableWidth() {
+        return drawableWidth;
+    }
+
+    public void setDrawableWidth(final int drawableWidth) {
+        this.drawableWidth = drawableWidth;
+    }
+
+    public int getDrawableHeight() {
+        return drawableHeight;
+    }
+
+    public void setDrawableHeight(final int drawableHeight) {
+        this.drawableHeight = drawableHeight;
+    }
+
+    public int getDrawableGravity() {
+        return drawableGravity;
+    }
+
+    public void setDrawableGravity(final int drawableGravity) {
+        this.drawableGravity = drawableGravity;
+    }
+
     public String getText() {
         return text;
     }
 
     public void setText(final String text) {
+        this.hasText = text == null || text.isEmpty();
         this.text = text;
 
         requestLayout();
