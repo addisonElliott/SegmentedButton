@@ -23,6 +23,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -228,7 +229,15 @@ public class SegmentedButton extends View {
                 textTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily), textStyle);
             } else {
                 final int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
-                textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
+
+                if (fontFamily > 0) {
+                    textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
+                } else {
+                    // On lower API Android versions, fontFamily returns 0 for default fonts such as "sans-serif" and
+                    // "monospace". Thus, we get the font as a string and then try to load that way
+                    textTypeface = Typeface.create(ta.getString(R.styleable.SegmentedButton_android_fontFamily),
+                            textStyle);
+                }
             }
         } else {
             textTypeface = Typeface.create((Typeface) null, textStyle);
