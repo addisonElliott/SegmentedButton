@@ -159,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         updateButton(gradientButtonGroup.getPosition());
         gradientButtonGroup.setOnPositionChangedListener(position -> updateButton(position));
 
-        // TODO Get this working
         setupDynamicDrawables();
 
         // Basic checks
