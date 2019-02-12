@@ -174,6 +174,8 @@ segmentedButtonGroup.getPosition();
 | android:fontFamily              | `font`            | Font for displaying text                                                     |
 | app:textStyle                   | `flag`            | Text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
 
+**All layout attributes have a corresponding function in Java that can be called to change programatically. See Javadocs of source code for more information.**
+
 ### Available Animations
 
 - fastOutSlowIn
@@ -191,18 +193,9 @@ segmentedButtonGroup.getPosition();
 
 These animations can be set using the attribute noted above like so: `app:selectionAnimationInterpolator="bounce"`.
 
-## Todo List
+## Support
 
-This project is still under a major rehaul. The following is a list of items left to be done.
-
-* [ ] Upload to JitPack
-* [ ] Advertise branch via issues and PRs in upstream repo
-* [ ] Update README to include better graphics and docs and real JitPack version
-* [ ] Major rehaul to README
-    * [ ] Include better previews with just simple segmented controls
-    * [ ] Have a description for each preview option to see what this contains
-    * [ ] Contain a note that the code for these previews can be found in the examples
-* [ ] Consider switching to Maven from JitPack in future
+Issues and pull requests are encouraged.
 
 ## License
 
