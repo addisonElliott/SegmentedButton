@@ -42,7 +42,9 @@ enum Action {
     ChangeDrawableTint,
     ToggleDrawableSize,
     ChangeDrawableGravity,
-    ChangeText;
+    ChangeText,
+    ChangeTextColor,
+    ChangeTextSize;
 
     public String getDisplayText() {
         if (this == None) {
@@ -83,6 +85,10 @@ enum Action {
             return "Change drawable gravity";
         } else if (this == ChangeText) {
             return "Change text";
+        } else if (this == ChangeTextColor) {
+            return "Change text color";
+        } else if (this == ChangeTextSize) {
+            return "Change text size";
         } else {
             return "";
         }
@@ -275,6 +281,17 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case ChangeText:
                 lordOfTheRingsButtonGroup.getButton(0).setText("Testing");
                 lordOfTheRingsButtonGroup.getButton(1).setText("");
+                break;
+
+            case ChangeTextColor:
+                lordOfTheRingsButtonGroup.getButton(0).setSelectedTextColor(Color.RED);
+                lordOfTheRingsButtonGroup.getButton(1).setTextColor(Color.BLUE);
+                gradientButtonGroup.getButton(1).removeSelectedTextColor();
+                break;
+
+            case ChangeTextSize:
+                lordOfTheRingsButtonGroup.getButton(1).setTextSize(48.0f);
+                DCSuperHerosButtonGroup.getButton(0).setTextSize(48.0f);
                 break;
 
             default:

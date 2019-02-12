@@ -23,7 +23,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -36,6 +35,7 @@ import androidx.core.content.res.ResourcesCompat;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+@SuppressWarnings("unused")
 @SuppressLint("RtlHardcoded")
 public class SegmentedButton extends View {
 
@@ -1046,10 +1046,10 @@ public class SegmentedButton extends View {
      * The drawable padding is the space between the drawable and text, in pixels. If the drawable or the text is not
      * present, then the padding is ignored.
      *
-     * @param drawablePadding padding in pixels to set for the drawable
+     * @param padding padding in pixels to set for the drawable
      */
-    public void setDrawablePadding(final int drawablePadding) {
-        this.drawablePadding = drawablePadding;
+    public void setDrawablePadding(final int padding) {
+        drawablePadding = padding;
 
         requestLayout();
 
@@ -1080,14 +1080,14 @@ public class SegmentedButton extends View {
      *
      * This drawable tint color will be the color applied to the drawable when the button is not selected
      *
-     * @param drawableTint color for the drawable tint
+     * @param tint color for the drawable tint
      */
-    public void setDrawableTint(final @ColorInt int drawableTint) {
-        this.hasDrawableTint = true;
-        this.drawableTint = drawableTint;
+    public void setDrawableTint(final @ColorInt int tint) {
+        hasDrawableTint = true;
+        drawableTint = tint;
 
         // Create color filter for the tint color
-        drawableColorFilter = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
+        drawableColorFilter = new PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN);
 
         invalidate();
     }
@@ -1123,14 +1123,14 @@ public class SegmentedButton extends View {
      *
      * This drawable tint color will be the color applied to the drawable when the button is selected
      *
-     * @param drawableTint color for the drawable tint
+     * @param tint color for the drawable tint
      */
-    public void setSelectedDrawableTint(final @ColorInt int drawableTint) {
-        this.hasSelectedDrawableTint = true;
-        this.selectedDrawableTint = drawableTint;
+    public void setSelectedDrawableTint(final @ColorInt int tint) {
+        hasSelectedDrawableTint = true;
+        selectedDrawableTint = tint;
 
         // Create color filter for the tint color
-        selectedDrawableColorFilter = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
+        selectedDrawableColorFilter = new PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN);
 
         invalidate();
     }
@@ -1232,18 +1232,18 @@ public class SegmentedButton extends View {
      * Set the drawable gravity
      *
      * Can be one of the following values:
-     *      - Gravity.LEFT
-     *      - Gravity.TOP
-     *      - Gravity.RIGHT
-     *      - Gravity.BOTTOM
+     * - Gravity.LEFT
+     * - Gravity.TOP
+     * - Gravity.RIGHT
+     * - Gravity.BOTTOM
      *
      * The drawable gravity indicates the location of the drawable in relation to the text. If no text is being
      * displayed, this property will be ignored.
      *
-     * @param drawableGravity new drawable gravity
+     * @param gravity new drawable gravity
      */
-    public void setDrawableGravity(final @GravityOptions int drawableGravity) {
-        this.drawableGravity = drawableGravity;
+    public void setDrawableGravity(final @GravityOptions int gravity) {
+        drawableGravity = gravity;
 
         // Request relayout because the drawable width is different now
         requestLayout();
@@ -1284,6 +1284,94 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
+    /**
+     * Returns the text color when the button is not selected
+     */
+    public int getTextColor() {
+        return textColor;
+    }
+
+    /**
+     * Set the text color when the button is unselected
+     *
+     * @param color text color
+     */
+    public void setTextColor(final @ColorInt int color) {
+        textColor = color;
+
+        invalidate();
+    }
+
+    /**
+     * Whether or not there is a text color when this button is selected
+     *
+     * If this is false, then the text color will be the same as when the button is unselected
+     */
+    public boolean hasSelectedTextColor() {
+        return hasSelectedTextColor;
+    }
+
+    /**
+     * Returns the text color when the button is selected
+     *
+     * If hasSelectedTextColor is false, then this returned value is undefined
+     */
+    public int getSelectedTextColor() {
+        return selectedTextColor;
+    }
+
+    /**
+     * Set the text color when the button is selected
+     *
+     * @param color text color
+     */
+    public void setSelectedTextColor(final @ColorInt int color) {
+        hasSelectedTextColor = true;
+        selectedTextColor = color;
+
+        invalidate();
+    }
+
+    /**
+     * Remove the text color when the button is selected
+     *
+     * The text color of the button when selected will be the normal text color of the button
+     */
+    public void removeSelectedTextColor() {
+        hasSelectedTextColor = false;
+
+        invalidate();
+    }
+
+    /**
+     * Return the size of the text in pixels
+     */
+    public float getTextSize() {
+        return textSize;
+    }
+
+    /**
+     * Set the size of the text in pixels
+     *
+     * @param size new size in pixels of the text
+     */
+    public void setTextSize(final float size) {
+        textSize = size;
+
+        if (!hasText) {
+            return;
+        }
+
+        textPaint.setTextSize(size);
+
+        requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
+    }
+
     // TODO Getters and setters for these functions
     // TODO Add button programatically
 //    [X]backgroundClipPath
@@ -1301,9 +1389,9 @@ public class SegmentedButton extends View {
 //    [x]private int drawableGravity;
 //    [x]private boolean hasText;
 //    [x]private String text;
-//    private boolean hasSelectedTextColor;
-//    private int textColor, selectedTextColor;
-//    private float textSize;
+//    [x]private boolean hasSelectedTextColor;
+//    [x]private int textColor, selectedTextColor;
+//    [x]private float textSize;
 //    private Typeface textTypeface;
 
     // endregion
@@ -1334,36 +1422,6 @@ public class SegmentedButton extends View {
 //            Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), location);
 //            textPaint.setTypeface(typeface);
 //        }
-//    }
-//
-//    void setSelectorColor(int color) {
-//        mPaint.setColor(color);
-//    }
-//
-//    public void removeDrawableTintOnSelection() {
-//        hasSelectedDrawableTint = false;
-//    }
-//
-//    public void removeTextColorOnSelection() {
-//        hasTextColorOnSelection = false;
-//    }
-//
-//    /**
-//     * @return button's text color when selector is on the button
-//     */
-//    public int getTextColorOnSelection() {
-//        return textColorOnSelection;
-//    }
-//
-//    /**
-//     * @param textColorOnSelection set button's text color when selector is on the button
-//     */
-//    public void setTextColorOnSelection(int textColorOnSelection) {
-//        this.textColorOnSelection = textColorOnSelection;
-//    }
-//
-//    boolean hasTextColorOnSelection() {
-//        return hasTextColorOnSelection;
 //    }
 
     // endregion
