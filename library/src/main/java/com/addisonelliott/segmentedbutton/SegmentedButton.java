@@ -1058,22 +1058,90 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
+    /**
+     * Whether or not there is a tint color applied to the drawable when the button is not selected
+     */
+    public boolean hasDrawableTint() {
+        return hasDrawableTint;
+    }
+
+    /**
+     * Tint color applied to the drawable when the button is not selected
+     *
+     * If hasDrawableTint is false, then this value will be undefined
+     */
     public int getDrawableTint() {
         return drawableTint;
     }
 
+    /**
+     * Set the drawable tint color to the specified color
+     *
+     * This drawable tint color will be the color applied to the drawable when the button is not selected
+     *
+     * @param drawableTint color for the drawable tint
+     */
     public void setDrawableTint(final @ColorInt int drawableTint) {
+        this.hasDrawableTint = true;
         this.drawableTint = drawableTint;
+
+        // Create color filter for the tint color
+        drawableColorFilter = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
 
         invalidate();
     }
 
+    /**
+     * Remove drawable tint color so that the normal drawable is shown when the button is not selected
+     */
+    public void removeDrawableTint() {
+        hasDrawableTint = false;
+        drawableColorFilter = null;
+
+        invalidate();
+    }
+
+    /**
+     * Whether or not there is a tint color applied to the drawable when the button is selected
+     */
+    public boolean hasSelectedDrawableTint() {
+        return hasSelectedDrawableTint;
+    }
+
+    /**
+     * Tint color applied to the drawable when the button is selected
+     *
+     * If hasSelectedDrawableTint is false, then this value will be undefined
+     */
     public int getSelectedDrawableTint() {
         return selectedDrawableTint;
     }
 
-    public void setSelectedDrawableTint(final @ColorInt int selectedDrawableTint) {
-        this.selectedDrawableTint = selectedDrawableTint;
+    /**
+     * Set the drawable tint color to the specified color
+     *
+     * This drawable tint color will be the color applied to the drawable when the button is selected
+     *
+     * @param drawableTint color for the drawable tint
+     */
+    public void setSelectedDrawableTint(final @ColorInt int drawableTint) {
+        this.hasSelectedDrawableTint = true;
+        this.selectedDrawableTint = drawableTint;
+
+        // Create color filter for the tint color
+        selectedDrawableColorFilter = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
+
+        invalidate();
+    }
+
+    /**
+     * Remove drawable tint color so that the normal drawable is shown when the button is selected
+     */
+    public void removeSelectedDrawableTint() {
+        hasSelectedDrawableTint = false;
+        selectedDrawableColorFilter = null;
+
+        invalidate();
     }
 
     public int getDrawableWidth() {
@@ -1119,10 +1187,10 @@ public class SegmentedButton extends View {
 //    [x]private Drawable backgroundDrawable;
 //    [x]private Drawable selectedBackgroundDrawable;
 //    [x]private int rippleColor;
-//    private Drawable drawable;
-//    private int drawablePadding;
-//    private boolean hasDrawableTint, hasSelectedDrawableTint;
-//    private int drawableTint, selectedDrawableTint;
+//    [x]private Drawable drawable;
+//    [x]private int drawablePadding;
+//    [x]private boolean hasDrawableTint, hasSelectedDrawableTint;
+//    [x]private int drawableTint, selectedDrawableTint;
 //    private boolean hasDrawableWidth, hasDrawableHeight;
 //    private int drawableWidth, drawableHeight;
 //    private int drawableGravity;

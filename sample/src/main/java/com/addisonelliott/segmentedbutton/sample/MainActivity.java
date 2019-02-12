@@ -34,7 +34,8 @@ enum Action {
     ChangeDivider,
     ChangeAnimation,
     RemoveButtonDrawable,
-    ChangeButtonDrawable;
+    ChangeButtonDrawable,
+    ChangeDrawableTint;
 
     public String getDisplayText() {
         if (this == None) {
@@ -67,6 +68,8 @@ enum Action {
             return "Remove button drawable";
         } else if (this == ChangeButtonDrawable) {
             return "Change button drawable";
+        } else if (this == ChangeDrawableTint) {
+            return "Change drawable tint color";
         } else {
             return "";
         }
@@ -220,6 +223,13 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                         R.drawable.ic_b9));
                 DCSuperHerosButtonGroup.getButton(1).setDrawable(ContextCompat.getDrawable(getApplicationContext(),
                         R.drawable.ic_aragorn));
+                break;
+
+            case ChangeDrawableTint:
+                lordOfTheRingsButtonGroup.getButton(0).setSelectedDrawableTint(Color.RED);
+                lordOfTheRingsButtonGroup.getButton(1).setDrawableTint(Color.GREEN);
+                lordOfTheRingsButtonGroup.getButton(2).setDrawableTint(Color.BLUE);
+                darthVaderButtonGroup.getButton(1).removeDrawableTint();
                 break;
 
             default:
