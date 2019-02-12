@@ -103,6 +103,15 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Drawable for the background when selected, this will be a ColorDrawable in case a solid color is given
     private Drawable selectedBackgroundDrawable;
 
+    // Width of the border in pixels (default value is 0px for no border)
+    private int borderWidth;
+     // Color of the border (default color is black)
+    private int borderColor;
+    // Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+    private int borderDashWidth;
+    // Width of the gap for border, in pixels. Only relevant when dashWidth is greater than 0px
+    private int borderDashGap;
+
     // Radius for rounding edges of the button group, in pixels (default value is 0)
     private int radius;
 
@@ -262,14 +271,13 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Width is the thickness of the border, color is the color of the border
         // Dash width and gap, if the dash width is not zero will make the border dashed with a ratio between dash
         // width and gap
-        final int borderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderWidth, 0);
-        final int borderColor = ta.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
-        final int borderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
-        final int borderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
+        borderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderWidth, 0);
+        borderColor = ta.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
+        borderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
+        borderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
 
-        // Set the border to the read values, we don't store these border values because they are just used to create
-        // a GradientDrawable to set as the background. Not sure it's that likely that someone will want to retrieve
-        // these values
+        // Set the border to the read values, this will set the border values to itself but will create a
+        // GradientDrawable containing the border
         setBorder(borderWidth, borderColor, borderDashWidth, borderDashGap);
 
         position = ta.getInt(R.styleable.SegmentedButtonGroup_position, 0);
@@ -683,33 +691,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     // TODO Write getters & setters
 
     /**
-     * Set the border for the perimeter of the button group.
-     *
-     * @param width     Width of the border in pixels (default value is 0px or no border)
-     * @param color     Color of the border (default color is black)
-     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
-     * @param dashGap   Width of the gap for border, in pixels.
-     */
-    public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
-        // Border width of 0 indicates to hide borders
-        if (width > 0) {
-            GradientDrawable borderDrawable = new GradientDrawable();
-            // Set background color to be transparent so that buttons and everything underneath the border view is
-            // still visible. This was an issue on API 16 Android where it would default to a black background
-            borderDrawable.setColor(Color.TRANSPARENT);
-            // Corner radius is the radius minus half of the border width because the drawable will draw the stroke
-            // from the center, so the actual corner radius is reduced
-            // If the half border width is left out, the border radius does not follow the curve of the background
-            borderDrawable.setCornerRadius(radius - width / 2.0f);
-            borderDrawable.setStroke(width, color, dashWidth, dashGap);
-
-            borderView.setBackground(borderDrawable);
-        } else {
-            borderView.setBackground(null);
-        }
-    }
-
-    /**
      * List of segmented buttons that are attached to this button group
      */
     public ArrayList<SegmentedButton> getButtons() {
@@ -783,7 +764,6 @@ public class SegmentedButtonGroup extends LinearLayout {
      * setBackground works but not setBackgroundColor.
      *
      * @param color color to set the background to
-     *
      * @see #setBackground(int)
      */
     @Override
@@ -845,59 +825,144 @@ public class SegmentedButtonGroup extends LinearLayout {
      * Convenience function for setting the background color
      *
      * @param color color to set the background to
-     *
      * @see #setSelectedBackground(int)
      */
     public void setSelectedBackgroundColor(@ColorInt int color) {
         setSelectedBackground(color);
     }
 
-    public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
-        // TODO Explain these
+    /**
+     * Return the width of the border, in pixels
+     *
+     * 0px value indicates no border is present
+     */
+    public int getBorderWidth() {
+        return borderWidth;
+    }
 
-        // Drawable of null indicates that we want to hide dividers
-        if (drawable == null) {
-            dividerLayout.setDividerDrawable(null);
-            dividerLayout.setShowDividers(SHOW_DIVIDER_NONE);
-            return;
-        }
+    /**
+     * Return color of the border
+     */
+    public int getBorderColor() {
+        return borderColor;
+    }
 
-        // Set the corner radius and size if the drawable is a GradientDrawable
-        // Otherwise just set the divider drawable like normal because we cant set the parameters
-        if (drawable instanceof GradientDrawable) {
-            GradientDrawable gradient = (GradientDrawable) drawable;
-            gradient.setSize(width, 0);
-            gradient.setCornerRadius(radius);
+    /**
+     * Return the border dash width, in pixels
+     *
+     * 0px value indicates the border is solid
+     */
+    public int getBorderDashWidth() {
+        return borderDashWidth;
+    }
 
-            dividerLayout.setDividerDrawable(gradient);
+    /**
+     * Return the border gap width, in pixels
+     *
+     * Only relevant if border dash width is greater than 0px
+     */
+    public int getBorderDashGap() {
+        return borderDashGap;
+    }
+
+    /**
+     * Set the border for the perimeter of the button group.
+     *
+     * @param width     Width of the border in pixels (default value is 0px or no border)
+     * @param color     Color of the border (default color is black)
+     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+     * @param dashGap   Width of the gap for border, in pixels.
+     */
+    public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+        borderWidth = width;
+        borderColor = color;
+        borderDashWidth = dashWidth;
+        borderDashGap = dashGap;
+
+        // Border width of 0 indicates to hide borders
+        if (width > 0) {
+            GradientDrawable borderDrawable = new GradientDrawable();
+            // Set background color to be transparent so that buttons and everything underneath the border view is
+            // still visible. This was an issue on API 16 Android where it would default to a black background
+            borderDrawable.setColor(Color.TRANSPARENT);
+            // Corner radius is the radius minus half of the border width because the drawable will draw the stroke
+            // from the center, so the actual corner radius is reduced
+            // If the half border width is left out, the border radius does not follow the curve of the background
+            borderDrawable.setCornerRadius(radius - width / 2.0f);
+            borderDrawable.setStroke(width, color, dashWidth, dashGap);
+
+            borderView.setBackground(borderDrawable);
         } else {
-            dividerLayout.setDividerDrawable(drawable);
+            borderView.setBackground(null);
+        }
+    }
+
+    /**
+     * Returns the current corner radius for this button group, in pixels
+     *
+     * A value of 0px indicates the view is rectangular and has no rounded corners
+     */
+    public int getRadius() {
+        return radius;
+    }
+
+    /**
+     * Set the radius of this button group
+     *
+     * @param radius value of new corner radius, in pixels
+     */
+    public void setRadius(final int radius) {
+        this.radius = radius;
+
+        // Update radius for each button
+        for (SegmentedButton button : buttons) {
+            button.setBackgroundRadius(radius);
+            button.setupBackgroundClipPath();
+
+            button.invalidate();
         }
 
-        dividerLayout.setDividerPadding(padding);
-        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+        // Update border for new radius
+        GradientDrawable borderDrawable = (GradientDrawable) borderView.getBackground();
+        if (borderDrawable != null) {
+            borderDrawable.setCornerRadius(radius - borderWidth / 2.0f);
+        }
+
+        // Invalidate shadow outline so that it will be updated to follow the new radius
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            invalidateOutline();
+        }
     }
 
-    public void setDivider(@ColorInt int color, int width, int radius, int padding) {
-        // TODO Explain these
-
-        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
-                new int[]{color, color});
-
-        drawable.setCornerRadius(radius);
-        drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setSize(width, 0);
-
-        dividerLayout.setDividerDrawable(drawable);
-        dividerLayout.setDividerPadding(padding);
-        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
-    }
-
+    /**
+     * Return the currently selected button index
+     *
+     * If the button is currently being animated, then the position will be the old button position until the
+     * animation is complete
+     */
     public int getPosition() {
         return position;
     }
 
-    public void setPosition(final int position, boolean animate) {
+    /**
+     * Selects the button at the given position and animates the movement if desired
+     *
+     * If the given position is out of bounds, i.e. less than 0 or greater than or equal to the number of buttons,
+     * then the function will return after doing nothing. In addition, if the button selected is the current button
+     * and the user is not dragging or the button is not currently being animated, then the function also returns
+     * after doing nothing.
+     *
+     * If animate is true, then the button will be animated to the new position, using an animation interpolator and
+     * animation duration stored in the button group. Otherwise, if animate is false, the button will be moved to the
+     * new position immediately.
+     *
+     * If an existing animation is already taking place, the animation should automatically be cancelled and the new
+     * animation will begin from the current location.
+     *
+     * @param position index of new button to select
+     * @param animate whether or not to animate moving to the button
+     */
+    public void setPosition(final int position, final boolean animate) {
         // Return and do nothing in two cases
         // First, if the position is out of bounds.
         // Second, if the desired position is equal to the current position do nothing. But, only do this under two
@@ -942,6 +1007,49 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Start the animation
         buttonAnimator.start();
     }
+
+    public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
+        // TODO Explain these
+
+        // Drawable of null indicates that we want to hide dividers
+        if (drawable == null) {
+            dividerLayout.setDividerDrawable(null);
+            dividerLayout.setShowDividers(SHOW_DIVIDER_NONE);
+            return;
+        }
+
+        // Set the corner radius and size if the drawable is a GradientDrawable
+        // Otherwise just set the divider drawable like normal because we cant set the parameters
+        if (drawable instanceof GradientDrawable) {
+            GradientDrawable gradient = (GradientDrawable) drawable;
+            gradient.setSize(width, 0);
+            gradient.setCornerRadius(radius);
+
+            dividerLayout.setDividerDrawable(gradient);
+        } else {
+            dividerLayout.setDividerDrawable(drawable);
+        }
+
+        dividerLayout.setDividerPadding(padding);
+        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+    }
+
+    public void setDivider(@ColorInt int color, int width, int radius, int padding) {
+        // TODO Explain these
+
+        GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
+                new int[]{color, color});
+
+        drawable.setCornerRadius(radius);
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setSize(width, 0);
+
+        dividerLayout.setDividerDrawable(drawable);
+        dividerLayout.setDividerPadding(padding);
+        dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+    }
+
+
 
     public OnPositionChangedListener getOnPositionChangedListener() {
         return onPositionChangedListener;
@@ -1046,8 +1154,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 //    [x]private ArrayList<SegmentedButton> buttons;
 //    [x]private Drawable backgroundDrawable;
 //    [x]private Drawable selectedBackgroundDrawable;
-//    private int radius;
-//    private int position;
+//    [x]private int radius;
+//    [x]private int position;
 //    private boolean draggable;
 //    private boolean ripple;
 //    private int rippleColor;
@@ -1065,54 +1173,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 //     */
 //    public void setOnPositionChangedListener(OnPositionChangedListener onPositionChangedListener) {
 //        this.onPositionChangedListener = onPositionChangedListener;
-//    }
-//
-//    /**
-//     * @param position is used to select one of segmented buttons
-//     */
-//    public void setPosition(int position) {
-//        this.position = position;
-//
-//        if (null == buttons) {
-//            lastPosition = toggledPosition = position;
-//            lastPositionOffset = toggledPositionOffset = (float) position;
-//        } else {
-//            toggle(position, animateSelectorDuration, false);
-//        }
-//    }
-//
-//    /**
-//     * @param position is used to select one of segmented buttons
-//     * @param duration determines how long animation takes to finish
-//     */
-//    public void setPosition(int position, int duration) {
-//        this.position = position;
-//
-//        if (null == buttons) {
-//            lastPosition = toggledPosition = position;
-//            lastPositionOffset = toggledPositionOffset = (float) position;
-//        } else {
-//            toggle(position, duration, false);
-//        }
-//    }
-//
-//    /**
-//     * @param position      is used to select one of segmented buttons
-//     * @param withAnimation if true default animation will perform
-//     */
-//    public void setPosition(int position, boolean withAnimation) {
-//        this.position = position;
-//
-//        if (null == buttons) {
-//            lastPosition = toggledPosition = position;
-//            lastPositionOffset = toggledPositionOffset = (float) position;
-//        } else {
-//            if (withAnimation) {
-//                toggle(position, animateSelectorDuration, false);
-//            } else {
-//                toggle(position, 1, false);
-//            }
-//        }
 //    }
 //
 //    /**

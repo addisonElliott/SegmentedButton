@@ -21,7 +21,10 @@ enum Action {
     ChangeBorder1,
     ChangeBorder2,
     ChangeBackgroundColor,
-    ChangeBackgroundDrawable;
+    ChangeBackgroundDrawable,
+    ChangeRadius,
+    ChangePositionAnimated,
+    ChangePosition;
 
     public String getDisplayText() {
         if (this == None) {
@@ -34,6 +37,12 @@ enum Action {
             return "Change background and selected background to color";
         } else if (this == ChangeBackgroundDrawable) {
             return "Change background and selected background to drawable";
+        } else if (this == ChangeRadius) {
+            return "Change radius";
+        } else if (this == ChangePositionAnimated) {
+            return "Change position and animate movement";
+        } else if (this == ChangePosition) {
+            return "Change position without animating";
         } else {
             return "";
         }
@@ -136,6 +145,19 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                         R.drawable.gradient_drawable));
                 lordOfTheRingsButtonGroup.setSelectedBackground(ContextCompat.getDrawable(getApplicationContext(),
                         R.drawable.gradient_drawable_selector));
+                break;
+
+            case ChangeRadius:
+                marvelSuperherosButtonGroup.setRadius(5);
+                DCSuperHerosButtonGroup.setRadius(50);
+                break;
+
+            case ChangePositionAnimated:
+                lordOfTheRingsButtonGroup.setPosition(((lordOfTheRingsButtonGroup.getPosition() + 1) % 3), true);
+                break;
+
+            case ChangePosition:
+                lordOfTheRingsButtonGroup.setPosition(((lordOfTheRingsButtonGroup.getPosition() + 1) % 3), false);
                 break;
 
             default:
