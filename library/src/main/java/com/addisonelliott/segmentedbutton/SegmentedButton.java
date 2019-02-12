@@ -23,6 +23,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -243,6 +244,7 @@ public class SegmentedButton extends View {
 
         // If there is no text then do not bother
         if (!hasText) {
+            textStaticLayout = null;
             return;
         }
 
@@ -411,8 +413,8 @@ public class SegmentedButton extends View {
      */
     private void updateSize() {
         final int width = getWidth(), height = getHeight();
-        final int textWidth = textStaticLayout != null ? textStaticLayout.getWidth() : 0;
-        final int textHeight = textStaticLayout != null ? textStaticLayout.getHeight() : 0;
+        final int textWidth = hasText ? textStaticLayout.getWidth() : 0;
+        final int textHeight = hasText ? textStaticLayout.getHeight() : 0;
         final int drawableWidth = drawable != null ? hasDrawableWidth ? this.drawableWidth
                 : drawable.getIntrinsicWidth() : 0;
         final int drawableHeight = drawable != null ? hasDrawableHeight ? this.drawableHeight
@@ -1252,15 +1254,34 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
+    /**
+     * Return the text currently being displayed
+     *
+     * If no text is being shown, this will be either null or an empty string
+     */
     public String getText() {
         return text;
     }
 
-    public void setText(final String text) {
-        this.hasText = text == null || text.isEmpty();
+    /**
+     * Set the text to a new string
+     *
+     * If the string is null or an empty string, then the text will be hidden
+     *
+     * @param text new string to set text to in the button
+     */
+    public void setText(final @Nullable String text) {
+        this.hasText = (text != null && !text.isEmpty());
         this.text = text;
 
+        initText();
+
         requestLayout();
+
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
     }
 
     // TODO Getters and setters for these functions
@@ -1278,8 +1299,8 @@ public class SegmentedButton extends View {
 //    [x]private boolean hasDrawableWidth, hasDrawableHeight;
 //    [x]private int drawableWidth, drawableHeight;
 //    [x]private int drawableGravity;
-//    private boolean hasText;
-//    private String text;
+//    [x]private boolean hasText;
+//    [x]private String text;
 //    private boolean hasSelectedTextColor;
 //    private int textColor, selectedTextColor;
 //    private float textSize;
@@ -1319,47 +1340,6 @@ public class SegmentedButton extends View {
 //        mPaint.setColor(color);
 //    }
 //
-//    /**
-//     * Sets button's drawable by given drawable object and its position
-//     *
-//     * @param resId is your drawable's resource id
-//     */
-//    public void setDrawable(int resId) {
-//        setDrawable(ContextCompat.getDrawable(getContext(), resId));
-//    }
-//
-//    /**
-//     * Sets button's drawable by given drawable object and its position
-//     *
-//     * @param drawable is your drawable object
-//     */
-//    public void setDrawable(Drawable drawable) {
-//        drawable = drawable;
-//        hasDrawable = true;
-//        requestLayout();
-//    }
-//
-//    /**
-//     * Sets button's drawable by given drawable id and its position
-//     *
-//     * @param gravity specifies button's drawable position relative to text position.
-//     *                These values can be given to position:
-//     *                {DrawableGravity.LEFT} sets drawable to the left of button's text
-//     *                {DrawableGravity.TOP} sets drawable to the top of button's text
-//     *                {DrawableGravity.RIGHT} sets drawable to the right of button's text
-//     *                {DrawableGravity.BOTTOM} sets drawable to the bottom of button's text
-//     */
-//    public void setGravity(DrawableGravity gravity) {
-//        drawableGravity = gravity;
-//    }
-//
-//    /**
-//     * removes drawable's tint
-//     */
-//    public void removeDrawableTint() {
-//        hasDrawableTint = false;
-//    }
-//
 //    public void removeDrawableTintOnSelection() {
 //        hasSelectedDrawableTint = false;
 //    }
@@ -1367,16 +1347,6 @@ public class SegmentedButton extends View {
 //    public void removeTextColorOnSelection() {
 //        hasTextColorOnSelection = false;
 //    }
-//
-//    /**
-//     * If button has any drawable, it sets drawable's tint color without changing drawable's position.
-//     *
-//     * @param color is used to set drawable's tint color
-//     */
-//    public void setDrawableTint(int color) {
-//        drawableTint = color;
-//    }
-//
 //
 //    /**
 //     * @return button's text color when selector is on the button
@@ -1390,34 +1360,6 @@ public class SegmentedButton extends View {
 //     */
 //    public void setTextColorOnSelection(int textColorOnSelection) {
 //        this.textColorOnSelection = textColorOnSelection;
-//    }
-//
-//    /**
-//     * @return drawable's tint color when selector is on the button
-//     */
-//    public int getDrawableTintOnSelection() {
-//        return selectedDrawableTint;
-//    }
-//
-//    /**
-//     * @return drawable's tint color
-//     */
-//    public int getDrawableTint() {
-//        return drawableTint;
-//    }
-//
-//    /**
-//     * @return true if button's drawable is not empty
-//     */
-//    public boolean hasDrawableTint() {
-//        return hasDrawableTint;
-//    }
-//
-//    /**
-//     * @return true if button's drawable has tint when selector is on the button
-//     */
-//    public boolean hasSelectedDrawableTint() {
-//        return hasSelectedDrawableTint;
 //    }
 //
 //    boolean hasTextColorOnSelection() {

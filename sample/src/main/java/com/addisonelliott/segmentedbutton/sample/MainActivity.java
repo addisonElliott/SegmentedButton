@@ -41,7 +41,8 @@ enum Action {
     ChangeButtonDrawable,
     ChangeDrawableTint,
     ToggleDrawableSize,
-    ChangeDrawableGravity;
+    ChangeDrawableGravity,
+    ChangeText;
 
     public String getDisplayText() {
         if (this == None) {
@@ -80,6 +81,8 @@ enum Action {
             return "Toggle drawable size";
         } else if (this == ChangeDrawableGravity) {
             return "Change drawable gravity";
+        } else if (this == ChangeText) {
+            return "Change text";
         } else {
             return "";
         }
@@ -267,6 +270,11 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 }
 
                 DCSuperHerosButtonGroup.getButton(0).setDrawableGravity(currentGravity);
+                break;
+
+            case ChangeText:
+                lordOfTheRingsButtonGroup.getButton(0).setText("Testing");
+                lordOfTheRingsButtonGroup.getButton(1).setText("");
                 break;
 
             default:
