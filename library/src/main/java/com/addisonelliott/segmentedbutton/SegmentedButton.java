@@ -1372,57 +1372,30 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
-    // TODO Getters and setters for these functions
-    // TODO Add button programatically
-//    [X]backgroundClipPath
-//    [X]private int backgroundRadius;
-//    [x]private boolean isLeftButton, isRightButton;
-//    [x]private Drawable backgroundDrawable;
-//    [x]private Drawable selectedBackgroundDrawable;
-//    [x]private int rippleColor;
-//    [x]private Drawable drawable;
-//    [x]private int drawablePadding;
-//    [x]private boolean hasDrawableTint, hasSelectedDrawableTint;
-//    [x]private int drawableTint, selectedDrawableTint;
-//    [x]private boolean hasDrawableWidth, hasDrawableHeight;
-//    [x]private int drawableWidth, drawableHeight;
-//    [x]private int drawableGravity;
-//    [x]private boolean hasText;
-//    [x]private String text;
-//    [x]private boolean hasSelectedTextColor;
-//    [x]private int textColor, selectedTextColor;
-//    [x]private float textSize;
-//    private Typeface textTypeface;
+    /**
+     * Return the current typeface used for drawing text
+     */
+    public Typeface getTextTypeface() {
+        return textTypeface;
+    }
 
-    // endregion
+    /**
+     * Set a new typeface to use for drawing text
+     *
+     * @param typeface new typeface for text
+     */
+    public void setTextTypeface(final Typeface typeface) {
+        textTypeface = typeface;
 
-    // region Unused
+        initText();
 
-    // TODO Create getters and setters, test them though!
+        requestLayout();
 
-    // TODO Go through and add docstrings to each function
-
-//    /**
-//     * Typeface.NORMAL: 0
-//     * Typeface.BOLD: 1
-//     * Typeface.ITALIC: 2
-//     * Typeface.BOLD_ITALIC: 3
-//     *
-//     * @param typeface you can use above variations using the bitwise OR operator
-//     */
-//    public void setTypeface(Typeface typeface) {
-//        textPaint.setTypeface(typeface);
-//    }
-//
-//    /**
-//     * @param location is .ttf file's path in assets folder. Example: 'fonts/my_font.ttf'
-//     */
-//    public void setTypeface(String location) {
-//        if (null != location && !location.equals("")) {
-//            Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), location);
-//            textPaint.setTypeface(typeface);
-//        }
-//    }
+        // Calculate new positions and bounds for text & drawable
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // change but the positions still need to be recalculated
+        updateSize();
+    }
 
     // endregion
 }

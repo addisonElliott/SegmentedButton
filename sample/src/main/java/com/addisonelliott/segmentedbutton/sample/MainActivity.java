@@ -1,6 +1,7 @@
 package com.addisonelliott.segmentedbutton.sample;
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -44,7 +45,8 @@ enum Action {
     ChangeDrawableGravity,
     ChangeText,
     ChangeTextColor,
-    ChangeTextSize;
+    ChangeTextSize,
+    ChangeTypeface;
 
     public String getDisplayText() {
         if (this == None) {
@@ -89,6 +91,8 @@ enum Action {
             return "Change text color";
         } else if (this == ChangeTextSize) {
             return "Change text size";
+        } else if (this == ChangeTypeface) {
+            return "Change typeface";
         } else {
             return "";
         }
@@ -257,8 +261,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                         getApplicationContext().getResources().getDisplayMetrics());
 
                 for (SegmentedButton button : DCSuperHerosButtonGroup.getButtons()) {
-                    button.setDrawableWidth(setSize ? (int)size : -1);
-                    button.setDrawableHeight(setSize ? (int)size : -1);
+                    button.setDrawableWidth(setSize ? (int) size : -1);
+                    button.setDrawableHeight(setSize ? (int) size : -1);
                 }
                 break;
 
@@ -269,10 +273,18 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 int currentGravity = DCSuperHerosButtonGroup.getButton(0).getDrawableGravity();
 
                 switch (currentGravity) {
-                    case Gravity.LEFT: currentGravity = Gravity.TOP; break;
-                    case Gravity.TOP: currentGravity = Gravity.RIGHT; break;
-                    case Gravity.RIGHT: currentGravity = Gravity.BOTTOM; break;
-                    case Gravity.BOTTOM: currentGravity = Gravity.LEFT; break;
+                    case Gravity.LEFT:
+                        currentGravity = Gravity.TOP;
+                        break;
+                    case Gravity.TOP:
+                        currentGravity = Gravity.RIGHT;
+                        break;
+                    case Gravity.RIGHT:
+                        currentGravity = Gravity.BOTTOM;
+                        break;
+                    case Gravity.BOTTOM:
+                        currentGravity = Gravity.LEFT;
+                        break;
                 }
 
                 DCSuperHerosButtonGroup.getButton(0).setDrawableGravity(currentGravity);
@@ -292,6 +304,10 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
             case ChangeTextSize:
                 lordOfTheRingsButtonGroup.getButton(1).setTextSize(48.0f);
                 DCSuperHerosButtonGroup.getButton(0).setTextSize(48.0f);
+                break;
+
+            case ChangeTypeface:
+                lordOfTheRingsButtonGroup.getButton(0).setTextTypeface(Typeface.create((Typeface) null, Typeface.BOLD));
                 break;
 
             default:
