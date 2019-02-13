@@ -37,9 +37,9 @@ task sourcesJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     failOnError false
-    source = android.sourceSets.main.java.sourceFiles
-    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-    classpath += configurations.compile
+    source = android.sourceSets.main.java.srcDirs
+    configurations.implementation.setCanBeResolved(true)
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator)) + configurations.implementation
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
@@ -57,5 +57,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
     implementation "androidx.appcompat:appcompat:$androidXLibraryVersion"
+    implementation "androidx.interpolator:interpolator:1.0.0"
+    implementation "androidx.core:core:1.0.1"
     implementation 'com.github.addisonElliott:RippleDrawable:2.0.2'
 }
