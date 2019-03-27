@@ -562,7 +562,7 @@ public class SegmentedButton extends View {
             canvas.restore();
         }
 
-        // Draw drawable (unselected)
+        // Draw drawable (selected)
         if (drawable != null) {
             // If a selected drawable tint was used, then use that, but if it wasn't specified we want to stick with
             // the normal tint color.
