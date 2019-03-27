@@ -51,7 +51,7 @@ and:
 
 ```gradle
 dependencies {
-    compile 'com.github.addisonelliott:SegmentedButton:v3.0.0'
+    compile 'com.github.addisonelliott:SegmentedButton:3.0.0'
 }
 ```
 
