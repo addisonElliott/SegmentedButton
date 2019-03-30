@@ -553,7 +553,7 @@ public class SegmentedButton extends View {
         // TODO But not sure how I can add a border to things
         selectedClipPath.reset();
         if (isClippingLeft) {
-            float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
+            final float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
             rectF.set((relativeClipPosition - 1.0f) * leftButtonWidth, 0.0f, relativeClipPosition * width, height);
 
             // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
@@ -564,7 +564,7 @@ public class SegmentedButton extends View {
                 canvas.clipRect(rectF);
             }
         } else {
-            float rightButtonWidth = isRightButton() ? width : rightButton.getWidth();
+            final float rightButtonWidth = isRightButton() ? width : rightButton.getWidth();
             rectF.set(relativeClipPosition * width, 0.0f, width + relativeClipPosition * rightButtonWidth, height);
 
             // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
@@ -602,15 +602,15 @@ public class SegmentedButton extends View {
 
         // 0.5f offset to prevent antialiasing bleed through, document this
         // TODO Document
-        rectF.inset(5.0f - 0.5f, 5.0f - 0.5f);
-
-        Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(10);
-//        borderPaint.setPathEffect() DashedHere...
-        borderPaint.setColor(Color.RED);
-
-        canvas.drawRoundRect(rectF, selectedButtonRadius - 5.0f, selectedButtonRadius - 5.0f, borderPaint);
+//        rectF.inset(5.0f - 0.5f, 5.0f - 0.5f);
+//
+//        Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        borderPaint.setStyle(Paint.Style.STROKE);
+//        borderPaint.setStrokeWidth(10);
+////        borderPaint.setPathEffect() DashedHere...
+//        borderPaint.setColor(Color.RED);
+//
+//        canvas.drawRoundRect(rectF, selectedButtonRadius - 5.0f, selectedButtonRadius - 5.0f, borderPaint);
 
         canvas.restore();
 

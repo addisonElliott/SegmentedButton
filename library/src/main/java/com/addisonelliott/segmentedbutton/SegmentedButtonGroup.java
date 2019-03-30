@@ -411,6 +411,9 @@ public class SegmentedButtonGroup extends LinearLayout {
             // Sets up the background clip path in order to correctly round background to match the radius
             button.setupBackgroundClipPath();
 
+            // TODO We do this because the background radius is changed
+            button.setupSelectedButtonClipPath();
+
             // Add the button to the main group instead and store the button in our buttons list
             buttonLayout.addView(button, params);
             buttons.add(button);

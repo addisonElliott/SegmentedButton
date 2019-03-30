@@ -340,6 +340,7 @@
             app:position="2"
             app:radius="2dp"
             app:rippleColor="@color/white"
+            app:selectedButtonRadius="32dp"
             app:selectedBackground="@color/white"
             app:selectionAnimationDuration="1000"
             app:selectionAnimationInterpolator="fastOutSlowIn">
