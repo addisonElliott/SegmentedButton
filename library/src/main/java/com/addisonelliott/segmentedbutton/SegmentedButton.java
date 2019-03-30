@@ -79,8 +79,10 @@ public class SegmentedButton extends View {
 
     // Radius of the selected button used for creating a rounded selected button
     private int selectedButtonRadius;
-    // TODO Document me
+    // Clip path used to round the selected button to the specified radius
     private Path selectedClipPath;
+    // Corner radii for the selected button, this contains 8x values all set to selectedButtonRadius
+    // This is used to prevent allocation in the onDraw method
     private float[] selectedButtonRadii;
 
     // Paint information for how the border should be drawn for the selected button, null indicates no border
@@ -555,13 +557,14 @@ public class SegmentedButton extends View {
         // TODO Document here
         // TODO Clip a rounded rect now instead...
         // TODO But not sure how I can add a border to things
-        selectedClipPath.reset();
         if (isClippingLeft) {
             final float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
             rectF.set((relativeClipPosition - 1.0f) * leftButtonWidth, 0.0f, relativeClipPosition * width, height);
 
             // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
             if (selectedButtonRadius > 0) {
+                selectedClipPath.reset();
+
                 selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
                 canvas.clipPath(selectedClipPath);
             } else {
@@ -573,6 +576,8 @@ public class SegmentedButton extends View {
 
             // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
             if (selectedButtonRadius > 0) {
+                selectedClipPath.reset();
+
                 selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
                 canvas.clipPath(selectedClipPath);
             } else {
@@ -799,9 +804,8 @@ public class SegmentedButton extends View {
      * Sets the button directly to the left of this button. Set to null to indicate that this is the left-most button
      * in the group
      *
-     * TODO Fix the below message
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius,
+     * leftButton, rightButton & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
     void setLeftButton(SegmentedButton leftButton) {
@@ -812,8 +816,8 @@ public class SegmentedButton extends View {
      * Sets the button directly to the right of this button. Set to null to indicate that this is the right-most button
      * in the group
      *
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, leftButton,
+     * rightButton & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
     void setRightButton(SegmentedButton rightButton) {
@@ -840,9 +844,8 @@ public class SegmentedButton extends View {
      * If both are true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
-     * TODO Fix me
      * This function should be called when the size of the button changes, if the background radius changes and/or if
-     * the isLeftButton or isRightButton boolean values change.
+     * the isLeftButton() or isRightButton() boolean values change.
      */
     void setupBackgroundClipPath() {
         // If there is no background radius then skip
@@ -878,22 +881,33 @@ public class SegmentedButton extends View {
         // right-most buttons) is not supported with hardware acceleration until API 18
         // Thus, switch to software acceleration if the background clip path is not null (meaning the edges are
         // rounded) and the current version is less than 18
-        // Otherwise, switch to hardware acceleration
         if (backgroundClipPath != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
-        } else {
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
     }
 
+    /**
+     * Setup the selected button clip path to round the corners of the selected button
+     *
+     * This function should be called if the selected button radius is changed
+     */
     void setupSelectedButtonClipPath() {
-        // TODO Document and fix me
-        // TODO Does this need updated on size change or anything...?
+        if (selectedButtonRadius > 0) {
+            selectedClipPath = new Path();
+            selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                    selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                    selectedButtonRadius};
 
-        selectedClipPath = new Path();
-        selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
-                selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
-                selectedButtonRadius,};
+            // Canvas.clipPath, used in onDraw for drawing the background clip path (rounding the edges for left-most and
+            // right-most buttons) is not supported with hardware acceleration until API 18
+            // Thus, switch to software acceleration if the current version is less than 18
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                setLayerType(LAYER_TYPE_SOFTWARE, null);
+            }
+        } else {
+            selectedClipPath = null;
+            selectedButtonRadii = null;
+        }
     }
 
     /**
