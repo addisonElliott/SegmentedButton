@@ -544,7 +544,8 @@ public class SegmentedButton extends View {
         float br = 45.0f;
         if (isClippingLeft) {
 //            rectF.set(0.0f, 0.0f, relativeClipPosition * width, height);
-            rectF.set(0.0f - (1.0f - relativeClipPosition) * width, 0.0f, relativeClipPosition * width, height);
+            rectF.set((relativeClipPosition - 1.0f) * width, 0.0f,
+                    relativeClipPosition * width, height);
             selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
             canvas.clipPath(selectedClipPath);
 
@@ -552,7 +553,7 @@ public class SegmentedButton extends View {
 //            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
         } else {
 //            rectF.set(relativeClipPosition * width, 0.0f, width, height);
-            rectF.set(relativeClipPosition * width, 0.0f, (1.0f + relativeClipPosition) * width, height);
+            rectF.set(relativeClipPosition * width, 0.0f, (relativeClipPosition + 1.0f) * width, height);
             selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
             canvas.clipPath(selectedClipPath);
 
