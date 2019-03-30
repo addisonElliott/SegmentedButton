@@ -115,6 +115,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // Radius for rounding edges of the button group, in pixels (default value is 0)
     private int radius;
+    // Radius for rounding edges of the selected button, in pixels (default value is 0)
+    private int selectedButtonRadius;
 
     // Position of the currently selected button, zero-indexed (default value is 0)
     // When animating, the position will be the previous value until after animation is finished
@@ -276,6 +278,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Note: Must read radius before setBorder call in order to round the border corners!
         radius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
+        selectedButtonRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedButtonRadius, 0);
 
         // Setup border for button group
         // Width is the thickness of the border, color is the color of the border
@@ -359,6 +362,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             // The default backgrounds will only update the background of the button if there is not a background set
             // on that button explicitly
             button.setBackgroundRadius(radius);
+            button.setSelectedButtonRadius(selectedButtonRadius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
 

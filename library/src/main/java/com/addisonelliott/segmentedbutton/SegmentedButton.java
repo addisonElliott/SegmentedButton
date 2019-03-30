@@ -73,8 +73,11 @@ public class SegmentedButton extends View {
     // Preferably segmented buttons shouldn't NEED to know about the buttons beside it, but there is a special case
     // where its required
     // In addition, this is used to determine whether this button is the left-most or right-most in the group so the
-    // correct side can be rounded out
+    // correct side can be rounded out (if a background radius is specified)
     private SegmentedButton leftButton, rightButton;
+
+    // Radius of the selected button used for creating a rounded selected button
+    private int selectedButtonRadius;
 
     // Horizontal relative clip position from 0.0f to 1.0f.
     // Value is scaled by the width of this view to get the actual clip X coordinate
@@ -553,7 +556,7 @@ public class SegmentedButton extends View {
 //            float xxx = (relativeClipPosition - 1.0f) * (isLeftButton() ? width : leftButton.getWidth());
             rectF.set((relativeClipPosition - 1.0f) * (isLeftButton() ? width : leftButton.getWidth()), 0.0f,
                     relativeClipPosition * width, height);
-            selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
+            selectedClipPath.addRoundRect(rectF, new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius}, Direction.CW);
             canvas.clipPath(selectedClipPath);
 
             // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
@@ -563,7 +566,10 @@ public class SegmentedButton extends View {
 //            rectF.set(relativeClipPosition * width, 0.0f, width, height);
             rectF.set(relativeClipPosition * width, 0.0f, width + (relativeClipPosition) * (isRightButton() ?
                     width : rightButton.getWidth()), height);
-            selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
+            selectedClipPath.addRoundRect(rectF, new float[]{selectedButtonRadius, selectedButtonRadius,
+                            selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                            selectedButtonRadius, selectedButtonRadius},
+                    Direction.CW);
             canvas.clipPath(selectedClipPath);
 
             // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
@@ -613,7 +619,7 @@ public class SegmentedButton extends View {
         borderPaint.setColor(Color.RED);
 
 //        canvas.drawPath(selectedClipPath2, borderPaint);
-        canvas.drawRoundRect(rectF, br - 5.0f, br - 5.0f, borderPaint);
+        canvas.drawRoundRect(rectF, selectedButtonRadius - 5.0f, selectedButtonRadius - 5.0f, borderPaint);
 
         canvas.restore();
 
@@ -818,6 +824,18 @@ public class SegmentedButton extends View {
     @SuppressWarnings("SameParameterValue")
     void setRightButton(SegmentedButton rightButton) {
         this.rightButton = rightButton;
+    }
+
+    /**
+     * Set the radius of the selected button
+     *
+     * This will round out the selected button or the part shown in this button during animation based on this radius
+     * value.
+     *
+     * @param selectedButtonRadius radius of corners for selected button in pixels
+     */
+    void setSelectedButtonRadius(int selectedButtonRadius) {
+        this.selectedButtonRadius = selectedButtonRadius;
     }
 
     /**
