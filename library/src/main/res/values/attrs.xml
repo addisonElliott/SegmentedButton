@@ -46,6 +46,11 @@
         <attr name="borderDashWidth" format="dimension" />
         <attr name="borderDashGap" format="dimension" />
 
+        <attr name="selectedBorderWidth" format="dimension" />
+        <attr name="selectedBorderColor" format="color" />
+        <attr name="selectedBorderDashWidth" format="dimension" />
+        <attr name="selectedBorderDashGap" format="dimension" />
+
         <attr name="radius" format="dimension" />
         <attr name="selectedButtonRadius" format="dimension" />
         <attr name="position" format="integer" />
