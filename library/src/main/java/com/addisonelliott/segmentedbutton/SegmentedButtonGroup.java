@@ -18,11 +18,9 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -129,10 +127,6 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Position of the currently selected button, zero-indexed (default value is 0)
     // When animating, the position will be the previous value until after animation is finished
     private int position;
-
-    // Configuration value from Android that determines how far a user must move their finger before a touch is
-    // considered a drag
-    private int touchSlop;
 
     // Whether or not the button can be dragged to a different position (default value is false)
     private boolean draggable;
@@ -261,11 +255,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Retrieve custom attributes
         getAttributes(context, attrs);
-
-        // Retrieve the touch slop from Android configuration
-        // This is the same value used by ScrollView to determine when a user is scrolling vs just tapping
-        final ViewConfiguration configuration = ViewConfiguration.get(context);
-        touchSlop = configuration.getScaledTouchSlop();
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -576,11 +565,6 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // Get X coordinate of where the selected button should be by taking user's X location and subtract
                 // the offset
                 float xCoord = ev.getX() - dragOffsetX;
-
-                // Do not move the button until the user has moved their finger enough
-                if (Math.abs(xCoord) < touchSlop) {
-                    break;
-                }
 
                 // Convert X coordinate to a position containing the relative offset within the button as well
                 // Clip the position to be between 0.0f and buttons size minus 1 so that the user doesn't drag out of
