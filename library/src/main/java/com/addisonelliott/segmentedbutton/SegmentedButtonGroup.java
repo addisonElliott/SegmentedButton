@@ -502,6 +502,9 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // In the case that the user has been dragging the button, this will have the effect of "snapping" to
                 // the nearest button
                 setPosition(position, true);
+
+                // Enable scroll touch event interception again now that we're done dragging
+                requestDisallowInterceptTouchEvent(false);
             }
             break;
 
@@ -515,6 +518,10 @@ public class SegmentedButtonGroup extends LinearLayout {
                     dragOffsetX = Float.NaN;
                     break;
                 }
+
+                // Since the user is now officially dragging the button, we want to disable scrolling interception
+                // of touch events
+                requestDisallowInterceptTouchEvent(true);
 
                 // Set drag offset in case user moves finger to initiate drag
                 // Drag offset is the difference between finger current X location and the location of the selected
@@ -554,6 +561,9 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // In this case, stop dragging and "snap" to nearest position
                 if (!Float.isNaN(dragOffsetX)) {
                     setPosition(Math.round(currentPosition), true);
+
+                    // Enable scroll touch event interception again now that we're done dragging
+                    requestDisallowInterceptTouchEvent(false);
                 }
             }
             break;
