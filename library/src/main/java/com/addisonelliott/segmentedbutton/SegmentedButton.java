@@ -553,36 +553,60 @@ public class SegmentedButton extends View {
         // Begin drawing selected button view
         canvas.save();
 
-        // Clip canvas for drawing the selected button view
-        // TODO Document here
-        // TODO Clip a rounded rect now instead...
-        // TODO But not sure how I can add a border to things
+        // Clip canvas for drawing selected button items
+        // The relativeClipPosition and isClippingLeft is used to clip part of the selected button view to allow for
+        // smooth animation between one button to the next
+        //
+        // If isClippingLeft is true, then the left side of the selected button is being clipped (i.e. shown) and the
+        // right side is hidden. If isClippingLeft is false, then the right side of the selected button is being
+        // clipped and the left side is hidden.
+        //
+        // The amount of the left or right side being shown is based on the relativeClippingPosition, a value from
+        // 0.0f to 1.0f representing the relative position on the button.
         if (isClippingLeft) {
+            // If clipping the left, then the relativeClipPosition * width represents the right side of the selected
+            // button that is shown/clipped.
+            //
+            // The left side of the clip rectangle is set to be the relative clip position minus 1.0f times the width
+            // of the button directly to the left of this button. This will be a negative value (relativeClipPosition
+            // ranges from 0.0f to 1.0f, so subtracting 1.0f will make it range from -1.0f to 0.0f) and is scaled by
+            // the button width directly to the left of this button. The width of this button may not be the same as
+            // the one to the left so this is necessary.
+            //
+            // The reason the left side is set to a negative value as opposed to just 0.0f is because it is necessary
+            // for a smooth animation when the selected button has rounded corners (i.e. selectedButtonRadius > 0).
+            // Without the negative left clip side, the rounded corners will not smoothly transition from the button
+            // to the left to this button.
+            //
+            // For the left-most button, the left button width is set to be the width of this button because it
+            // doesn't matter.
             final float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
             rectF.set((relativeClipPosition - 1.0f) * leftButtonWidth, 0.0f, relativeClipPosition * width, height);
-
-            // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
-            if (selectedButtonRadius > 0) {
-                selectedClipPath.reset();
-
-                selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
-                canvas.clipPath(selectedClipPath);
-            } else {
-                canvas.clipRect(rectF);
-            }
         } else {
+            // Otherwise, if clipping the right, then the relativeClipPosition * width represents the left side of
+            // the selected button that is shown/clipped.
+            //
+            // The right side of the clip rectangle is set to be the width plus the relativeClipPosition times the
+            // width of the button directly to the right of this button. Note that the width of the button to the
+            // right may not be the same as the width of this button.
+            //
+            // The reason the right side is set to a value greater than the width as opposed to just the width itself
+            // is because it is necessary for a smooth animation when the selected button has rounded corners (i.e.
+            // selectedButtonRadius > 0). Without the correct right clip side, the rounded corners will not smoothly
+            // transition from the button to the right to this button.
             final float rightButtonWidth = isRightButton() ? width : rightButton.getWidth();
             rectF.set(relativeClipPosition * width, 0.0f, width + relativeClipPosition * rightButtonWidth, height);
+        }
 
-            // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
-            if (selectedButtonRadius > 0) {
-                selectedClipPath.reset();
+        // If the selected button has a radius, then recreate the clip path with the rounded rectangle
+        // Otherwise, just clip the path using a normal rectangle
+        if (selectedButtonRadius > 0) {
+            selectedClipPath.reset();
 
-                selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
-                canvas.clipPath(selectedClipPath);
-            } else {
-                canvas.clipRect(rectF);
-            }
+            selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+            canvas.clipPath(selectedClipPath);
+        } else {
+            canvas.clipRect(rectF);
         }
 
         // Draw background (selected)
@@ -609,12 +633,21 @@ public class SegmentedButton extends View {
             drawable.draw(canvas);
         }
 
-        // 0.5f offset to prevent antialiasing bleed through, document this
-        // TODO Document
+        // Draw a border around the selected button
         if (selectedButtonBorderPaint != null) {
+            // Get the border width from the paint information and divide by 2
+            // Remember that rectF is the rectangle that was setup for the appropriate clip path above
+            // Note that this rectangle should NOT be touched after the clip path is set otherwise the border drawn
+            // will be incorrect.
+            //
+            // The rectangle is inset by half of the border width because the border width is centered about the
+            // rectangle bounds resulting in half of the border to be cut off since it is outside the clip path. In
+            // addition, the inset is reduced by half a pixel (0.5f) to ensure there is no antialiasing bleed through
+            // around the edge of the border.
             final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
             rectF.inset(halfBorderWidth - 0.5f, halfBorderWidth - 0.5f);
 
+            // Draw the border for the selected button
             canvas.drawRoundRect(rectF, selectedButtonRadius - halfBorderWidth, selectedButtonRadius - halfBorderWidth,
                     selectedButtonBorderPaint);
         }
