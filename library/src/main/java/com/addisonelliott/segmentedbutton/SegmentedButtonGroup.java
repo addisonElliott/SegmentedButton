@@ -373,7 +373,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             // For example, if there are 5 buttons, then the indices are 0, 1, 2, 3, 4, so the next index is 5!
             final int position = buttons.size();
 
-            // Give radius, default background and default selected background to the button
+            // Give radius, selected button radius, default background and default selected background to the button
             // The default backgrounds will only update the background of the button if there is not a background set
             // on that button explicitly
             button.setBackgroundRadius(radius);
@@ -393,13 +393,13 @@ public class SegmentedButtonGroup extends LinearLayout {
                 button.setRipple(false);
             }
 
-            // TODO Redocument
-            // If this is the first item, set it as left-most button
-            // Otherwise, notify previous button that it is not right-most anymore
+            // If this is NOT the first item in the group, then update the previous button and this button with its
+            // respective right button and left button.
             if (position != 0) {
-                // Update previous button that it is not right-most anymore
                 final SegmentedButton oldButton = buttons.get(position - 1);
 
+                // Old button's right button is this new button
+                // This button's left button is the old button
                 oldButton.setRightButton(button);
                 button.setLeftButton(oldButton);
 
@@ -408,10 +408,8 @@ public class SegmentedButtonGroup extends LinearLayout {
                 oldButton.setupBackgroundClipPath();
             }
 
-            // Sets up the background clip path in order to correctly round background to match the radius
+            // Sets up the background clip path, selected button clip path, and selected button border
             button.setupBackgroundClipPath();
-
-            // TODO We do this because the background radius is changed
             button.setupSelectedButtonClipPath();
             button.setSelectedButtonBorder(selectedBorderWidth, selectedBorderColor, selectedBorderDashWidth,
                     selectedBorderDashGap);
@@ -1008,26 +1006,11 @@ public class SegmentedButtonGroup extends LinearLayout {
         selectedBorderDashWidth = dashWidth;
         selectedBorderDashGap = dashGap;
 
-        // TODO Fix me here, pass to all buttons
-
-//        // Border width of 0 indicates to hide borders
-//        if (width > 0) {
-//            GradientDrawable borderDrawable = new GradientDrawable();
-//            // Set background color to be transparent so that buttons and everything underneath the border view is
-//            // still visible. This was an issue on API 16 Android where it would default to a black background
-//            borderDrawable.setColor(Color.TRANSPARENT);
-//            // Corner radius is the radius minus half of the border width because the drawable will draw the stroke
-//            // from the center, so the actual corner radius is reduced
-//            // If the half border width is left out, the border radius does not follow the curve of the background
-//            borderDrawable.setCornerRadius(radius - width / 2.0f);
-//            borderDrawable.setStroke(width, color, dashWidth, dashGap);
-//
-//            borderView.setBackground(borderDrawable);
-//        } else {
-//            borderView.setBackground(null);
-//        }
+        // Loop through each button and set the selected button border
+        for (SegmentedButton button : buttons) {
+            button.setSelectedButtonBorder(width, color, dashWidth, dashGap);
+        }
     }
-
 
     /**
      * Returns the current corner radius for this button group, in pixels
@@ -1083,7 +1066,13 @@ public class SegmentedButtonGroup extends LinearLayout {
     public void setSelectedButtonRadius(int selectedButtonRadius) {
         this.selectedButtonRadius = selectedButtonRadius;
 
-        // TODO Fix me, update the radius for each button
+        // Update the selected button radius for each button
+        for (SegmentedButton button : buttons) {
+            button.setSelectedButtonRadius(selectedButtonRadius);
+            button.setupSelectedButtonClipPath();
+
+            button.invalidate();
+        }
     }
 
     /**
