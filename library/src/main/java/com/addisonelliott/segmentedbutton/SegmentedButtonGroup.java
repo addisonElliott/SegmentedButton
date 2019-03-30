@@ -492,19 +492,23 @@ public class SegmentedButtonGroup extends LinearLayout {
             return false;
         }
 
-        // Selected button position
-        final int position = getButtonPositionFromX(ev.getX());
-
         switch (ev.getAction()) {
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_UP: {
+                // Selected button position
+                final int position = getButtonPositionFromX(ev.getX());
+
                 // Go to the selected button on touch up and animate too
                 //
                 // In the case that the user has been dragging the button, this will have the effect of "snapping" to
                 // the nearest button
                 setPosition(position, true);
-                break;
+            }
+            break;
 
-            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_DOWN: {
+                // Selected button position
+                final int position = getButtonPositionFromX(ev.getX());
+
                 // If buttons cannot be dragged or if the user is NOT pressing the currently selected button, then
                 // just set the drag offset to be NaN meaning drag is not activated
                 if (!draggable || this.position != position) {
@@ -520,9 +524,13 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // moves their finger 50px, then the button should move 50px. Thus, this delta will be subtracted
                 // from the user's X value to get the location of where the button position should be.
                 dragOffsetX = ev.getX() - buttons.get(position).getLeft();
-                break;
+            }
+            break;
 
-            case MotionEvent.ACTION_MOVE:
+            case MotionEvent.ACTION_MOVE: {
+                // Selected button position
+                final int position = getButtonPositionFromX(ev.getX());
+
                 // Only drag if drag has been activated and hence is allowed
                 if (Float.isNaN(dragOffsetX)) {
                     break;
@@ -537,16 +545,18 @@ public class SegmentedButtonGroup extends LinearLayout {
 
                 // Update the selected button to the new position
                 moveSelectedButton(newPosition);
-                break;
+            }
+            break;
 
-            case MotionEvent.ACTION_CANCEL:
+            case MotionEvent.ACTION_CANCEL: {
                 // Cancel action is called when user leaves the view with their finger and another view captures the
                 // actions (e.g. scroll views for example)
                 // In this case, stop dragging and "snap" to nearest position
-                if (draggable) {
-                    setPosition(position, true);
+                if (!Float.isNaN(dragOffsetX)) {
+                    setPosition(Math.round(currentPosition), true);
                 }
-                break;
+            }
+            break;
         }
 
         // Pretend like we never handled the touch event and pass to children (SegmentedButton)
