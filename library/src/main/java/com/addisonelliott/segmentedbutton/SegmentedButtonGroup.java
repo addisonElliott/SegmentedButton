@@ -538,6 +538,15 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // Update the selected button to the new position
                 moveSelectedButton(newPosition);
                 break;
+
+            case MotionEvent.ACTION_CANCEL:
+                // Cancel action is called when user leaves the view with their finger and another view captures the
+                // actions (e.g. scroll views for example)
+                // In this case, stop dragging and "snap" to nearest position
+                if (draggable) {
+                    setPosition(position, true);
+                }
+                break;
         }
 
         // Pretend like we never handled the touch event and pass to children (SegmentedButton)
