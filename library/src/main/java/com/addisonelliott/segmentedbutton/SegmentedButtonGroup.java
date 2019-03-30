@@ -413,6 +413,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
             // TODO We do this because the background radius is changed
             button.setupSelectedButtonClipPath();
+            button.setSelectedButtonBorder(selectedBorderWidth, selectedBorderColor, selectedBorderDashWidth,
+                    selectedBorderDashGap);
 
             // Add the button to the main group instead and store the button in our buttons list
             buttonLayout.addView(button, params);
@@ -1001,10 +1003,10 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param dashGap   Width of the gap for border, in pixels.
      */
     public void setSelectedBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
-        borderWidth = width;
-        borderColor = color;
-        borderDashWidth = dashWidth;
-        borderDashGap = dashGap;
+        selectedBorderWidth = width;
+        selectedBorderColor = color;
+        selectedBorderDashWidth = dashWidth;
+        selectedBorderDashGap = dashGap;
 
         // TODO Fix me here, pass to all buttons
 

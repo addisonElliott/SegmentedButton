@@ -342,6 +342,8 @@
             app:radius="2dp"
             app:rippleColor="@color/white"
             app:selectedButtonRadius="32dp"
+            app:selectedBorderWidth="2dp"
+            app:selectedBorderColor="@color/red"
             app:selectedBackground="@color/white"
             app:selectionAnimationDuration="1000"
             app:selectionAnimationInterpolator="fastOutSlowIn">

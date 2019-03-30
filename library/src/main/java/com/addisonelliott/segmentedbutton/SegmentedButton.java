@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
@@ -55,7 +56,7 @@ public class SegmentedButton extends View {
     // General purpose rectangle to prevent memory allocation in onDraw
     private RectF rectF;
 
-    // Text paint variables contains paint info for unselected and selected text
+    // Text paint variable contains paint info for unselected and selected text
     private TextPaint textPaint;
     // Static layout used for positioning and drawing unselected and selected text
     private StaticLayout textStaticLayout;
@@ -81,6 +82,9 @@ public class SegmentedButton extends View {
     // TODO Document me
     private Path selectedClipPath;
     private float[] selectedButtonRadii;
+
+    // Paint information for how the border should be drawn for the selected button, null indicates no border
+    private Paint selectedButtonBorderPaint;
 
     // Horizontal relative clip position from 0.0f to 1.0f.
     // Value is scaled by the width of this view to get the actual clip X coordinate
@@ -602,15 +606,13 @@ public class SegmentedButton extends View {
 
         // 0.5f offset to prevent antialiasing bleed through, document this
         // TODO Document
-//        rectF.inset(5.0f - 0.5f, 5.0f - 0.5f);
-//
-//        Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        borderPaint.setStyle(Paint.Style.STROKE);
-//        borderPaint.setStrokeWidth(10);
-////        borderPaint.setPathEffect() DashedHere...
-//        borderPaint.setColor(Color.RED);
-//
-//        canvas.drawRoundRect(rectF, selectedButtonRadius - 5.0f, selectedButtonRadius - 5.0f, borderPaint);
+        if (selectedButtonBorderPaint != null) {
+            final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
+            rectF.inset(halfBorderWidth - 0.5f, halfBorderWidth - 0.5f);
+
+            canvas.drawRoundRect(rectF, selectedButtonRadius - halfBorderWidth, selectedButtonRadius - halfBorderWidth,
+                    selectedButtonBorderPaint);
+        }
 
         canvas.restore();
 
@@ -776,7 +778,7 @@ public class SegmentedButton extends View {
     }
 
     /**
-     * Returns whether this button is the left-most button in the group.
+     * Returns whether this button is the left-most button in the group
      *
      * This is determined based on whether the rightButton variable is null
      */
@@ -785,7 +787,7 @@ public class SegmentedButton extends View {
     }
 
     /**
-     * Returns whether this button is the right-most button in the group.
+     * Returns whether this button is the right-most button in the group
      *
      * This is determined based on whether the rightButton variable is null
      */
@@ -795,7 +797,8 @@ public class SegmentedButton extends View {
 
     /**
      * Sets the button directly to the left of this button. Set to null to indicate that this is the left-most button
-     * in the group.
+     * in the group
+     *
      * TODO Fix the below message
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
      * isRightButton & width/height are completed.
@@ -807,7 +810,7 @@ public class SegmentedButton extends View {
 
     /**
      * Sets the button directly to the right of this button. Set to null to indicate that this is the right-most button
-     * in the group.
+     * in the group
      *
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
      * isRightButton & width/height are completed.
@@ -885,11 +888,34 @@ public class SegmentedButton extends View {
 
     void setupSelectedButtonClipPath() {
         // TODO Document and fix me
+        // TODO Does this need updated on size change or anything...?
 
         selectedClipPath = new Path();
         selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                 selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                 selectedButtonRadius,};
+    }
+
+    /**
+     * Set the border for the selected button
+     *
+     * @param width     Width of the border in pixels (default value is 0px or no border)
+     * @param color     Color of the border (default color is black)
+     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+     * @param dashGap   Width of the gap for border, in pixels.
+     */
+    void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+        // TODO Document
+        // TODO invalidate maybe?
+        if (width > 0) {
+            selectedButtonBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            selectedButtonBorderPaint.setStyle(Paint.Style.STROKE);
+            selectedButtonBorderPaint.setStrokeWidth(width);
+            selectedButtonBorderPaint.setColor(color);
+            selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[]{dashWidth, dashGap}, 0));
+        } else {
+            selectedButtonBorderPaint = null;
+        }
     }
 
     /**
