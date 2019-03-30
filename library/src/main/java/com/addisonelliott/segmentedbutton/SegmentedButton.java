@@ -965,7 +965,10 @@ public class SegmentedButton extends View {
             selectedButtonBorderPaint.setStyle(Paint.Style.STROKE);
             selectedButtonBorderPaint.setStrokeWidth(width);
             selectedButtonBorderPaint.setColor(color);
-            selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[]{dashWidth, dashGap}, 0));
+
+            if (dashWidth > 0.0f) {
+                selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[]{dashWidth, dashGap}, 0));
+            }
         } else {
             // If the width is 0, then disable drawing border
             selectedButtonBorderPaint = null;

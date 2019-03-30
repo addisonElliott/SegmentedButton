@@ -50,7 +50,10 @@ enum Action {
     ChangeText,
     ChangeTextColor,
     ChangeTextSize,
-    ChangeTypeface;
+    ChangeTypeface,
+    ChangeSelectedButtonRadius,
+    ChangeSelectedButtonBorderSolid,
+    ChangeSelectedButtonBorderDashed;
 
     public String getDisplayText() {
         if (this == None) {
@@ -97,6 +100,12 @@ enum Action {
             return "Change text size";
         } else if (this == ChangeTypeface) {
             return "Change typeface";
+        } else if (this == ChangeSelectedButtonRadius) {
+            return "Change selected button radius";
+        } else if (this == ChangeSelectedButtonBorderSolid) {
+            return "Change selected button border (solid)";
+        } else if (this == ChangeSelectedButtonBorderDashed) {
+            return "Change selected button border (dashed)";
         } else {
             return "";
         }
@@ -137,6 +146,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
     SegmentedButtonGroup pickupDropoffButtonGroup;
     @BindView(R.id.buttonGroup_starWarsAlt)
     SegmentedButtonGroup starWarsAltButtonGroup;
+    @BindView(R.id.buttonGroup_roundSelectedButton)
+    SegmentedButtonGroup roundSelectedButtonGroup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -315,6 +326,25 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
             case ChangeTypeface:
                 lordOfTheRingsButtonGroup.getButton(0).setTextTypeface(Typeface.create((Typeface) null, Typeface.BOLD));
+                break;
+
+            case ChangeSelectedButtonRadius: {
+                final float radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30.0f,
+                        getApplicationContext().getResources().getDisplayMetrics());
+
+                lordOfTheRingsButtonGroup.setSelectedButtonRadius((int)radius);
+                roundSelectedButtonGroup.setSelectedButtonRadius(0);
+            }
+            break;
+
+            case ChangeSelectedButtonBorderSolid:
+                lordOfTheRingsButtonGroup.setSelectedBorder(5, Color.MAGENTA, 0, 0);
+                roundSelectedButtonGroup.setSelectedBorder(0, 0, 0, 0);
+                break;
+
+            case ChangeSelectedButtonBorderDashed:
+                lordOfTheRingsButtonGroup.setSelectedBorder(5, Color.MAGENTA, 6, 3);
+                roundSelectedButtonGroup.setSelectedBorder(16, Color.BLACK, 6, 2);
                 break;
 
             default:
