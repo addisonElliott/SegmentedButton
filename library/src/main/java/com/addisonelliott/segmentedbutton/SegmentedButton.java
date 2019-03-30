@@ -564,7 +564,7 @@ public class SegmentedButton extends View {
         // The amount of the left or right side being shown is based on the relativeClippingPosition, a value from
         // 0.0f to 1.0f representing the relative position on the button.
         if (isClippingLeft) {
-            // If clipping the left, then the relativeClipPosition * width represents the right side of the selected
+            // If clipping the left, then relativeClipPosition * width represents the right side of the selected
             // button that is shown/clipped.
             //
             // The left side of the clip rectangle is set to be the relative clip position minus 1.0f times the width
@@ -641,7 +641,7 @@ public class SegmentedButton extends View {
             // will be incorrect.
             //
             // The rectangle is inset by half of the border width because the border width is centered about the
-            // rectangle bounds resulting in half of the border to be cut off since it is outside the clip path. In
+            // rectangle bounds resulting in half of the border being cut off since it is outside the clip path. In
             // addition, the inset is reduced by half a pixel (0.5f) to ensure there is no antialiasing bleed through
             // around the edge of the border.
             final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
@@ -958,6 +958,8 @@ public class SegmentedButton extends View {
      * @param dashGap   Width of the gap for border, in pixels.
      */
     void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+        // TODO Android preview border has a different radius than the selectedBackgroundRadius
+        // However problem is resolved when run on actual device
         if (width > 0) {
             // Allocate Paint object for drawing border here
             // Used in onDraw to draw the border around the selected button

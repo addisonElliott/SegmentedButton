@@ -18,6 +18,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -582,7 +583,9 @@ public class SegmentedButtonGroup extends LinearLayout {
                 }
 
                 // Convert X coordinate to a position containing the relative offset within the button as well
-                final float newPosition = getButtonPositionFromXF(xCoord);
+                // Clip the position to be between 0.0f and buttons size minus 1 so that the user doesn't drag out of
+                // bounds
+                final float newPosition = Math.min(Math.max(getButtonPositionFromXF(xCoord), 0.0f), buttons.size() - 1);
 
                 // Update the selected button to the new position
                 moveSelectedButton(newPosition);
