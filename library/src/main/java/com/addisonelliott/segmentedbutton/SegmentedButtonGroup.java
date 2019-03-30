@@ -1102,7 +1102,6 @@ public class SegmentedButtonGroup extends LinearLayout {
      * nearest button
      */
     public void setDraggable(final boolean draggable) {
-        // TODO Fix draggable bug where finger leaves button group, exit focus event?
         this.draggable = draggable;
     }
 
