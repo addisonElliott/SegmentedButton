@@ -538,12 +538,26 @@ public class SegmentedButton extends View {
         canvas.save();
 
         // Clip canvas for drawing the selected button view
+        // TODO Clip a rounded rect now instead...
+        // TODO But not sure how I can add a border to things
+        Path selectedClipPath = new Path();
+        float br = 45.0f;
         if (isClippingLeft) {
+//            rectF.set(0.0f, 0.0f, relativeClipPosition * width, height);
+            rectF.set(0.0f - (1.0f - relativeClipPosition) * width, 0.0f, relativeClipPosition * width, height);
+            selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
+            canvas.clipPath(selectedClipPath);
+
             // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
-            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
+//            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
         } else {
+//            rectF.set(relativeClipPosition * width, 0.0f, width, height);
+            rectF.set(relativeClipPosition * width, 0.0f, (1.0f + relativeClipPosition) * width, height);
+            selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
+            canvas.clipPath(selectedClipPath);
+
             // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
-            canvas.clipRect(relativeClipPosition * width, 0.0f, width, height);
+//            canvas.clipRect(relativeClipPosition * width, 0.0f, width, height);
         }
 
         // Draw background (selected)
