@@ -330,6 +330,7 @@
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
+        <!--TODO Remove me and make a proper test-->
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
             android:id="@+id/buttonGroup_darthVader"
             android:layout_width="match_parent"
