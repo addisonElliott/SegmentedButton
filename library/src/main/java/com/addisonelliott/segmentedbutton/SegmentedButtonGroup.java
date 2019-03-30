@@ -21,6 +21,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -118,6 +119,10 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Position of the currently selected button, zero-indexed (default value is 0)
     // When animating, the position will be the previous value until after animation is finished
     private int position;
+
+    // Configuration value from Android that determines how far a user must move their finger before a touch is
+    // considered a drag
+    private int touchSlop;
 
     // Whether or not the button can be dragged to a different position (default value is false)
     private boolean draggable;
@@ -246,6 +251,11 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Retrieve custom attributes
         getAttributes(context, attrs);
+
+        // Retrieve the touch slop from Android configuration
+        // This is the same value used by ScrollView to determine when a user is scrolling vs just tapping
+        final ViewConfiguration configuration = ViewConfiguration.get(context);
+        touchSlop = configuration.getScaledTouchSlop();
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -492,25 +502,36 @@ public class SegmentedButtonGroup extends LinearLayout {
             return false;
         }
 
-        // Selected button position
-        final int position = getButtonPositionFromX(ev.getX());
-
         switch (ev.getAction()) {
-            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_UP: {
+                // Selected button position
+                final int position = getButtonPositionFromX(ev.getX());
+
                 // Go to the selected button on touch up and animate too
                 //
                 // In the case that the user has been dragging the button, this will have the effect of "snapping" to
                 // the nearest button
                 setPosition(position, true);
-                break;
 
-            case MotionEvent.ACTION_DOWN:
-                // If buttons cannot be dragged or if the user is NOT pressing the currently selected button, then
-                // just set the drag offset to be NaN meaning drag is not activated
-                if (!draggable || this.position != position) {
+                // Enable scroll touch event interception again now that we're done dragging
+                requestDisallowInterceptTouchEvent(false);
+            }
+            break;
+
+            case MotionEvent.ACTION_DOWN: {
+                // Selected button position
+                final int position = getButtonPositionFromX(ev.getX());
+
+                // If button cannot be dragged, user is NOT pressing the currently selected button or the button is
+                // being animated, then just set drag offset o NaN meaning drag is not activated
+                if (!draggable || this.position != position || (buttonAnimator != null && buttonAnimator.isRunning())) {
                     dragOffsetX = Float.NaN;
                     break;
                 }
+
+                // Since the user is now officially dragging the button, we want to disable scrolling interception
+                // of touch events
+                requestDisallowInterceptTouchEvent(true);
 
                 // Set drag offset in case user moves finger to initiate drag
                 // Drag offset is the difference between finger current X location and the location of the selected
@@ -520,9 +541,13 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // moves their finger 50px, then the button should move 50px. Thus, this delta will be subtracted
                 // from the user's X value to get the location of where the button position should be.
                 dragOffsetX = ev.getX() - buttons.get(position).getLeft();
-                break;
 
-            case MotionEvent.ACTION_MOVE:
+                // Return here so that the touch event is not sent to the buttons
+                // This prevents the ripple effect from showing up when dragging
+                return true;
+            }
+
+            case MotionEvent.ACTION_MOVE: {
                 // Only drag if drag has been activated and hence is allowed
                 if (Float.isNaN(dragOffsetX)) {
                     break;
@@ -532,12 +557,31 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // the offset
                 float xCoord = ev.getX() - dragOffsetX;
 
+                // Do not move the button until the user has moved their finger enough
+                if (Math.abs(xCoord) < touchSlop) {
+                    break;
+                }
+
                 // Convert X coordinate to a position containing the relative offset within the button as well
                 final float newPosition = getButtonPositionFromXF(xCoord);
 
                 // Update the selected button to the new position
                 moveSelectedButton(newPosition);
-                break;
+            }
+            break;
+
+            case MotionEvent.ACTION_CANCEL: {
+                // Cancel action is called when user leaves the view with their finger and another view captures the
+                // actions (e.g. scroll views for example)
+                // In this case, stop dragging and "snap" to nearest position
+                if (!Float.isNaN(dragOffsetX)) {
+                    setPosition(Math.round(currentPosition), true);
+
+                    // Enable scroll touch event interception again now that we're done dragging
+                    requestDisallowInterceptTouchEvent(false);
+                }
+            }
+            break;
         }
 
         // Pretend like we never handled the touch event and pass to children (SegmentedButton)
