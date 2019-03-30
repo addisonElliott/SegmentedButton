@@ -6,6 +6,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.PointF;
@@ -563,6 +564,10 @@ public class SegmentedButton extends View {
 
         // Draw background (selected)
         if (selectedBackgroundDrawable != null) {
+//            selectedBackgroundDrawable.setBounds(0 + 10, 0 + 10,
+//                    getWidth() - 10,
+//                    getHeight() - 10);
+
             selectedBackgroundDrawable.draw(canvas);
         }
 
@@ -584,6 +589,23 @@ public class SegmentedButton extends View {
             drawable.setColorFilter(hasSelectedDrawableTint ? selectedDrawableColorFilter : drawableColorFilter);
             drawable.draw(canvas);
         }
+
+//        canvas.restore();
+
+//        Path selectedClipPath2 = new Path();
+        rectF.inset(5.0f - 0.5f, 5.0f - 0.5f);
+//        rectF.inset(5.0f, 5.0f);
+//        selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
+
+        Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+//        Paint borderPaint = new Paint();
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(10);
+//        borderPaint.setDas
+        borderPaint.setColor(Color.RED);
+
+//        canvas.drawPath(selectedClipPath2, borderPaint);
+        canvas.drawRoundRect(rectF, br - 5.0f, br - 5.0f, borderPaint);
 
         canvas.restore();
 
