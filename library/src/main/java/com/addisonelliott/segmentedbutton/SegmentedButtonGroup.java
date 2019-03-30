@@ -956,6 +956,75 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     /**
+     * Return the width of the border for the selected button, in pixels
+     *
+     * 0px value indicates no border is present
+     */
+    public int getSelectedBorderWidth() {
+        return selectedBorderWidth;
+    }
+
+    /**
+     * Return color of the border for the selected button
+     */
+    public int getSelectedBorderColor() {
+        return selectedBorderColor;
+    }
+
+    /**
+     * Return the border dash width for the selected button, in pixels
+     *
+     * 0px value indicates the border is solid
+     */
+    public int getSelectedBorderDashWidth() {
+        return selectedBorderDashWidth;
+    }
+
+    /**
+     * Return the border gap width for the selected button, in pixels
+     *
+     * Only relevant if border dash width is greater than 0px
+     */
+    public int getSelectedBorderDashGap() {
+        return selectedBorderDashGap;
+    }
+
+    /**
+     * Set the border for the selected button.
+     *
+     * @param width     Width of the border in pixels (default value is 0px or no border)
+     * @param color     Color of the border (default color is black)
+     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+     * @param dashGap   Width of the gap for border, in pixels.
+     */
+    public void setSelectedBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+        borderWidth = width;
+        borderColor = color;
+        borderDashWidth = dashWidth;
+        borderDashGap = dashGap;
+
+        // TODO Fix me here, pass to all buttons
+
+//        // Border width of 0 indicates to hide borders
+//        if (width > 0) {
+//            GradientDrawable borderDrawable = new GradientDrawable();
+//            // Set background color to be transparent so that buttons and everything underneath the border view is
+//            // still visible. This was an issue on API 16 Android where it would default to a black background
+//            borderDrawable.setColor(Color.TRANSPARENT);
+//            // Corner radius is the radius minus half of the border width because the drawable will draw the stroke
+//            // from the center, so the actual corner radius is reduced
+//            // If the half border width is left out, the border radius does not follow the curve of the background
+//            borderDrawable.setCornerRadius(radius - width / 2.0f);
+//            borderDrawable.setStroke(width, color, dashWidth, dashGap);
+//
+//            borderView.setBackground(borderDrawable);
+//        } else {
+//            borderView.setBackground(null);
+//        }
+    }
+
+
+    /**
      * Returns the current corner radius for this button group, in pixels
      *
      * A value of 0px indicates the view is rectangular and has no rounded corners
