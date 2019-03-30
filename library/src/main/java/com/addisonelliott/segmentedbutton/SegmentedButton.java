@@ -78,6 +78,9 @@ public class SegmentedButton extends View {
 
     // Radius of the selected button used for creating a rounded selected button
     private int selectedButtonRadius;
+    // TODO Document me
+    private Path selectedClipPath;
+    private float[] selectedButtonRadii;
 
     // Horizontal relative clip position from 0.0f to 1.0f.
     // Value is scaled by the width of this view to get the actual clip X coordinate
@@ -545,43 +548,36 @@ public class SegmentedButton extends View {
         canvas.save();
 
         // Clip canvas for drawing the selected button view
+        // TODO Document here
         // TODO Clip a rounded rect now instead...
         // TODO But not sure how I can add a border to things
-        Path selectedClipPath = new Path();
-        float br = 45.0f;
+        selectedClipPath.reset();
         if (isClippingLeft) {
-            // buttonLeft.getWidth()
-            // leftWidth here...
-//            rectF.set(0.0f, 0.0f, relativeClipPosition * width, height);
-//            float xxx = (relativeClipPosition - 1.0f) * (isLeftButton() ? width : leftButton.getWidth());
-            rectF.set((relativeClipPosition - 1.0f) * (isLeftButton() ? width : leftButton.getWidth()), 0.0f,
-                    relativeClipPosition * width, height);
-            selectedClipPath.addRoundRect(rectF, new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius}, Direction.CW);
-            canvas.clipPath(selectedClipPath);
+            float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
+            rectF.set((relativeClipPosition - 1.0f) * leftButtonWidth, 0.0f, relativeClipPosition * width, height);
 
             // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
-//            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
+            if (selectedButtonRadius > 0) {
+                selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+                canvas.clipPath(selectedClipPath);
+            } else {
+                canvas.clipRect(rectF);
+            }
         } else {
-            // buttonRight.getWidth()
-//            rectF.set(relativeClipPosition * width, 0.0f, width, height);
-            rectF.set(relativeClipPosition * width, 0.0f, width + (relativeClipPosition) * (isRightButton() ?
-                    width : rightButton.getWidth()), height);
-            selectedClipPath.addRoundRect(rectF, new float[]{selectedButtonRadius, selectedButtonRadius,
-                            selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
-                            selectedButtonRadius, selectedButtonRadius},
-                    Direction.CW);
-            canvas.clipPath(selectedClipPath);
+            float rightButtonWidth = isRightButton() ? width : rightButton.getWidth();
+            rectF.set(relativeClipPosition * width, 0.0f, width + relativeClipPosition * rightButtonWidth, height);
 
             // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
-//            canvas.clipRect(relativeClipPosition * width, 0.0f, width, height);
+            if (selectedButtonRadius > 0) {
+                selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+                canvas.clipPath(selectedClipPath);
+            } else {
+                canvas.clipRect(rectF);
+            }
         }
 
         // Draw background (selected)
         if (selectedBackgroundDrawable != null) {
-//            selectedBackgroundDrawable.setBounds(0 + 10, 0 + 10,
-//                    getWidth() - 10,
-//                    getHeight() - 10);
-
             selectedBackgroundDrawable.draw(canvas);
         }
 
@@ -604,21 +600,16 @@ public class SegmentedButton extends View {
             drawable.draw(canvas);
         }
 
-//        canvas.restore();
-
-//        Path selectedClipPath2 = new Path();
+        // 0.5f offset to prevent antialiasing bleed through, document this
+        // TODO Document
         rectF.inset(5.0f - 0.5f, 5.0f - 0.5f);
-//        rectF.inset(5.0f, 5.0f);
-//        selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
 
         Paint borderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        Paint borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
         borderPaint.setStrokeWidth(10);
-//        borderPaint.setDas
+//        borderPaint.setPathEffect() DashedHere...
         borderPaint.setColor(Color.RED);
 
-//        canvas.drawPath(selectedClipPath2, borderPaint);
         canvas.drawRoundRect(rectF, selectedButtonRadius - 5.0f, selectedButtonRadius - 5.0f, borderPaint);
 
         canvas.restore();
@@ -890,6 +881,15 @@ public class SegmentedButton extends View {
         } else {
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
+    }
+
+    void setupSelectedButtonClipPath() {
+        // TODO Document and fix me
+
+        selectedClipPath = new Path();
+        selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                selectedButtonRadius,};
     }
 
     /**
