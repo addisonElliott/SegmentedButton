@@ -773,8 +773,8 @@ public class SegmentedButton extends View {
      * If both are true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, left button,
+     * right button & width/height are completed.
      *
      * @param backgroundRadius radius of corners of parent button group in pixels
      */
@@ -893,21 +893,27 @@ public class SegmentedButton extends View {
      */
     void setupSelectedButtonClipPath() {
         if (selectedButtonRadius > 0) {
+            // Setup clip path and the selected button radii
+            // These will be used in onDraw to draw the rounded selected button
+            // These objects are allocated here rather than in onDraw to increase performance
             selectedClipPath = new Path();
             selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                     selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                     selectedButtonRadius};
 
-            // Canvas.clipPath, used in onDraw for drawing the background clip path (rounding the edges for left-most and
-            // right-most buttons) is not supported with hardware acceleration until API 18
-            // Thus, switch to software acceleration if the current version is less than 18
+            // Canvas.clipPath, used in onDraw for drawing the selected button clip path is not supported with
+            // hardware acceleration until API 18. Thus, this switches to software acceleration if current Android
+            // API version is less than 18.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 setLayerType(LAYER_TYPE_SOFTWARE, null);
             }
         } else {
+            // If the selected button radius is equal to zero, then corners will not be rounded
             selectedClipPath = null;
             selectedButtonRadii = null;
         }
+
+        invalidate();
     }
 
     /**
@@ -919,17 +925,20 @@ public class SegmentedButton extends View {
      * @param dashGap   Width of the gap for border, in pixels.
      */
     void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
-        // TODO Document
-        // TODO invalidate maybe?
         if (width > 0) {
+            // Allocate Paint object for drawing border here
+            // Used in onDraw to draw the border around the selected button
             selectedButtonBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             selectedButtonBorderPaint.setStyle(Paint.Style.STROKE);
             selectedButtonBorderPaint.setStrokeWidth(width);
             selectedButtonBorderPaint.setColor(color);
             selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[]{dashWidth, dashGap}, 0));
         } else {
+            // If the width is 0, then disable drawing border
             selectedButtonBorderPaint = null;
         }
+
+        invalidate();
     }
 
     /**
