@@ -541,13 +541,13 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // moves their finger 50px, then the button should move 50px. Thus, this delta will be subtracted
                 // from the user's X value to get the location of where the button position should be.
                 dragOffsetX = ev.getX() - buttons.get(position).getLeft();
+
+                // Return here so that the touch event is not sent to the buttons
+                // This prevents the ripple effect from showing up when dragging
+                return true;
             }
-            break;
 
             case MotionEvent.ACTION_MOVE: {
-                // Selected button position
-                final int position = getButtonPositionFromX(ev.getX());
-
                 // Only drag if drag has been activated and hence is allowed
                 if (Float.isNaN(dragOffsetX)) {
                     break;
