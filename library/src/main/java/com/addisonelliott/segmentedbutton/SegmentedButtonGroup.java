@@ -374,23 +374,20 @@ public class SegmentedButtonGroup extends LinearLayout {
                 button.setRipple(false);
             }
 
+            // TODO Redocument
             // If this is the first item, set it as left-most button
             // Otherwise, notify previous button that it is not right-most anymore
-            if (position == 0) {
-                button.setIsLeftButton(true);
-            } else {
+            if (position != 0) {
                 // Update previous button that it is not right-most anymore
                 final SegmentedButton oldButton = buttons.get(position - 1);
 
-                oldButton.setIsRightButton(false);
+                 oldButton.setRightButton(button);
+                 button.setLeftButton(oldButton);
 
                 // Update the background clip path for that button (removes rounding edges since it's not the
                 // right-most button anymore)
                 oldButton.setupBackgroundClipPath();
             }
-
-            // Set current button as right-most
-            button.setIsRightButton(true);
 
             // Sets up the background clip path in order to correctly round background to match the radius
             button.setupBackgroundClipPath();

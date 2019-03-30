@@ -24,7 +24,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -70,8 +69,12 @@ public class SegmentedButton extends View {
     private Path backgroundClipPath;
     // Radius of the segmented button group used for creating background clip path
     private int backgroundRadius;
-    // Whether this button is on the left or right side of the segmented group, determines which side to round out
-    private boolean isLeftButton, isRightButton;
+    // The button directly to the left and right of this current button
+    // Preferably segmented buttons shouldn't NEED to know about the buttons beside it, but there is a special case
+    // where its required
+    // In addition, this is used to determine whether this button is the left-most or right-most in the group so the
+    // correct side can be rounded out
+    private SegmentedButton leftButton, rightButton;
 
     // Horizontal relative clip position from 0.0f to 1.0f.
     // Value is scaled by the width of this view to get the actual clip X coordinate
@@ -162,8 +165,8 @@ public class SegmentedButton extends View {
         // Setup background clip path parameters
         // This should be changed before onDraw is ever called but they are initialized to be safe
         backgroundRadius = 0;
-        isLeftButton = false;
-        isRightButton = false;
+        leftButton = null;
+        rightButton = null;
 
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
@@ -544,8 +547,11 @@ public class SegmentedButton extends View {
         Path selectedClipPath = new Path();
         float br = 45.0f;
         if (isClippingLeft) {
+            // buttonLeft.getWidth()
+            // leftWidth here...
 //            rectF.set(0.0f, 0.0f, relativeClipPosition * width, height);
-            rectF.set((relativeClipPosition - 1.0f) * width, 0.0f,
+//            float xxx = (relativeClipPosition - 1.0f) * (isLeftButton() ? width : leftButton.getWidth());
+            rectF.set((relativeClipPosition - 1.0f) * (isLeftButton() ? width : leftButton.getWidth()), 0.0f,
                     relativeClipPosition * width, height);
             selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
             canvas.clipPath(selectedClipPath);
@@ -553,8 +559,10 @@ public class SegmentedButton extends View {
             // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
 //            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
         } else {
+            // buttonRight.getWidth()
 //            rectF.set(relativeClipPosition * width, 0.0f, width, height);
-            rectF.set(relativeClipPosition * width, 0.0f, (relativeClipPosition + 1.0f) * width, height);
+            rectF.set(relativeClipPosition * width, 0.0f, width + (relativeClipPosition) * (isRightButton() ?
+                    width : rightButton.getWidth()), height);
             selectedClipPath.addRoundRect(rectF, new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
             canvas.clipPath(selectedClipPath);
 
@@ -756,8 +764,8 @@ public class SegmentedButton extends View {
     /**
      * Set the background radius of the corners of the parent button group in order to round edges
      *
-     * If isLeftButton is true, this radius will be used to clip the bottom-left and top-left corners.
-     * If isRightButton is true, this radius will be used to clip the bottom-right and top-right corners.
+     * If isLeftButton() is true, this radius will be used to clip the bottom-left and top-left corners.
+     * If isRightButton() is true, this radius will be used to clip the bottom-right and top-right corners.
      * If both are true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
@@ -771,34 +779,56 @@ public class SegmentedButton extends View {
     }
 
     /**
-     * Set whether or not this button is the left-most button in the group
+     * Returns whether this button is the left-most button in the group.
+     *
+     * This is determined based on whether the rightButton variable is null
+     */
+    private boolean isLeftButton() {
+        return leftButton == null;
+    }
+
+    /**
+     * Returns whether this button is the right-most button in the group.
+     *
+     * This is determined based on whether the rightButton variable is null
+     */
+    private boolean isRightButton() {
+        return rightButton == null;
+    }
+
+    /**
+     * Sets the button directly to the left of this button. Set to null to indicate that this is the left-most button
+     * in the group.
+     * TODO Fix the below message
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
+     * isRightButton & width/height are completed.
+     */
+    @SuppressWarnings("SameParameterValue")
+    void setLeftButton(SegmentedButton leftButton) {
+        this.leftButton = leftButton;
+    }
+
+    /**
+     * Sets the button directly to the right of this button. Set to null to indicate that this is the right-most button
+     * in the group.
      *
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
      * isRightButton & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
-    void setIsLeftButton(boolean isLeftButton) {
-        this.isLeftButton = isLeftButton;
-    }
-
-    /**
-     * Set whether or not this button is the right-most button in the group
-     *
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
-     */
-    void setIsRightButton(boolean isRightButton) {
-        this.isRightButton = isRightButton;
+    void setRightButton(SegmentedButton rightButton) {
+        this.rightButton = rightButton;
     }
 
     /**
      * Setup the background clip path in order to round the edges of this button
      *
-     * If isLeftButton is true, this radius will be used to clip the bottom-left and top-left corners.
-     * If isRightButton is true, this radius will be used to clip the bottom-right and top-right corners.
+     * If isLeftButton() is true, this radius will be used to clip the bottom-left and top-left corners.
+     * If isRightButton() is true, this radius will be used to clip the bottom-right and top-right corners.
      * If both are true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
+     * TODO Fix me
      * This function should be called when the size of the button changes, if the background radius changes and/or if
      * the isLeftButton or isRightButton boolean values change.
      */
@@ -815,16 +845,16 @@ public class SegmentedButton extends View {
         // Background radius, shorthand variable to make code cleaner
         final float br = backgroundRadius;
 
-        if (isLeftButton && isRightButton) {
+        if (isLeftButton() && isRightButton()) {
             // Add radius on all sides, left & right
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF,
                     new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
-        } else if (isLeftButton) {
+        } else if (isLeftButton()) {
             // Add radius on left side only
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF, new float[]{br, br, 0, 0, 0, 0, br, br}, Direction.CW);
-        } else if (isRightButton) {
+        } else if (isRightButton()) {
             // Add radius on right side only
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF, new float[]{0, 0, br, br, br, br, 0, 0}, Direction.CW);
