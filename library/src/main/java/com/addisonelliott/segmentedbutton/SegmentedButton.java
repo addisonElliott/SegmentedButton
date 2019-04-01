@@ -15,12 +15,14 @@ import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader.TileMode;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -48,6 +50,13 @@ public class SegmentedButton extends View {
 
     // region Variables & Constants
     private static final String TAG = "SegmentedButton";
+
+    // Bitmap used for creating bitmaps from the background & selected background drawables
+    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+
+    // Intrinsic size (width & height) to use for creating a Bitmap from a ColorDrawable
+    // A ColorDrawable has no intrinsic size on its own, so this size is used instead
+    private static final int COLORDRAWABLE_SIZE = 2;
 
     @IntDef(flag = true, value = {
             Gravity.LEFT,
@@ -146,9 +155,6 @@ public class SegmentedButton extends View {
     private Typeface textTypeface;
 
     // TODO Testing variables for new way of rounding edges
-    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
-    private static final int COLORDRAWABLE_DIMENSION = 2;
-
     private Bitmap backgroundBitmap;
     private BitmapShader backgroundBitmapShader;
     private Paint backgroundPaint;
@@ -402,11 +408,11 @@ public class SegmentedButton extends View {
     protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        // Recalculate the background clip path since width & height have changed
-        setupBackgroundClipPath();
-
         // Calculate new positions and bounds for text & drawable
         updateSize();
+
+        // Recalculate the background clip path since width & height have changed
+        setupBackgroundClipPath();
     }
 
     /**
@@ -970,66 +976,23 @@ public class SegmentedButton extends View {
         }
 
         // TODO Testing stuff
-        if (backgroundDrawable != null) {
-            backgroundBitmap = getBitmapFromDrawable(backgroundDrawable);
-
-            // TODO Figure out why this is null, its because intrinsic width/height is not right, hmm
-            //  But with the drawable not null, I do not see why it should not have an intrinsic width or height
-            if (backgroundBitmap == null) {
-                Log.v(TAG, String.format("Null background: %d %d", backgroundDrawable.getIntrinsicWidth(),
-                        backgroundDrawable.getIntrinsicHeight()));
-                final int test = 7;
-            }
-
-            if (backgroundBitmap != null) {
-                backgroundBitmapShader = new BitmapShader(backgroundBitmap, TileMode.CLAMP, TileMode.CLAMP);
-                backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                backgroundPaint.setShader(backgroundBitmapShader);
-            }
+        if (backgroundDrawable != null && (backgroundBitmap = getBitmapFromDrawable(backgroundDrawable)) != null) {
+            backgroundBitmapShader = new BitmapShader(backgroundBitmap, TileMode.CLAMP, TileMode.CLAMP);
+            backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            backgroundPaint.setShader(backgroundBitmapShader);
+        } else {
+            backgroundBitmapShader = null;
+            backgroundPaint = null;
         }
 
-        if (selectedBackgroundDrawable != null) {
-            selectedBackgroundBitmap = getBitmapFromDrawable(selectedBackgroundDrawable);
-
-            if (selectedBackgroundBitmap != null) {
-                selectedBackgroundBitmapShader = new BitmapShader(selectedBackgroundBitmap, TileMode.CLAMP,
-                        TileMode.CLAMP);
-                selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-                selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
-            }
-        }
-    }
-
-    private static Bitmap getBitmapFromDrawable(Drawable drawable) {
-        if (drawable == null) {
-            return null;
-        }
-
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
-
-        try {
-            Bitmap bitmap;
-
-            if (drawable instanceof ColorDrawable) {
-                bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG);
-            } else {
-                if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-                    return null;
-                }
-
-                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
-                        BITMAP_CONFIG);
-            }
-
-            Canvas canvas = new Canvas(bitmap);
-            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-            drawable.draw(canvas);
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        if (selectedBackgroundDrawable != null &&
+                (selectedBackgroundBitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null) {
+            selectedBackgroundBitmapShader = new BitmapShader(selectedBackgroundBitmap, TileMode.CLAMP, TileMode.CLAMP);
+            selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
+        } else {
+            selectedBackgroundBitmapShader = null;
+            selectedBackgroundPaint = null;
         }
     }
 
@@ -1113,10 +1076,6 @@ public class SegmentedButton extends View {
             Log.v(TAG, String.format("Testx: %d %d %d %d %d %d", drawable.getBounds().width(),
                     drawable.getBounds().height()
                     , drawable.getIntrinsicHeight(), drawable.getIntrinsicWidth(), getWidth(), getHeight()));
-
-            // TODO Testing
-            backgroundBitmap = getBitmapFromDrawable(drawable);
-            setupBackgroundClipPath();
         }
     }
 
@@ -1135,10 +1094,6 @@ public class SegmentedButton extends View {
         if (selectedBackgroundDrawable == null && drawable != null) {
             // Make sure to clone the drawable so that we can set the bounds on it
             selectedBackgroundDrawable = drawable.getConstantState().newDrawable();
-
-            // TODO Testing
-            selectedBackgroundBitmap = getBitmapFromDrawable(drawable);
-            setupBackgroundClipPath();
         }
     }
 
@@ -1163,8 +1118,7 @@ public class SegmentedButton extends View {
         backgroundDrawable = drawable;
         backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
-        // TODO Testing
-        backgroundBitmap = getBitmapFromDrawable(drawable);
+        // TODO Testing, probably should have setupBackgroundBitmaps
         setupBackgroundClipPath();
 
         invalidate();
@@ -1186,8 +1140,7 @@ public class SegmentedButton extends View {
             backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
 
-        // TODO Testing
-        backgroundBitmap = getBitmapFromDrawable(drawable);
+        // TODO Testing, probably should have setupBackgroundBitmaps
         setupBackgroundClipPath();
 
         invalidate();
@@ -1227,7 +1180,6 @@ public class SegmentedButton extends View {
         selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
         // TODO Testing
-        selectedBackgroundBitmap = getBitmapFromDrawable(drawable);
         setupBackgroundClipPath();
 
         invalidate();
@@ -1250,7 +1202,6 @@ public class SegmentedButton extends View {
         }
 
         // TODO Testing
-        selectedBackgroundBitmap = getBitmapFromDrawable(drawable);
         setupBackgroundClipPath();
 
         invalidate();
@@ -1719,6 +1670,68 @@ public class SegmentedButton extends View {
         // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
         // change but the positions still need to be recalculated
         updateSize();
+    }
+
+    // endregion
+
+    // region Helper functions
+
+    /**
+     * Create a bitmap from a specified drawable
+     *
+     * Note that if the size of the drawable changes, then the bitmap will need to be changed.
+     *
+     * @param drawable drawable to convert to a bitmap
+     * @return
+     */
+    private static Bitmap getBitmapFromDrawable(@Nullable Drawable drawable) {
+        if (drawable == null) {
+            return null;
+        }
+
+        // Return bitmap if drawable is BitmapDrawable
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        try {
+            Bitmap bitmap;
+
+            if (drawable instanceof ColorDrawable) {
+                // Create a bitmap of fixed size for ColorDrawable since it inherently has no size
+                // Ideally, this size can be small because the bitmap can be stretched to fit any width/height
+                // without loss of quality
+                bitmap = Bitmap.createBitmap(COLORDRAWABLE_SIZE, COLORDRAWABLE_SIZE, BITMAP_CONFIG);
+            } else if (drawable instanceof GradientDrawable) {
+                // GradientDrawable ALSO doesn't have a inherent size
+                // However, the size of the bitmap used to represent the GradientDrawable should be the size of the
+                // bounds.
+                // A small fixed size here would result in a pixelated bitmap being drawn
+                // Return null if bounds are 0, this occurs if function is called before button is laid out
+                final Rect bounds = drawable.getBounds();
+
+                if (bounds.width() > 0 && bounds.height() > 0) {
+                    bitmap = Bitmap.createBitmap(bounds.width(), bounds.height(), BITMAP_CONFIG);
+                } else {
+                    return null;
+                }
+            } else {
+                // Otherwise, create bitmap based on intrinsic size of the drawable
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                        BITMAP_CONFIG);
+            }
+
+            // Create canvas using bitmap and draw the drawable on the canvas
+            Canvas canvas = new Canvas(bitmap);
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+
+            return bitmap;
+        } catch (Exception e) {
+            // There was an unexpected problem, print out the stack track
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // endregion
