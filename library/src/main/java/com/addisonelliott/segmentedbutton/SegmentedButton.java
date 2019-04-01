@@ -91,6 +91,29 @@ public class SegmentedButton extends View {
     // correct side can be rounded out (if a background radius is specified)
     private SegmentedButton leftButton, rightButton;
 
+    // Bitmap created internally from the background drawable
+    // The bitmap, bitmap shader, and paint for the background are only used if the background has rounded corners
+    // (i.e. backgroundRadius > 0) and the button is either a left or right button (isLeftButton() || isRightButton())
+    // In cases where these items are not used, they are set to null
+    //
+    // The bitmap shader and paint are used to draw the background on a path to round the corners but also allow
+    // antialiasing
+    private Bitmap backgroundBitmap;
+    private BitmapShader backgroundBitmapShader;
+    private Paint backgroundPaint;
+
+    // TODO Fix me, this needs to be present if there is a selectedRadius or something too
+    // Bitmap created internally from the background drawable
+    // The bitmap, bitmap shader, and paint for the background are only used if the background has rounded corners
+    // (i.e. backgroundRadius > 0) and the button is either a left or right button (isLeftButton() || isRightButton())
+    // In cases where these items are not used, they are set to null
+    //
+    // The bitmap shader and paint are used to draw the background on a path to round the corners but also allow
+    // antialiasing
+    private Bitmap selectedBackgroundBitmap;
+    private BitmapShader selectedBackgroundBitmapShader;
+    private Paint selectedBackgroundPaint;
+
     // Radius of the selected button used for creating a rounded selected button
     private int selectedButtonRadius;
     // Clip path used to round the selected button to the specified radius
@@ -153,14 +176,6 @@ public class SegmentedButton extends View {
     private float textSize;
     // Typeface to use for displaying the text, this is created from the fontFamily & textStyle attributes
     private Typeface textTypeface;
-
-    // TODO Testing variables for new way of rounding edges
-    private Bitmap backgroundBitmap;
-    private BitmapShader backgroundBitmapShader;
-    private Paint backgroundPaint;
-    private Bitmap selectedBackgroundBitmap;
-    private BitmapShader selectedBackgroundBitmapShader;
-    private Paint selectedBackgroundPaint;
 
     // endregion
 
