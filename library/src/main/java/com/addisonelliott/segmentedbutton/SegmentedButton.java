@@ -201,10 +201,6 @@ public class SegmentedButton extends View {
 
         // Required in order for this button to 'consume' the ripple touch event
         setClickable(true);
-
-        // TODO Testing stuff
-        backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -546,9 +542,11 @@ public class SegmentedButton extends View {
 
         // Draw background (unselected)
         if (backgroundDrawable != null) {
-            canvas.drawPath(backgroundClipPath, backgroundPaint);
-        } else {
-            backgroundDrawable.draw(canvas);
+            if (backgroundClipPath != null && backgroundBitmap != null) {
+                canvas.drawPath(backgroundClipPath, backgroundPaint);
+            } else {
+                backgroundDrawable.draw(canvas);
+            }
         }
 
         // Draw text (unselected)
@@ -626,7 +624,7 @@ public class SegmentedButton extends View {
         }
 
         // Draw background (selected)
-        if (selectedBackgroundDrawable != null) {
+        if (selectedBackgroundDrawable != null && selectedBackgroundBitmap != null) {
             if (backgroundClipPath != null) {
                 canvas.drawPath(backgroundClipPath, selectedBackgroundPaint);
             } else {
@@ -956,11 +954,31 @@ public class SegmentedButton extends View {
         }
 
         // TODO Testing stuff
-        backgroundBitmapShader = new BitmapShader(backgroundBitmap, TileMode.CLAMP, TileMode.CLAMP);
-        backgroundPaint.setShader(backgroundBitmapShader);
+        if (backgroundDrawable != null) {
+            backgroundBitmap = getBitmapFromDrawable(backgroundDrawable);
 
-        selectedBackgroundBitmapShader = new BitmapShader(selectedBackgroundBitmap, TileMode.CLAMP, TileMode.CLAMP);
-        selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
+            if (backgroundBitmap == null) {
+                Log.v(TAG, String.format("Null background: %d %d", backgroundDrawable.getIntrinsicWidth(),
+                        backgroundDrawable.getIntrinsicHeight()));
+            }
+
+            if (backgroundBitmap != null) {
+                backgroundBitmapShader = new BitmapShader(backgroundBitmap, TileMode.CLAMP, TileMode.CLAMP);
+                backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                backgroundPaint.setShader(backgroundBitmapShader);
+            }
+        }
+
+        if (selectedBackgroundDrawable != null) {
+            selectedBackgroundBitmap = getBitmapFromDrawable(selectedBackgroundDrawable);
+
+            if (selectedBackgroundBitmap != null) {
+                selectedBackgroundBitmapShader = new BitmapShader(selectedBackgroundBitmap, TileMode.CLAMP,
+                        TileMode.CLAMP);
+                selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+                selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
+            }
+        }
     }
 
     private static Bitmap getBitmapFromDrawable(Drawable drawable) {
@@ -978,8 +996,12 @@ public class SegmentedButton extends View {
             if (drawable instanceof ColorDrawable) {
                 bitmap = Bitmap.createBitmap(COLORDRAWABLE_DIMENSION, COLORDRAWABLE_DIMENSION, BITMAP_CONFIG);
             } else {
-                bitmap = Bitmap
-                        .createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), BITMAP_CONFIG);
+                if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+                    return null;
+                }
+
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                        BITMAP_CONFIG);
             }
 
             Canvas canvas = new Canvas(bitmap);
@@ -1070,6 +1092,7 @@ public class SegmentedButton extends View {
 
             // TODO Testing
             backgroundBitmap = getBitmapFromDrawable(drawable);
+            setupBackgroundClipPath();
         }
     }
 
@@ -1091,6 +1114,7 @@ public class SegmentedButton extends View {
 
             // TODO Testing
             selectedBackgroundBitmap = getBitmapFromDrawable(drawable);
+            setupBackgroundClipPath();
         }
     }
 
@@ -1117,6 +1141,7 @@ public class SegmentedButton extends View {
 
         // TODO Testing
         backgroundBitmap = getBitmapFromDrawable(drawable);
+        setupBackgroundClipPath();
 
         invalidate();
     }
@@ -1139,6 +1164,7 @@ public class SegmentedButton extends View {
 
         // TODO Testing
         backgroundBitmap = getBitmapFromDrawable(drawable);
+        setupBackgroundClipPath();
 
         invalidate();
     }
@@ -1178,6 +1204,7 @@ public class SegmentedButton extends View {
 
         // TODO Testing
         selectedBackgroundBitmap = getBitmapFromDrawable(drawable);
+        setupBackgroundClipPath();
 
         invalidate();
     }
@@ -1200,6 +1227,7 @@ public class SegmentedButton extends View {
 
         // TODO Testing
         selectedBackgroundBitmap = getBitmapFromDrawable(drawable);
+        setupBackgroundClipPath();
 
         invalidate();
     }
