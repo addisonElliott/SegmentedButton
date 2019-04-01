@@ -957,6 +957,8 @@ public class SegmentedButton extends View {
         if (backgroundDrawable != null) {
             backgroundBitmap = getBitmapFromDrawable(backgroundDrawable);
 
+            // TODO Figure out why this is null, its because intrinsic width/height is not right, hmm
+            //  But with the drawable not null, I do not see why it should not have an intrinsic width or height
             if (backgroundBitmap == null) {
                 Log.v(TAG, String.format("Null background: %d %d", backgroundDrawable.getIntrinsicWidth(),
                         backgroundDrawable.getIntrinsicHeight()));
