@@ -25,6 +25,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -644,12 +645,27 @@ public class SegmentedButton extends View {
             // rectangle bounds resulting in half of the border being cut off since it is outside the clip path. In
             // addition, the inset is reduced by half a pixel (0.5f) to ensure there is no antialiasing bleed through
             // around the edge of the border.
+            // TODO Testing for API 19
             final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
             rectF.inset(halfBorderWidth - 0.5f, halfBorderWidth - 0.5f);
+
+//            rectF.inset(halfBorderWidth, halfBorderWidth);
+            // This fixes displaying with no radius, anything else and border isnt shown
+//            rectF.inset(halfBorderWidth*2, halfBorderWidth*2);
 
             // Draw the border for the selected button
             canvas.drawRoundRect(rectF, selectedButtonRadius - halfBorderWidth, selectedButtonRadius - halfBorderWidth,
                     selectedButtonBorderPaint);
+            Log.v(TAG,
+                    "Test: " + selectedButtonRadius + " " + selectedButtonBorderPaint.getStrokeWidth() + " "
+                            + halfBorderWidth);
+
+            Log.v(TAG, String.format("Meow: %d %d %d %d, (%f, %f, %f, %f)", getLeft(), getTop(), getWidth(),
+                    getHeight(), rectF.left,
+                    rectF.top, rectF.width(), rectF.height()));
+//            canvas.drawRoundRect(rectF, selectedButtonRadius - halfBorderWidth * 2,
+//                    selectedButtonRadius - halfBorderWidth * 2,
+//                    selectedButtonBorderPaint);
         }
 
         canvas.restore();
