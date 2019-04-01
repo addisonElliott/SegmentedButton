@@ -619,7 +619,6 @@ public class SegmentedButton extends View {
 
             selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
 //            canvas.clipPath(selectedClipPath);
-        } else {
         }
         canvas.clipRect(rectF);
 
@@ -670,16 +669,22 @@ public class SegmentedButton extends View {
             final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
             rectF.inset(halfBorderWidth - 0.5f, halfBorderWidth - 0.5f);
 
+            Path test = new Path();
+            test.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+
 //            rectF.inset(halfBorderWidth, halfBorderWidth);
             // This fixes displaying with no radius, anything else and border isnt shown
 //            rectF.inset(halfBorderWidth*2, halfBorderWidth*2);
 
             // Draw the border for the selected button
-            canvas.drawRoundRect(rectF, selectedButtonRadius - halfBorderWidth, selectedButtonRadius - halfBorderWidth,
-                    selectedButtonBorderPaint);
+//            canvas.drawRoundRect(rectF, (selectedButtonRadius - halfBorderWidth) / 1.37f,
+//                    selectedButtonRadius - halfBorderWidth,
+//                    selectedButtonBorderPaint);
+            canvas.drawPath(test, selectedButtonBorderPaint);
+//            canvas.drawRoundRect(rectF, selectedButtonRadius, selectedButtonRadius, selectedButtonBorderPaint);
             Log.v(TAG,
                     "Test: " + selectedButtonRadius + " " + selectedButtonBorderPaint.getStrokeWidth() + " "
-                            + halfBorderWidth);
+                            + halfBorderWidth + " " + isHardwareAccelerated() + " " + canvas.isHardwareAccelerated());
 
             Log.v(TAG, String.format("Meow: %d %d %d %d, (%f, %f, %f, %f)", getLeft(), getTop(), getWidth(),
                     getHeight(), rectF.left,
