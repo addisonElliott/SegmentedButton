@@ -618,14 +618,17 @@ public class SegmentedButton extends View {
             selectedClipPath.reset();
 
             selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
-            canvas.clipPath(selectedClipPath);
+//            canvas.clipPath(selectedClipPath);
         } else {
-            canvas.clipRect(rectF);
         }
+        canvas.clipRect(rectF);
 
         // Draw background (selected)
         if (selectedBackgroundDrawable != null && selectedBackgroundBitmap != null) {
-            if (backgroundClipPath != null) {
+            if (selectedButtonRadius > 0 && selectedClipPath != null) {
+                canvas.drawPath(selectedClipPath, selectedBackgroundPaint);
+            } else if (backgroundClipPath != null) {
+//            if (backgroundClipPath != null) {
                 canvas.drawPath(backgroundClipPath, selectedBackgroundPaint);
             } else {
                 selectedBackgroundDrawable.draw(canvas);
@@ -688,6 +691,12 @@ public class SegmentedButton extends View {
 
         canvas.restore();
 
+        canvas.save();
+
+        if (backgroundClipPath != null) {
+            canvas.clipPath(backgroundClipPath);
+        }
+
         // Draw ripple drawable to show ripple effect on click
         if (rippleDrawableLollipop != null) {
             rippleDrawableLollipop.draw(canvas);
@@ -697,6 +706,8 @@ public class SegmentedButton extends View {
         if (rippleDrawable != null) {
             rippleDrawable.draw(canvas);
         }
+
+        canvas.restore();
     }
 
     /**
@@ -962,6 +973,7 @@ public class SegmentedButton extends View {
             if (backgroundBitmap == null) {
                 Log.v(TAG, String.format("Null background: %d %d", backgroundDrawable.getIntrinsicWidth(),
                         backgroundDrawable.getIntrinsicHeight()));
+                final int test = 7;
             }
 
             if (backgroundBitmap != null) {
@@ -1091,6 +1103,11 @@ public class SegmentedButton extends View {
         if (backgroundDrawable == null && drawable != null) {
             // Make sure to clone the drawable so that we can set the bounds on it
             backgroundDrawable = drawable.getConstantState().newDrawable();
+
+            // TODO getBounds()
+            Log.v(TAG, String.format("Testx: %d %d %d %d %d %d", drawable.getBounds().width(),
+                    drawable.getBounds().height()
+                    , drawable.getIntrinsicHeight(), drawable.getIntrinsicWidth(), getWidth(), getHeight()));
 
             // TODO Testing
             backgroundBitmap = getBitmapFromDrawable(drawable);
