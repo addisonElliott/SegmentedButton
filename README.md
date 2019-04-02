@@ -32,7 +32,6 @@ This project is originally forked from [ceryle/SegmentedButton](https://github.c
 ![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)
 ![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)
 
-
 ## Installation
 
 #### Gradle
