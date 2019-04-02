@@ -265,8 +265,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Load background if available, this can be a drawable or a color
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
-        if (ta.hasValue(R.styleable.SegmentedButtonGroup_background)) {
-            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_background);
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_android_background)) {
+            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_android_background);
         }
 
         // Load background on selection if available, can be drawable or color
@@ -781,8 +781,11 @@ public class SegmentedButtonGroup extends LinearLayout {
     public void setBackground(final Drawable drawable) {
         backgroundDrawable = drawable;
 
-        for (SegmentedButton button : buttons) {
-            button.setBackground(drawable);
+        // Check for non-null buttons because parent class calls setBackground
+        if (buttons != null) {
+            for (SegmentedButton button : buttons) {
+                button.setBackground(drawable);
+            }
         }
     }
 

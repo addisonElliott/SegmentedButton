@@ -66,7 +66,7 @@ dependencies {
     android:layout_gravity="center_horizontal"
     android:layout_margin="4dp"
     android:elevation="2dp"
-    app:background="@color/white"
+    android:background="@color/white"
     app:borderColor="@color/orange_700"
     app:borderWidth="1dp"
     app:divider="@color/orange_700"
@@ -135,7 +135,7 @@ segmentedButtonGroup.getPosition();
 
 | Attribute                          | Format            | Description                                                                |
 | ---------------------------------- | ----------------- | -------------------------------------------------------------------------- |
-| app:background                     | `drawable\|color` | Set background for every button when unselected                            |
+| android:background                 | `drawable\|color` | Set background for every button when unselected                            |
 | app:selectedBackground             | `drawable\|color` | Set background for every button when selected                              |
 | app:borderWidth                    | `dimension`       | Width of border around button group                                        |
 | app:borderColor                    | `color`           | Color of border                                                            |
@@ -157,7 +157,7 @@ segmentedButtonGroup.getPosition();
 
 | Option Name                     | Format            | Description                                                                  |
 | ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
-| app:background                  | `drawable\|color` | Set background for button when unselected                                    |
+| android:background              | `drawable\|color` | Set background for button when unselected                                    |
 | app:selectedBackground          | `drawable\|color` | Set background for button when selected                                      |
 | app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
 | app:drawable                    | `drawable`        | Drawable to display                                                          |

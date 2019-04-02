@@ -222,8 +222,8 @@ public class SegmentedButton extends View {
         // Load background if available, this can be a drawable or a color
         // In the instance of a color, a ColorDrawable is created and used instead
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
-        if (ta.hasValue(R.styleable.SegmentedButton_background)) {
-            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_background);
+        if (ta.hasValue(R.styleable.SegmentedButton_android_background)) {
+            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_android_background);
         }
 
         // Load background on selection if available, can be drawable or color
