@@ -1045,6 +1045,9 @@ public class SegmentedButton extends View {
             selectedButtonRadii = null;
         }
 
+        // Update background bitmaps
+        setupBackgroundBitmaps();
+
         invalidate();
     }
 
@@ -1057,8 +1060,6 @@ public class SegmentedButton extends View {
      * @param dashGap   Width of the gap for border, in pixels.
      */
     void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
-        // TODO Android preview border has a different radius than the selectedBackgroundRadius
-        // However problem is resolved when run on actual device
         if (width > 0) {
             // Allocate Paint object for drawing border here
             // Used in onDraw to draw the border around the selected button
@@ -1737,12 +1738,15 @@ public class SegmentedButton extends View {
                         BITMAP_CONFIG);
             }
 
-            // Create canvas using bitmap and draw the drawable on the canvas
+            // Create canvas using bitmap
             Canvas canvas = new Canvas(bitmap);
-            // Note: By changing the bounds on the drawable, this can have odd effects
-            // Currently not a problem but may be relevant later
+
+            // Draw the drawable on the canvas
+            // Save the bounds before hand and reset the drawable bounds afterwards
+            final Rect bounds = new Rect(drawable.getBounds());
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
+            drawable.setBounds(bounds);
 
             return bitmap;
         } catch (Exception e) {

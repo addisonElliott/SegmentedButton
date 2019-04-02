@@ -18,6 +18,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -1057,8 +1058,6 @@ public class SegmentedButtonGroup extends LinearLayout {
         for (SegmentedButton button : buttons) {
             button.setSelectedButtonRadius(selectedButtonRadius);
             button.setupSelectedButtonClipPath();
-
-            button.invalidate();
         }
     }
 
