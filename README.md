@@ -141,7 +141,12 @@ segmentedButtonGroup.getPosition();
 | app:borderColor                    | `color`           | Color of border                                                            |
 | app:borderDashWidth                | `dimension`       | Width of dashes, 0 indicates solid line                                    |
 | app:borderDashGap                  | `dimension`       | Width of gaps in dashes                                                    |
+| app:selectedBorderWidth            | `dimension`       | Width of border around selected button in group                            |
+| app:selectedBorderColor            | `color`           | Color of border for selected button in group                               |
+| app:selectedBorderDashWidth        | `dimension`       | Width of dashes for selected button in group, 0 indicates solid line       |
+| app:selectedBorderDashGap          | `dimension`       | Width of gaps in dashes for selected button in group                       |
 | app:radius                         | `dimension`       | Radius of corners for button group                                         |
+| app:selectedButtonRadius           | `dimension`       | Radius of corners for selected button in group                             |
 | app:position                       | `integer`         | Default button that is selected                                            |
 | app:draggable                      | `boolean`         | Whether or not buttons can be dragged to change selected state             |
 | app:ripple                         | `boolean`         | Whether or not ripple effect is enabled for all buttons                    |
