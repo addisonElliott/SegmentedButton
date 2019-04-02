@@ -1,14 +1,9 @@
 package com.addisonelliott.segmentedbutton.sample;
 
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -16,25 +11,18 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ScrollView;
 import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.addisonelliott.segmentedbutton.SegmentedButton;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
-import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.AnimationInterpolator;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 enum Action {
     None,
@@ -340,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 final float radius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30.0f,
                         getApplicationContext().getResources().getDisplayMetrics());
 
-                lordOfTheRingsButtonGroup.setSelectedButtonRadius((int)radius);
+                lordOfTheRingsButtonGroup.setSelectedButtonRadius((int) radius);
                 roundSelectedButtonGroup.setSelectedButtonRadius(0);
             }
             break;
