@@ -97,7 +97,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     private EmptyView borderView;
 
     // Array containing the buttons
-    private ArrayList<SegmentedButton> buttons;
+    private ArrayList<SegmentedButton> buttons = new ArrayList<>();
 
     // Drawable for the background, this will be a ColorDrawable in case a solid color is given
     private Drawable backgroundDrawable;
@@ -208,8 +208,6 @@ public class SegmentedButtonGroup extends LinearLayout {
             setOutlineProvider(new OutlineProvider());
         }
 
-        buttons = new ArrayList<>();
-
         // This FrameLayout is used in order to stack the button layout, border view & divider layout on top of each
         // other rather than horizontally or vertically like this SegmentedButtonGroup would do(it inherits from
         // LinearLayout)
@@ -265,8 +263,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Load background if available, this can be a drawable or a color
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
-        if (ta.hasValue(R.styleable.SegmentedButtonGroup_background)) {
-            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_background);
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_android_background)) {
+            backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_android_background);
         }
 
         // Load background on selection if available, can be drawable or color
@@ -781,8 +779,11 @@ public class SegmentedButtonGroup extends LinearLayout {
     public void setBackground(final Drawable drawable) {
         backgroundDrawable = drawable;
 
-        for (SegmentedButton button : buttons) {
-            button.setBackground(drawable);
+        // Check for non-null buttons because parent class calls setBackground
+        if (buttons != null) {
+            for (SegmentedButton button : buttons) {
+                button.setBackground(drawable);
+            }
         }
     }
 

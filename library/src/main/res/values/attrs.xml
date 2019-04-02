@@ -7,7 +7,7 @@
     </declare-styleable>
 
     <declare-styleable name="SegmentedButton">
-        <attr name="background" />
+        <attr name="android:background" />
         <attr name="selectedBackground" />
 
         <attr name="rippleColor" />
@@ -38,7 +38,7 @@
     </declare-styleable>
 
     <declare-styleable name="SegmentedButtonGroup">
-        <attr name="background" />
+        <attr name="android:background" />
         <attr name="selectedBackground" />
 
         <attr name="borderWidth" format="dimension" />
