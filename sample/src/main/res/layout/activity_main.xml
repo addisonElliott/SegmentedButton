@@ -43,8 +43,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                app:background="@drawable/gradient_drawable"
                 android:elevation="2dp"
+                app:background="@drawable/gradient_drawable"
                 app:divider="@drawable/gradient_drawable_divider"
                 app:dividerPadding="10dp"
                 app:dividerRadius="10dp"
@@ -87,7 +87,6 @@
 
         </LinearLayout>
 
-        <!--            app:background="@color/white"-->
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
             android:id="@+id/buttonGroup_lordOfTheRings"
             android:layout_width="match_parent"
@@ -95,7 +94,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="4dp"
             android:elevation="2dp"
-            app:background="@drawable/gradient_drawable"
+            app:background="@color/white"
             app:borderColor="@color/orange_700"
             app:borderWidth="1dp"
             app:divider="@color/orange_700"
@@ -475,9 +474,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:padding="8dp"
                 app:drawableGravity="right"
                 app:drawablePadding="8dp"
-                android:padding="8dp"
                 app:drawableTint="@color/white"
                 app:selectedDrawableTint="@color/black"
                 app:text="Left" />

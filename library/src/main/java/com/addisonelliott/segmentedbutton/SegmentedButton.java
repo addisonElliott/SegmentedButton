@@ -31,7 +31,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -69,6 +68,8 @@ public class SegmentedButton extends View {
 
     // General purpose rectangle to prevent memory allocation in onDraw
     private RectF rectF;
+    // General purpose path to prevent memory allocation in onDraw
+    private Path path;
 
     // Text paint variable contains paint info for unselected and selected text
     private TextPaint textPaint;
@@ -104,8 +105,6 @@ public class SegmentedButton extends View {
 
     // Radius of the selected button used for creating a rounded selected button
     private int selectedButtonRadius;
-    // Clip path used to round the selected button to the specified radius
-    private Path selectedClipPath;
     // Corner radii for the selected button, this contains 8x values all set to selectedButtonRadius
     // This is used to prevent allocation in the onDraw method
     private float[] selectedButtonRadii;
@@ -207,6 +206,9 @@ public class SegmentedButton extends View {
 
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
+
+        // Create general purpose path, prevents memory allocation during onDraw
+        path = new Path();
 
         // Required in order for this button to 'consume' the ripple touch event
         setClickable(true);
@@ -639,11 +641,11 @@ public class SegmentedButton extends View {
         //      2. Background has a radius (i.e. backgroundRadius > 0)
         // In these two cases, the background is drawn using a BitmapShader contained in the background paint object/
         // Otherwise, the background is drawn normally via the drawable with no rounded corners.
-        if (selectedClipPath != null && selectedBackgroundPaint != null) {
-            selectedClipPath.reset();
-            selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+        if (selectedButtonRadius > 0 && selectedBackgroundPaint != null) {
+            path.reset();
+            path.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
 
-            canvas.drawPath(selectedClipPath, selectedBackgroundPaint);
+            canvas.drawPath(path, selectedBackgroundPaint);
         } else if (backgroundClipPath != null && selectedBackgroundPaint != null) {
             canvas.drawPath(backgroundClipPath, selectedBackgroundPaint);
         } else if (selectedBackgroundDrawable != null) {
@@ -680,33 +682,15 @@ public class SegmentedButton extends View {
             // rectangle bounds resulting in half of the border being cut off since it is outside the clip path. In
             // addition, the inset is reduced by half a pixel (0.5f) to ensure there is no antialiasing bleed through
             // around the edge of the border.
-            // TODO Testing for API 19
             final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
             rectF.inset(halfBorderWidth - 0.5f, halfBorderWidth - 0.5f);
 
-            Path test = new Path();
-            test.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+            // Note: A path is used here rather than canvas.drawRoundRect because there was odd behavior on API 19
+            // and particular devices where the border radius did not match the background radius.
+            path.reset();
+            path.addRoundRect(rectF, selectedButtonRadius, selectedButtonRadius, Direction.CW);
 
-//            rectF.inset(halfBorderWidth, halfBorderWidth);
-            // This fixes displaying with no radius, anything else and border isnt shown
-//            rectF.inset(halfBorderWidth*2, halfBorderWidth*2);
-
-            // Draw the border for the selected button
-//            canvas.drawRoundRect(rectF, (selectedButtonRadius - halfBorderWidth) / 1.37f,
-//                    selectedButtonRadius - halfBorderWidth,
-//                    selectedButtonBorderPaint);
-            canvas.drawPath(test, selectedButtonBorderPaint);
-//            canvas.drawRoundRect(rectF, selectedButtonRadius, selectedButtonRadius, selectedButtonBorderPaint);
-            Log.v(TAG,
-                    "Test: " + selectedButtonRadius + " " + selectedButtonBorderPaint.getStrokeWidth() + " "
-                            + halfBorderWidth + " " + isHardwareAccelerated() + " " + canvas.isHardwareAccelerated());
-
-            Log.v(TAG, String.format("Meow: %d %d %d %d, (%f, %f, %f, %f)", getLeft(), getTop(), getWidth(),
-                    getHeight(), rectF.left,
-                    rectF.top, rectF.width(), rectF.height()));
-//            canvas.drawRoundRect(rectF, selectedButtonRadius - halfBorderWidth * 2,
-//                    selectedButtonRadius - halfBorderWidth * 2,
-//                    selectedButtonBorderPaint);
+            canvas.drawPath(path, selectedButtonBorderPaint);
         }
 
         canvas.restore();
@@ -1044,10 +1028,8 @@ public class SegmentedButton extends View {
      */
     void setupSelectedButtonClipPath() {
         if (selectedButtonRadius > 0) {
-            // Setup clip path and the selected button radii
-            // These will be used in onDraw to draw the rounded selected button
-            // These objects are allocated here rather than in onDraw to increase performance
-            selectedClipPath = new Path();
+            // Setup selected button radii
+            // Object allocated here rather than in onDraw to increase performance
             selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                     selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                     selectedButtonRadius};
@@ -1060,7 +1042,6 @@ public class SegmentedButton extends View {
             }
         } else {
             // If the selected button radius is equal to zero, then corners will not be rounded
-            selectedClipPath = null;
             selectedButtonRadii = null;
         }
 
@@ -1758,7 +1739,8 @@ public class SegmentedButton extends View {
 
             // Create canvas using bitmap and draw the drawable on the canvas
             Canvas canvas = new Canvas(bitmap);
-            // TODO This is a problem
+            // Note: By changing the bounds on the drawable, this can have odd effects
+            // Currently not a problem but may be relevant later
             drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
             drawable.draw(canvas);
 
