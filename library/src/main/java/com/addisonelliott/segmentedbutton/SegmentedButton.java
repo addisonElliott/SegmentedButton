@@ -688,7 +688,7 @@ public class SegmentedButton extends View {
             // Note: A path is used here rather than canvas.drawRoundRect because there was odd behavior on API 19
             // and particular devices where the border radius did not match the background radius.
             path.reset();
-            path.addRoundRect(rectF, selectedButtonRadius, selectedButtonRadius, Direction.CW);
+            path.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
 
             canvas.drawPath(path, selectedButtonBorderPaint);
         }
@@ -1027,22 +1027,19 @@ public class SegmentedButton extends View {
      * This function should be called if the selected button radius is changed
      */
     void setupSelectedButtonClipPath() {
-        if (selectedButtonRadius > 0) {
-            // Setup selected button radii
-            // Object allocated here rather than in onDraw to increase performance
-            selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
-                    selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
-                    selectedButtonRadius};
+        // Setup selected button radii
+        // Object allocated here rather than in onDraw to increase performance
+        selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                selectedButtonRadius};
 
+        if (selectedButtonRadius > 0) {
             // Canvas.clipPath, used in onDraw for drawing the selected button clip path is not supported with
             // hardware acceleration until API 18. Thus, this switches to software acceleration if current Android
             // API version is less than 18.
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 setLayerType(LAYER_TYPE_SOFTWARE, null);
             }
-        } else {
-            // If the selected button radius is equal to zero, then corners will not be rounded
-            selectedButtonRadii = null;
         }
 
         // Update background bitmaps
