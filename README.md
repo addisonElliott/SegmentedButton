@@ -12,6 +12,7 @@ Android view that mimics iOS's [SegmentedControl](https://developer.apple.com/de
 * Ripple effect on button tap
 * Draggable buttons
 * Animations
+* Support for API 16+
 
 ## Old Library
 
