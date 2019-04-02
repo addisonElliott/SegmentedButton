@@ -416,9 +416,6 @@ public class SegmentedButton extends View {
 
         // Recalculate the background clip path since width & height have changed
         setupBackgroundClipPath();
-
-        // TODO Explain this
-        setupBackgroundBitmaps();
     }
 
     /**
@@ -1115,11 +1112,6 @@ public class SegmentedButton extends View {
         if (backgroundDrawable == null && drawable != null) {
             // Make sure to clone the drawable so that we can set the bounds on it
             backgroundDrawable = drawable.getConstantState().newDrawable();
-
-            // TODO getBounds()
-            Log.v(TAG, String.format("Testx: %d %d %d %d %d %d", drawable.getBounds().width(),
-                    drawable.getBounds().height()
-                    , drawable.getIntrinsicHeight(), drawable.getIntrinsicWidth(), getWidth(), getHeight()));
         }
     }
 
@@ -1160,10 +1152,9 @@ public class SegmentedButton extends View {
     @Override
     public void setBackground(final Drawable drawable) {
         backgroundDrawable = drawable;
-//        backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+        backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
-        // TODO Testing, probably should have setupBackgroundBitmaps
-        setupBackgroundClipPath();
+        // Setup the background bitmaps again since background drawable has changed
         setupBackgroundBitmaps();
 
         invalidate();
@@ -1182,11 +1173,10 @@ public class SegmentedButton extends View {
             ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
         } else {
             backgroundDrawable = new ColorDrawable(color);
-//            backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+            backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
 
-        // TODO Testing, probably should have setupBackgroundBitmaps
-        setupBackgroundClipPath();
+        // Setup the background bitmaps again since background drawable has changed
         setupBackgroundBitmaps();
 
         invalidate();
@@ -1223,10 +1213,9 @@ public class SegmentedButton extends View {
      */
     public void setSelectedBackground(final Drawable drawable) {
         selectedBackgroundDrawable = drawable;
-//        selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+        selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
-        // TODO Testing
-        setupBackgroundClipPath();
+        // Setup the background bitmaps again since background drawable has changed
         setupBackgroundBitmaps();
 
         invalidate();
@@ -1245,11 +1234,10 @@ public class SegmentedButton extends View {
             ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
         } else {
             selectedBackgroundDrawable = new ColorDrawable(color);
-//            selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
+            selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
 
-        // TODO Testing
-        setupBackgroundClipPath();
+        // Setup the background bitmaps again since background drawable has changed
         setupBackgroundBitmaps();
 
         invalidate();

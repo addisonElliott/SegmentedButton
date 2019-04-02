@@ -396,14 +396,10 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // Update the background clip path for that button (removes rounding edges since it's not the
                 // right-most button anymore)
                 oldButton.setupBackgroundClipPath();
-                // TODO Document why
-                oldButton.setupBackgroundBitmaps();
             }
 
             // Sets up the background clip path, selected button clip path, and selected button border
             button.setupBackgroundClipPath();
-            // TODO Document why
-            button.setupBackgroundBitmaps();
             button.setupSelectedButtonClipPath();
             button.setSelectedButtonBorder(selectedBorderWidth, selectedBorderColor, selectedBorderDashWidth,
                     selectedBorderDashGap);
