@@ -1,9 +1,13 @@
 package com.addisonelliott.segmentedbutton.sample;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -12,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -24,6 +29,9 @@ import com.addisonelliott.segmentedbutton.SegmentedButtonGroup;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.AnimationInterpolator;
 import com.addisonelliott.segmentedbutton.SegmentedButtonGroup.OnPositionChangedListener;
 import com.addisonelliott.segmentedbutton.sample.drawable.BadgeDrawable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -53,7 +61,8 @@ enum Action {
     ChangeTypeface,
     ChangeSelectedButtonRadius,
     ChangeSelectedButtonBorderSolid,
-    ChangeSelectedButtonBorderDashed;
+    ChangeSelectedButtonBorderDashed,
+    CaptureEntireScrollViewScreenshot;
 
     public String getDisplayText() {
         if (this == None) {
@@ -106,6 +115,8 @@ enum Action {
             return "Change selected button border (solid)";
         } else if (this == ChangeSelectedButtonBorderDashed) {
             return "Change selected button border (dashed)";
+        } else if (this == CaptureEntireScrollViewScreenshot) {
+            return "Capture entire ScrollView screenshot";
         } else {
             return "";
         }
@@ -116,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
 
     private static final String TAG = "SegmentedButtonSample";
 
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
     @BindView(R.id.spinner)
     Spinner spinner;
     @BindView(R.id.button_changePosition)
@@ -346,6 +359,28 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 lordOfTheRingsButtonGroup.setSelectedBorder(5, Color.MAGENTA, 6, 3);
                 roundSelectedButtonGroup.setSelectedBorder(16, Color.BLACK, 6, 2);
                 break;
+
+            case CaptureEntireScrollViewScreenshot: {
+                final int width = scrollView.getChildAt(0).getWidth();
+                final int height = scrollView.getChildAt(0).getHeight();
+
+                Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+
+                Canvas canvas = new Canvas(bitmap);
+                canvas.drawColor(Color.WHITE);
+                scrollView.draw(canvas);
+
+                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File file = new File(path, "screenshot.png");
+                Log.v(TAG, "testing: " + file.getAbsolutePath().toString());
+
+                try (FileOutputStream out = new FileOutputStream(file)) {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            break;
 
             default:
                 break;

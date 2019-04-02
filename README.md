@@ -19,21 +19,18 @@ Android view that mimics iOS's [SegmentedControl](https://developer.apple.com/de
 This project is originally forked from [ceryle/SegmentedButton](https://github.com/ceryle/SegmentedButton) but has been revamped and given some TLC. The parent repository has been stagnant since **October 17th, 2017**.
 
 ## Preview
-![1](https://cloud.githubusercontent.com/assets/20969019/21565956/9fec9300-cea6-11e6-981f-c5c2a70a2e57.gif)
 
-![2](https://cloud.githubusercontent.com/assets/20969019/21565963/bdda9aba-cea6-11e6-91ba-6e6b0230a512.gif)
-
-![3](https://cloud.githubusercontent.com/assets/20969019/21565967/c3dd51d2-cea6-11e6-91c4-1d3fa0ee6884.gif)
-
-![6](https://cloud.githubusercontent.com/assets/20969019/21565976/df8a7fc2-cea6-11e6-8740-debb45d1aff7.gif)
-
-![4](https://cloud.githubusercontent.com/assets/20969019/21565969/ce06efa6-cea6-11e6-8878-6260054bb3be.gif)
-
-![5](https://cloud.githubusercontent.com/assets/20969019/21565972/d6df69d2-cea6-11e6-8391-27b1d45b945b.gif)
-
-![7](https://cloud.githubusercontent.com/assets/20969019/21565978/ec2fb698-cea6-11e6-8ae9-54326e3ebdf4.gif)
-
-![8](https://cloud.githubusercontent.com/assets/20969019/24909871/6b0a8b10-1ece-11e7-8686-df8276f1ae15.gif)
+![1](https://www.addisonelliott.net/SegmentedButtonImages/Gradient.gif)
+![2](https://www.addisonelliott.net/SegmentedButtonImages/LordOfTheRings.gif)
+![3](https://www.addisonelliott.net/SegmentedButtonImages/DCSuperheros.gif)
+![4](https://www.addisonelliott.net/SegmentedButtonImages/MarvelSuperheros.gif)
+![5](https://www.addisonelliott.net/SegmentedButtonImages/Guys.gif)
+![6](https://www.addisonelliott.net/SegmentedButtonImages/StarWars.gif)
+![7](https://www.addisonelliott.net/SegmentedButtonImages/DarthVader.gif)
+![8](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybe.gif)
+![9](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybeRound.gif)
+![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)
+![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)
 
 
 ## Installation
