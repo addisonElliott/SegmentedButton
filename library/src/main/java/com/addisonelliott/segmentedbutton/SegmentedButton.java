@@ -716,7 +716,8 @@ public class SegmentedButton extends View {
 
         canvas.save();
 
-        // TODO Explain this
+        // Clip to the background clip path if available
+        // This is used so the ripple effect will stop at the rounded corners of the background
         if (backgroundClipPath != null) {
             canvas.clipPath(backgroundClipPath);
         }
@@ -948,16 +949,17 @@ public class SegmentedButton extends View {
      *
      * This function should be called when the size of the button changes, if the background radius changes and/or if
      * the isLeftButton() or isRightButton() boolean values change.
+     *
+     * Note that this function internally calls setupBackgroundBitmaps() because a change in the clip path will
+     * require updating the bitmaps
      */
     void setupBackgroundClipPath() {
-        // TODO Better naming if I end up using new method
         // If there is no background radius then skip
         if (backgroundRadius == 0) {
             backgroundClipPath = null;
 
-            // TODO Better
+            // Update background bitmaps
             setupBackgroundBitmaps();
-
             return;
         }
 
@@ -992,9 +994,11 @@ public class SegmentedButton extends View {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
         }
 
+        // Update background bitmaps
         setupBackgroundBitmaps();
     }
 
+    // TODO Explain here
     /**
      * Explain here
      *
@@ -1003,17 +1007,12 @@ public class SegmentedButton extends View {
      * button radius changes, or the size of either the background or selected background drawable changes.
      */
     void setupBackgroundBitmaps() {
-        // TODO Testing stuff
-        // TODO Consider renaming this and bringing together with setupBackgroundClipPath
-
-        // Note: Either one of these can be null before getSize is done correctly, so this means backgroundPaint and
-        // backgroundBitmap will be null.
-        //
-        // Besides that, I can assume a lot of things will NOT be null if something is set
-
         Bitmap bitmap;
 
-        // Do if backgroundRadius > 0
+        // Setup background paint object to render background using a bitmap shader approach under three conditions:
+        //      1. Background has rounded corners
+        //      2. There is a background drawable
+        //      3. Able to successfully create bitmap from drawable
         if (backgroundClipPath != null && backgroundDrawable != null
                 && (bitmap = getBitmapFromDrawable(backgroundDrawable)) != null) {
             final BitmapShader backgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP);
@@ -1024,7 +1023,11 @@ public class SegmentedButton extends View {
             backgroundPaint = null;
         }
 
-        // Do if backgroundRadius > 0 OR selectedButtonRadius > 0
+        // Setup selected background paint object to render background using a bitmap shader approach under three
+        // conditions:
+        //      1. Background has rounded corners OR selected button has rounded corners
+        //      2. There is a background drawable
+        //      3. Able to successfully create bitmap from drawable
         if ((backgroundClipPath != null || selectedButtonRadius > 0) && selectedBackgroundDrawable != null
                 && (bitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null) {
             final BitmapShader selectedBackgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP,
