@@ -998,13 +998,13 @@ public class SegmentedButton extends View {
         setupBackgroundBitmaps();
     }
 
-    // TODO Explain here
     /**
-     * Explain here
+     * Setup the background paint objects so that the background & selected background drawable can be rendered with
+     * rounded corners using a bitmap shader
      *
-     * This function should be called when the background clip path changes (see setupBackgroundClipPath for details
-     * on what causes that to change), the background drawable or selected background drawable changes, the selected
-     * button radius changes, or the size of either the background or selected background drawable changes.
+     * This function is called by setupBackgroundClipPath since the background clip determines whether the button has
+     * rounded corners. In addition, this function should be called when the drawable or selected drawable changes,
+     * the selected button radius changes, or the size of either drawable changes.
      */
     void setupBackgroundBitmaps() {
         Bitmap bitmap;
