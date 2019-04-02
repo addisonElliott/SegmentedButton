@@ -97,7 +97,7 @@ public class SegmentedButtonGroup extends LinearLayout {
     private EmptyView borderView;
 
     // Array containing the buttons
-    private ArrayList<SegmentedButton> buttons = new ArrayList<>();
+    private ArrayList<SegmentedButton> buttons;
 
     // Drawable for the background, this will be a ColorDrawable in case a solid color is given
     private Drawable backgroundDrawable;
@@ -207,6 +207,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             setOutlineProvider(new OutlineProvider());
         }
+
+        buttons = new ArrayList<>();
 
         // This FrameLayout is used in order to stack the button layout, border view & divider layout on top of each
         // other rather than horizontally or vertically like this SegmentedButtonGroup would do(it inherits from
