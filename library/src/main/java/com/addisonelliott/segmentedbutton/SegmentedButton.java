@@ -91,23 +91,15 @@ public class SegmentedButton extends View {
     // correct side can be rounded out (if a background radius is specified)
     private SegmentedButton leftButton, rightButton;
 
-    // Bitmap created internally from the background drawable
-    // The bitmap and paint for the background are only used if the background has rounded corners (i.e.
-    // backgroundRadius > 0) and the button is either a left or right button (isLeftButton() || isRightButton())
-    // In cases where these items are not used, they are set to null
+    // Paint objects used for drawing the background and selected background drawables with rounded corners if desired
+    // The background paint object will only be used if a drawable is present and the background radius is greater
+    // than 0 (meaning there is rounded corners). Similarly, for the selected background, if a drawable is present
+    // and the background radius is greater than 0 OR there is a selected button radius.
+    // Paint objects will contain a BitmapShader that is linked to a Bitmap created from the respective drawables
     //
-    // The background paint are used to draw the background on a path to round the corners but also allow antialiasing
-    private Bitmap backgroundBitmap;
+    // Note: The BitmapShader approach is used rather than Canvas.clipPath because antialiasing is supported in the
+    // former but not the latter
     private Paint backgroundPaint;
-
-    // TODO Fix me, this needs to be present if there is a selectedRadius or something too
-    // Bitmap created internally from the background drawable
-    // The bitmap and paint for the background are only used if the background has rounded corners (i.e.
-    // backgroundRadius > 0) and the button is either a left or right button (isLeftButton() || isRightButton())
-    // In cases where these items are not used, they are set to null
-    //
-    // The background paint are used to draw the background on a path to round the corners but also allow antialiasing
-    private Bitmap selectedBackgroundBitmap;
     private Paint selectedBackgroundPaint;
 
     // Radius of the selected button used for creating a rounded selected button
@@ -424,6 +416,8 @@ public class SegmentedButton extends View {
 
         // Recalculate the background clip path since width & height have changed
         setupBackgroundClipPath();
+
+        // TODO Explain this
         setupBackgroundBitmaps();
     }
 
@@ -560,13 +554,13 @@ public class SegmentedButton extends View {
 
         // Draw background (unselected)
         if (backgroundDrawable != null) {
-            // Draw background drawable with rounded corners if the backgroundRadius > 0
-            // The background clip path and bitmap will be created if the background radius is greater than 0.
-            // However, there is a chance that either one or both may be null during setup so we check for them both
-            // to be non-null to draw the background.
-            // Otherwise, if neither one of them are set, then we draw the background normally assuming it has no
-            // rounded corners
-            // TODO Cant see why backgroundClipPath would be null?
+            // Draw the background with rounded corners if the background clip path and background paint objet are
+            // non-null. The background clip path will be present if the background has rounded corners. See
+            // setupBackgroundClipPath for more details. Ideally the backgroundPaint object will always be present
+            // when backgroundClipPath is present but there are select cases when the bitmap cannot be generated from
+            // the drawable because of unknown bounds on program start.
+            //
+            // Otherwise, the background is drawn normally via the drawable with no rounded corners
             if (backgroundClipPath != null && backgroundPaint != null) {
                 canvas.drawPath(backgroundClipPath, backgroundPaint);
             } else {
@@ -637,12 +631,17 @@ public class SegmentedButton extends View {
             rectF.set(relativeClipPosition * width, 0.0f, width + relativeClipPosition * rightButtonWidth, height);
         }
 
-        // TODO Document
+        // Clip canvas for drawing the selected button view
+        // Allows for smooth animation between one button to the next
         canvas.clipRect(rectF);
 
         // Draw background (selected)
-        // TODO JEez this is a mess
-        // TODO Cant see why selectedClipPath could be null?
+        //
+        // Draw the selected background with rounded corners in two cases:
+        //      1. Selected button has rounded corners (i.e. selectedButtonRadius > 0)
+        //      2. Background has a radius (i.e. backgroundRadius > 0)
+        // In these two cases, the background is drawn using a BitmapShader contained in the background paint object/
+        // Otherwise, the background is drawn normally via the drawable with no rounded corners.
         if (selectedClipPath != null && selectedBackgroundPaint != null) {
             selectedClipPath.reset();
             selectedClipPath.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
@@ -651,7 +650,6 @@ public class SegmentedButton extends View {
         } else if (backgroundClipPath != null && selectedBackgroundPaint != null) {
             canvas.drawPath(backgroundClipPath, selectedBackgroundPaint);
         } else if (selectedBackgroundDrawable != null) {
-            Log.v(TAG, "Bounds: " + selectedBackgroundDrawable.getBounds());
             selectedBackgroundDrawable.draw(canvas);
         }
 
@@ -1006,17 +1004,19 @@ public class SegmentedButton extends View {
      */
     void setupBackgroundBitmaps() {
         // TODO Testing stuff
+        // TODO Consider renaming this and bringing together with setupBackgroundClipPath
 
         // Note: Either one of these can be null before getSize is done correctly, so this means backgroundPaint and
         // backgroundBitmap will be null.
         //
         // Besides that, I can assume a lot of things will NOT be null if something is set
 
+        Bitmap bitmap;
+
         // Do if backgroundRadius > 0
         if (backgroundClipPath != null && backgroundDrawable != null
-                && (backgroundBitmap = getBitmapFromDrawable(backgroundDrawable)) != null) {
-            final BitmapShader backgroundBitmapShader = new BitmapShader(backgroundBitmap, TileMode.CLAMP,
-                    TileMode.CLAMP);
+                && (bitmap = getBitmapFromDrawable(backgroundDrawable)) != null) {
+            final BitmapShader backgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP);
 
             backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             backgroundPaint.setShader(backgroundBitmapShader);
@@ -1026,9 +1026,9 @@ public class SegmentedButton extends View {
 
         // Do if backgroundRadius > 0 OR selectedButtonRadius > 0
         if ((backgroundClipPath != null || selectedButtonRadius > 0) && selectedBackgroundDrawable != null
-                && (selectedBackgroundBitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null) {
-            final BitmapShader selectedBackgroundBitmapShader = new BitmapShader(selectedBackgroundBitmap,
-                    TileMode.CLAMP, TileMode.CLAMP);
+                && (bitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null) {
+            final BitmapShader selectedBackgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP,
+                    TileMode.CLAMP);
 
             selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
