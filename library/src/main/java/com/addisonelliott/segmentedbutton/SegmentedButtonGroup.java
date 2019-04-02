@@ -18,10 +18,10 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -113,16 +113,21 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Width of the gap for border, in pixels. Only relevant when dashWidth is greater than 0px
     private int borderDashGap;
 
+    // This is the border information for the selected button with the same defaults as above for the button group
+    // border
+    private int selectedBorderWidth;
+    private int selectedBorderColor;
+    private int selectedBorderDashWidth;
+    private int selectedBorderDashGap;
+
     // Radius for rounding edges of the button group, in pixels (default value is 0)
     private int radius;
+    // Radius for rounding edges of the selected button, in pixels (default value is 0)
+    private int selectedButtonRadius;
 
     // Position of the currently selected button, zero-indexed (default value is 0)
     // When animating, the position will be the previous value until after animation is finished
     private int position;
-
-    // Configuration value from Android that determines how far a user must move their finger before a touch is
-    // considered a drag
-    private int touchSlop;
 
     // Whether or not the button can be dragged to a different position (default value is false)
     private boolean draggable;
@@ -251,11 +256,6 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Retrieve custom attributes
         getAttributes(context, attrs);
-
-        // Retrieve the touch slop from Android configuration
-        // This is the same value used by ScrollView to determine when a user is scrolling vs just tapping
-        final ViewConfiguration configuration = ViewConfiguration.get(context);
-        touchSlop = configuration.getScaledTouchSlop();
     }
 
     private void getAttributes(Context context, @Nullable AttributeSet attrs) {
@@ -276,6 +276,7 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Note: Must read radius before setBorder call in order to round the border corners!
         radius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
+        selectedButtonRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedButtonRadius, 0);
 
         // Setup border for button group
         // Width is the thickness of the border, color is the color of the border
@@ -289,6 +290,14 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Set the border to the read values, this will set the border values to itself but will create a
         // GradientDrawable containing the border
         setBorder(borderWidth, borderColor, borderDashWidth, borderDashGap);
+
+        // Get border information for the selected button
+        // Same defaults as the border above, however this border information will be passed to each button so that
+        // the correct border can be rendered around the selected button
+        selectedBorderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedBorderWidth, 0);
+        selectedBorderColor = ta.getColor(R.styleable.SegmentedButtonGroup_selectedBorderColor, Color.BLACK);
+        selectedBorderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedBorderDashWidth, 0);
+        selectedBorderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedBorderDashGap, 0);
 
         position = ta.getInt(R.styleable.SegmentedButtonGroup_position, 0);
         draggable = ta.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
@@ -355,10 +364,11 @@ public class SegmentedButtonGroup extends LinearLayout {
             // For example, if there are 5 buttons, then the indices are 0, 1, 2, 3, 4, so the next index is 5!
             final int position = buttons.size();
 
-            // Give radius, default background and default selected background to the button
+            // Give radius, selected button radius, default background and default selected background to the button
             // The default backgrounds will only update the background of the button if there is not a background set
             // on that button explicitly
             button.setBackgroundRadius(radius);
+            button.setSelectedButtonRadius(selectedButtonRadius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
 
@@ -374,26 +384,26 @@ public class SegmentedButtonGroup extends LinearLayout {
                 button.setRipple(false);
             }
 
-            // If this is the first item, set it as left-most button
-            // Otherwise, notify previous button that it is not right-most anymore
-            if (position == 0) {
-                button.setIsLeftButton(true);
-            } else {
-                // Update previous button that it is not right-most anymore
+            // If this is NOT the first item in the group, then update the previous button and this button with its
+            // respective right button and left button.
+            if (position != 0) {
                 final SegmentedButton oldButton = buttons.get(position - 1);
 
-                oldButton.setIsRightButton(false);
+                // Old button's right button is this new button
+                // This button's left button is the old button
+                oldButton.setRightButton(button);
+                button.setLeftButton(oldButton);
 
                 // Update the background clip path for that button (removes rounding edges since it's not the
                 // right-most button anymore)
                 oldButton.setupBackgroundClipPath();
             }
 
-            // Set current button as right-most
-            button.setIsRightButton(true);
-
-            // Sets up the background clip path in order to correctly round background to match the radius
+            // Sets up the background clip path, selected button clip path, and selected button border
             button.setupBackgroundClipPath();
+            button.setupSelectedButtonClipPath();
+            button.setSelectedButtonBorder(selectedBorderWidth, selectedBorderColor, selectedBorderDashWidth,
+                    selectedBorderDashGap);
 
             // Add the button to the main group instead and store the button in our buttons list
             buttonLayout.addView(button, params);
@@ -557,13 +567,10 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // the offset
                 float xCoord = ev.getX() - dragOffsetX;
 
-                // Do not move the button until the user has moved their finger enough
-                if (Math.abs(xCoord) < touchSlop) {
-                    break;
-                }
-
                 // Convert X coordinate to a position containing the relative offset within the button as well
-                final float newPosition = getButtonPositionFromXF(xCoord);
+                // Clip the position to be between 0.0f and buttons size minus 1 so that the user doesn't drag out of
+                // bounds
+                final float newPosition = Math.min(Math.max(getButtonPositionFromXF(xCoord), 0.0f), buttons.size() - 1);
 
                 // Update the selected button to the new position
                 moveSelectedButton(newPosition);
@@ -940,6 +947,60 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     /**
+     * Return the width of the border for the selected button, in pixels
+     *
+     * 0px value indicates no border is present
+     */
+    public int getSelectedBorderWidth() {
+        return selectedBorderWidth;
+    }
+
+    /**
+     * Return color of the border for the selected button
+     */
+    public int getSelectedBorderColor() {
+        return selectedBorderColor;
+    }
+
+    /**
+     * Return the border dash width for the selected button, in pixels
+     *
+     * 0px value indicates the border is solid
+     */
+    public int getSelectedBorderDashWidth() {
+        return selectedBorderDashWidth;
+    }
+
+    /**
+     * Return the border gap width for the selected button, in pixels
+     *
+     * Only relevant if border dash width is greater than 0px
+     */
+    public int getSelectedBorderDashGap() {
+        return selectedBorderDashGap;
+    }
+
+    /**
+     * Set the border for the selected button.
+     *
+     * @param width     Width of the border in pixels (default value is 0px or no border)
+     * @param color     Color of the border (default color is black)
+     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+     * @param dashGap   Width of the gap for border, in pixels.
+     */
+    public void setSelectedBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+        selectedBorderWidth = width;
+        selectedBorderColor = color;
+        selectedBorderDashWidth = dashWidth;
+        selectedBorderDashGap = dashGap;
+
+        // Loop through each button and set the selected button border
+        for (SegmentedButton button : buttons) {
+            button.setSelectedButtonBorder(width, color, dashWidth, dashGap);
+        }
+    }
+
+    /**
      * Returns the current corner radius for this button group, in pixels
      *
      * A value of 0px indicates the view is rectangular and has no rounded corners
@@ -973,6 +1034,30 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Invalidate shadow outline so that it will be updated to follow the new radius
         if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
             invalidateOutline();
+        }
+    }
+
+    /**
+     * Returns the current corner radius for the selected button, in pixels
+     *
+     * A value of 0px indicates the selected button will be rectangular and has no rounded corners
+     */
+    public int getSelectedButtonRadius() {
+        return selectedButtonRadius;
+    }
+
+    /**
+     * Sets the corner radius for the selected button
+     *
+     * @param selectedButtonRadius value of the new selected button corner radius, in pixels
+     */
+    public void setSelectedButtonRadius(int selectedButtonRadius) {
+        this.selectedButtonRadius = selectedButtonRadius;
+
+        // Update the selected button radius for each button
+        for (SegmentedButton button : buttons) {
+            button.setSelectedButtonRadius(selectedButtonRadius);
+            button.setupSelectedButtonClipPath();
         }
     }
 
@@ -1066,7 +1151,6 @@ public class SegmentedButtonGroup extends LinearLayout {
      * nearest button
      */
     public void setDraggable(final boolean draggable) {
-        // TODO Fix draggable bug where finger leaves button group, exit focus event?
         this.draggable = draggable;
     }
 

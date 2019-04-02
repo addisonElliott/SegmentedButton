@@ -4,17 +4,25 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader.TileMode;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -23,7 +31,6 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -43,6 +50,13 @@ public class SegmentedButton extends View {
     // region Variables & Constants
     private static final String TAG = "SegmentedButton";
 
+    // Bitmap used for creating bitmaps from the background & selected background drawables
+    private static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+
+    // Intrinsic size (width & height) to use for creating a Bitmap from a ColorDrawable
+    // A ColorDrawable has no intrinsic size on its own, so this size is used instead
+    private static final int COLORDRAWABLE_SIZE = 2;
+
     @IntDef(flag = true, value = {
             Gravity.LEFT,
             Gravity.RIGHT,
@@ -54,8 +68,10 @@ public class SegmentedButton extends View {
 
     // General purpose rectangle to prevent memory allocation in onDraw
     private RectF rectF;
+    // General purpose path to prevent memory allocation in onDraw
+    private Path path;
 
-    // Text paint variables contains paint info for unselected and selected text
+    // Text paint variable contains paint info for unselected and selected text
     private TextPaint textPaint;
     // Static layout used for positioning and drawing unselected and selected text
     private StaticLayout textStaticLayout;
@@ -69,8 +85,32 @@ public class SegmentedButton extends View {
     private Path backgroundClipPath;
     // Radius of the segmented button group used for creating background clip path
     private int backgroundRadius;
-    // Whether this button is on the left or right side of the segmented group, determines which side to round out
-    private boolean isLeftButton, isRightButton;
+    // The button directly to the left and right of this current button
+    // Preferably segmented buttons shouldn't NEED to know about the buttons beside it, but there is a special case
+    // where its required
+    // In addition, this is used to determine whether this button is the left-most or right-most in the group so the
+    // correct side can be rounded out (if a background radius is specified)
+    private SegmentedButton leftButton, rightButton;
+
+    // Paint objects used for drawing the background and selected background drawables with rounded corners if desired
+    // The background paint object will only be used if a drawable is present and the background radius is greater
+    // than 0 (meaning there is rounded corners). Similarly, for the selected background, if a drawable is present
+    // and the background radius is greater than 0 OR there is a selected button radius.
+    // Paint objects will contain a BitmapShader that is linked to a Bitmap created from the respective drawables
+    //
+    // Note: The BitmapShader approach is used rather than Canvas.clipPath because antialiasing is supported in the
+    // former but not the latter
+    private Paint backgroundPaint;
+    private Paint selectedBackgroundPaint;
+
+    // Radius of the selected button used for creating a rounded selected button
+    private int selectedButtonRadius;
+    // Corner radii for the selected button, this contains 8x values all set to selectedButtonRadius
+    // This is used to prevent allocation in the onDraw method
+    private float[] selectedButtonRadii;
+
+    // Paint information for how the border should be drawn for the selected button, null indicates no border
+    private Paint selectedButtonBorderPaint;
 
     // Horizontal relative clip position from 0.0f to 1.0f.
     // Value is scaled by the width of this view to get the actual clip X coordinate
@@ -161,11 +201,14 @@ public class SegmentedButton extends View {
         // Setup background clip path parameters
         // This should be changed before onDraw is ever called but they are initialized to be safe
         backgroundRadius = 0;
-        isLeftButton = false;
-        isRightButton = false;
+        leftButton = null;
+        rightButton = null;
 
         // Create general purpose rectangle, prevents memory allocation during onDraw
         rectF = new RectF();
+
+        // Create general purpose path, prevents memory allocation during onDraw
+        path = new Path();
 
         // Required in order for this button to 'consume' the ripple touch event
         setClickable(true);
@@ -370,11 +413,11 @@ public class SegmentedButton extends View {
     protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        // Recalculate the background clip path since width & height have changed
-        setupBackgroundClipPath();
-
         // Calculate new positions and bounds for text & drawable
         updateSize();
+
+        // Recalculate the background clip path since width & height have changed
+        setupBackgroundClipPath();
     }
 
     /**
@@ -508,15 +551,20 @@ public class SegmentedButton extends View {
         final int width = getWidth();
         final int height = getHeight();
 
-        // Apply background clip path if available
-        // This will clip the button to the parent segmented group in case there is a radius for rounding the corners
-        if (backgroundClipPath != null) {
-            canvas.clipPath(backgroundClipPath);
-        }
-
         // Draw background (unselected)
         if (backgroundDrawable != null) {
-            backgroundDrawable.draw(canvas);
+            // Draw the background with rounded corners if the background clip path and background paint objet are
+            // non-null. The background clip path will be present if the background has rounded corners. See
+            // setupBackgroundClipPath for more details. Ideally the backgroundPaint object will always be present
+            // when backgroundClipPath is present but there are select cases when the bitmap cannot be generated from
+            // the drawable because of unknown bounds on program start.
+            //
+            // Otherwise, the background is drawn normally via the drawable with no rounded corners
+            if (backgroundClipPath != null && backgroundPaint != null) {
+                canvas.drawPath(backgroundClipPath, backgroundPaint);
+            } else {
+                backgroundDrawable.draw(canvas);
+            }
         }
 
         // Draw text (unselected)
@@ -537,17 +585,70 @@ public class SegmentedButton extends View {
         // Begin drawing selected button view
         canvas.save();
 
-        // Clip canvas for drawing the selected button view
+        // Clip canvas for drawing selected button items
+        // The relativeClipPosition and isClippingLeft is used to clip part of the selected button view to allow for
+        // smooth animation between one button to the next
+        //
+        // If isClippingLeft is true, then the left side of the selected button is being clipped (i.e. shown) and the
+        // right side is hidden. If isClippingLeft is false, then the right side of the selected button is being
+        // clipped and the left side is hidden.
+        //
+        // The amount of the left or right side being shown is based on the relativeClippingPosition, a value from
+        // 0.0f to 1.0f representing the relative position on the button.
         if (isClippingLeft) {
-            // If clipping from left, go from 0.0f -> relativeClipPosition * width horizontally
-            canvas.clipRect(0.0f, 0.0f, relativeClipPosition * width, height);
+            // If clipping the left, then relativeClipPosition * width represents the right side of the selected
+            // button that is shown/clipped.
+            //
+            // The left side of the clip rectangle is set to be the relative clip position minus 1.0f times the width
+            // of the button directly to the left of this button. This will be a negative value (relativeClipPosition
+            // ranges from 0.0f to 1.0f, so subtracting 1.0f will make it range from -1.0f to 0.0f) and is scaled by
+            // the button width directly to the left of this button. The width of this button may not be the same as
+            // the one to the left so this is necessary.
+            //
+            // The reason the left side is set to a negative value as opposed to just 0.0f is because it is necessary
+            // for a smooth animation when the selected button has rounded corners (i.e. selectedButtonRadius > 0).
+            // Without the negative left clip side, the rounded corners will not smoothly transition from the button
+            // to the left to this button.
+            //
+            // For the left-most button, the left button width is set to be the width of this button because it
+            // doesn't matter.
+            final float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
+            rectF.set((relativeClipPosition - 1.0f) * leftButtonWidth, 0.0f, relativeClipPosition * width, height);
         } else {
-            // If clipping from right, go from relativeClipPosition * width -> 1.0f horizontally
-            canvas.clipRect(relativeClipPosition * width, 0.0f, width, height);
+            // Otherwise, if clipping the right, then the relativeClipPosition * width represents the left side of
+            // the selected button that is shown/clipped.
+            //
+            // The right side of the clip rectangle is set to be the width plus the relativeClipPosition times the
+            // width of the button directly to the right of this button. Note that the width of the button to the
+            // right may not be the same as the width of this button.
+            //
+            // The reason the right side is set to a value greater than the width as opposed to just the width itself
+            // is because it is necessary for a smooth animation when the selected button has rounded corners (i.e.
+            // selectedButtonRadius > 0). Without the correct right clip side, the rounded corners will not smoothly
+            // transition from the button to the right to this button.
+            final float rightButtonWidth = isRightButton() ? width : rightButton.getWidth();
+            rectF.set(relativeClipPosition * width, 0.0f, width + relativeClipPosition * rightButtonWidth, height);
         }
 
+        // Clip canvas for drawing the selected button view
+        // Allows for smooth animation between one button to the next
+        canvas.clipRect(rectF);
+
         // Draw background (selected)
-        if (selectedBackgroundDrawable != null) {
+        //
+        // Draw the selected background with rounded corners in two cases:
+        //      1. Selected button has rounded corners (i.e. selectedButtonRadius > 0)
+        //      2. Background has a radius (i.e. backgroundRadius > 0)
+        // In these two cases, the background is drawn using a BitmapShader contained in the background paint object/
+        // Otherwise, the background is drawn normally via the drawable with no rounded corners.
+        if (selectedButtonRadius > 0 && selectedBackgroundPaint != null) {
+            path.reset();
+            path.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+
+            canvas.drawPath(path, selectedBackgroundPaint);
+        } else if (backgroundClipPath != null && selectedBackgroundPaint != null) {
+            canvas.drawPath(backgroundClipPath, selectedBackgroundPaint);
+        } else if (selectedBackgroundDrawable != null) {
             selectedBackgroundDrawable.draw(canvas);
         }
 
@@ -570,7 +671,37 @@ public class SegmentedButton extends View {
             drawable.draw(canvas);
         }
 
+        // Draw a border around the selected button
+        if (selectedButtonBorderPaint != null) {
+            // Get the border width from the paint information and divide by 2
+            // Remember that rectF is the rectangle that was setup for the appropriate clip path above
+            // Note that this rectangle should NOT be touched after the clip path is set otherwise the border drawn
+            // will be incorrect.
+            //
+            // The rectangle is inset by half of the border width because the border width is centered about the
+            // rectangle bounds resulting in half of the border being cut off since it is outside the clip path. In
+            // addition, the inset is reduced by half a pixel (0.5f) to ensure there is no antialiasing bleed through
+            // around the edge of the border.
+            final float halfBorderWidth = selectedButtonBorderPaint.getStrokeWidth() / 2.0f;
+            rectF.inset(halfBorderWidth - 0.5f, halfBorderWidth - 0.5f);
+
+            // Note: A path is used here rather than canvas.drawRoundRect because there was odd behavior on API 19
+            // and particular devices where the border radius did not match the background radius.
+            path.reset();
+            path.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
+
+            canvas.drawPath(path, selectedButtonBorderPaint);
+        }
+
         canvas.restore();
+
+        canvas.save();
+
+        // Clip to the background clip path if available
+        // This is used so the ripple effect will stop at the rounded corners of the background
+        if (backgroundClipPath != null) {
+            canvas.clipPath(backgroundClipPath);
+        }
 
         // Draw ripple drawable to show ripple effect on click
         if (rippleDrawableLollipop != null) {
@@ -581,6 +712,8 @@ public class SegmentedButton extends View {
         if (rippleDrawable != null) {
             rippleDrawable.draw(canvas);
         }
+
+        canvas.restore();
     }
 
     /**
@@ -719,13 +852,13 @@ public class SegmentedButton extends View {
     /**
      * Set the background radius of the corners of the parent button group in order to round edges
      *
-     * If isLeftButton is true, this radius will be used to clip the bottom-left and top-left corners.
-     * If isRightButton is true, this radius will be used to clip the bottom-right and top-right corners.
+     * If isLeftButton() is true, this radius will be used to clip the bottom-left and top-left corners.
+     * If isRightButton() is true, this radius will be used to clip the bottom-right and top-right corners.
      * If both are true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, left button,
+     * right button & width/height are completed.
      *
      * @param backgroundRadius radius of corners of parent button group in pixels
      */
@@ -734,41 +867,80 @@ public class SegmentedButton extends View {
     }
 
     /**
-     * Set whether or not this button is the left-most button in the group
+     * Returns whether this button is the left-most button in the group
      *
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
+     * This is determined based on whether the rightButton variable is null
      */
-    @SuppressWarnings("SameParameterValue")
-    void setIsLeftButton(boolean isLeftButton) {
-        this.isLeftButton = isLeftButton;
+    private boolean isLeftButton() {
+        return leftButton == null;
     }
 
     /**
-     * Set whether or not this button is the right-most button in the group
+     * Returns whether this button is the right-most button in the group
      *
-     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, isLeftButton,
-     * isRightButton & width/height are completed.
+     * This is determined based on whether the rightButton variable is null
      */
-    void setIsRightButton(boolean isRightButton) {
-        this.isRightButton = isRightButton;
+    private boolean isRightButton() {
+        return rightButton == null;
+    }
+
+    /**
+     * Sets the button directly to the left of this button. Set to null to indicate that this is the left-most button
+     * in the group
+     *
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius,
+     * leftButton, rightButton & width/height are completed.
+     */
+    @SuppressWarnings("SameParameterValue")
+    void setLeftButton(SegmentedButton leftButton) {
+        this.leftButton = leftButton;
+    }
+
+    /**
+     * Sets the button directly to the right of this button. Set to null to indicate that this is the right-most button
+     * in the group
+     *
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, leftButton,
+     * rightButton & width/height are completed.
+     */
+    @SuppressWarnings("SameParameterValue")
+    void setRightButton(SegmentedButton rightButton) {
+        this.rightButton = rightButton;
+    }
+
+    /**
+     * Set the radius of the selected button
+     *
+     * This will round out the selected button or the part shown in this button during animation based on this radius
+     * value.
+     *
+     * @param selectedButtonRadius radius of corners for selected button in pixels
+     */
+    void setSelectedButtonRadius(int selectedButtonRadius) {
+        this.selectedButtonRadius = selectedButtonRadius;
     }
 
     /**
      * Setup the background clip path in order to round the edges of this button
      *
-     * If isLeftButton is true, this radius will be used to clip the bottom-left and top-left corners.
-     * If isRightButton is true, this radius will be used to clip the bottom-right and top-right corners.
+     * If isLeftButton() is true, this radius will be used to clip the bottom-left and top-left corners.
+     * If isRightButton() is true, this radius will be used to clip the bottom-right and top-right corners.
      * If both are true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
      * This function should be called when the size of the button changes, if the background radius changes and/or if
-     * the isLeftButton or isRightButton boolean values change.
+     * the isLeftButton() or isRightButton() boolean values change.
+     *
+     * Note that this function internally calls setupBackgroundBitmaps() because a change in the clip path will
+     * require updating the bitmaps
      */
     void setupBackgroundClipPath() {
         // If there is no background radius then skip
         if (backgroundRadius == 0) {
             backgroundClipPath = null;
+
+            // Update background bitmaps
+            setupBackgroundBitmaps();
             return;
         }
 
@@ -778,16 +950,16 @@ public class SegmentedButton extends View {
         // Background radius, shorthand variable to make code cleaner
         final float br = backgroundRadius;
 
-        if (isLeftButton && isRightButton) {
+        if (isLeftButton() && isRightButton()) {
             // Add radius on all sides, left & right
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF,
                     new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
-        } else if (isLeftButton) {
+        } else if (isLeftButton()) {
             // Add radius on left side only
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF, new float[]{br, br, 0, 0, 0, 0, br, br}, Direction.CW);
-        } else if (isRightButton) {
+        } else if (isRightButton()) {
             // Add radius on right side only
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF, new float[]{0, 0, br, br, br, br, 0, 0}, Direction.CW);
@@ -799,12 +971,109 @@ public class SegmentedButton extends View {
         // right-most buttons) is not supported with hardware acceleration until API 18
         // Thus, switch to software acceleration if the background clip path is not null (meaning the edges are
         // rounded) and the current version is less than 18
-        // Otherwise, switch to hardware acceleration
         if (backgroundClipPath != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
             setLayerType(LAYER_TYPE_SOFTWARE, null);
-        } else {
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
         }
+
+        // Update background bitmaps
+        setupBackgroundBitmaps();
+    }
+
+    /**
+     * Setup the background paint objects so that the background & selected background drawable can be rendered with
+     * rounded corners using a bitmap shader
+     *
+     * This function is called by setupBackgroundClipPath since the background clip determines whether the button has
+     * rounded corners. In addition, this function should be called when the drawable or selected drawable changes,
+     * the selected button radius changes, or the size of either drawable changes.
+     */
+    void setupBackgroundBitmaps() {
+        Bitmap bitmap;
+
+        // Setup background paint object to render background using a bitmap shader approach under three conditions:
+        //      1. Background has rounded corners
+        //      2. There is a background drawable
+        //      3. Able to successfully create bitmap from drawable
+        if (backgroundClipPath != null && backgroundDrawable != null
+                && (bitmap = getBitmapFromDrawable(backgroundDrawable)) != null) {
+            final BitmapShader backgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP);
+
+            backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            backgroundPaint.setShader(backgroundBitmapShader);
+        } else {
+            backgroundPaint = null;
+        }
+
+        // Setup selected background paint object to render background using a bitmap shader approach under three
+        // conditions:
+        //      1. Background has rounded corners OR selected button has rounded corners
+        //      2. There is a background drawable
+        //      3. Able to successfully create bitmap from drawable
+        if ((backgroundClipPath != null || selectedButtonRadius > 0) && selectedBackgroundDrawable != null
+                && (bitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null) {
+            final BitmapShader selectedBackgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP,
+                    TileMode.CLAMP);
+
+            selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
+        } else {
+            selectedBackgroundPaint = null;
+        }
+    }
+
+    /**
+     * Setup the selected button clip path to round the corners of the selected button
+     *
+     * This function should be called if the selected button radius is changed
+     */
+    void setupSelectedButtonClipPath() {
+        // Setup selected button radii
+        // Object allocated here rather than in onDraw to increase performance
+        selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+                selectedButtonRadius};
+
+        if (selectedButtonRadius > 0) {
+            // Canvas.clipPath, used in onDraw for drawing the selected button clip path is not supported with
+            // hardware acceleration until API 18. Thus, this switches to software acceleration if current Android
+            // API version is less than 18.
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                setLayerType(LAYER_TYPE_SOFTWARE, null);
+            }
+        }
+
+        // Update background bitmaps
+        setupBackgroundBitmaps();
+
+        invalidate();
+    }
+
+    /**
+     * Set the border for the selected button
+     *
+     * @param width     Width of the border in pixels (default value is 0px or no border)
+     * @param color     Color of the border (default color is black)
+     * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
+     * @param dashGap   Width of the gap for border, in pixels.
+     */
+    void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+        if (width > 0) {
+            // Allocate Paint object for drawing border here
+            // Used in onDraw to draw the border around the selected button
+            selectedButtonBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            selectedButtonBorderPaint.setStyle(Paint.Style.STROKE);
+            selectedButtonBorderPaint.setStrokeWidth(width);
+            selectedButtonBorderPaint.setColor(color);
+
+            if (dashWidth > 0.0f) {
+                selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[]{dashWidth, dashGap}, 0));
+            }
+        } else {
+            // If the width is 0, then disable drawing border
+            selectedButtonBorderPaint = null;
+        }
+
+        invalidate();
     }
 
     /**
@@ -864,6 +1133,9 @@ public class SegmentedButton extends View {
         backgroundDrawable = drawable;
         backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
+        // Setup the background bitmaps again since background drawable has changed
+        setupBackgroundBitmaps();
+
         invalidate();
     }
 
@@ -882,6 +1154,9 @@ public class SegmentedButton extends View {
             backgroundDrawable = new ColorDrawable(color);
             backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
+
+        // Setup the background bitmaps again since background drawable has changed
+        setupBackgroundBitmaps();
 
         invalidate();
     }
@@ -919,6 +1194,9 @@ public class SegmentedButton extends View {
         selectedBackgroundDrawable = drawable;
         selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
+        // Setup the background bitmaps again since background drawable has changed
+        setupBackgroundBitmaps();
+
         invalidate();
     }
 
@@ -937,6 +1215,9 @@ public class SegmentedButton extends View {
             selectedBackgroundDrawable = new ColorDrawable(color);
             selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
+
+        // Setup the background bitmaps again since background drawable has changed
+        setupBackgroundBitmaps();
 
         invalidate();
     }
@@ -1404,6 +1685,72 @@ public class SegmentedButton extends View {
         // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
         // change but the positions still need to be recalculated
         updateSize();
+    }
+
+    // endregion
+
+    // region Helper functions
+
+    /**
+     * Create a bitmap from a specified drawable
+     *
+     * Note that if the size of the drawable changes, then the bitmap will need to be changed.
+     *
+     * @param drawable drawable to convert to a bitmap
+     */
+    private static Bitmap getBitmapFromDrawable(@Nullable Drawable drawable) {
+        if (drawable == null) {
+            return null;
+        }
+
+        // Return bitmap if drawable is BitmapDrawable
+        if (drawable instanceof BitmapDrawable) {
+            return ((BitmapDrawable) drawable).getBitmap();
+        }
+
+        try {
+            Bitmap bitmap;
+
+            if (drawable instanceof ColorDrawable) {
+                // Create a bitmap of fixed size for ColorDrawable since it inherently has no size
+                // Ideally, this size can be small because the bitmap can be stretched to fit any width/height
+                // without loss of quality
+                bitmap = Bitmap.createBitmap(COLORDRAWABLE_SIZE, COLORDRAWABLE_SIZE, BITMAP_CONFIG);
+            } else if (drawable instanceof GradientDrawable) {
+                // GradientDrawable ALSO doesn't have a inherent size
+                // However, the size of the bitmap used to represent the GradientDrawable should be the size of the
+                // bounds.
+                // A small fixed size here would result in a pixelated bitmap being drawn
+                // Return null if bounds are 0, this occurs if function is called before button is laid out
+                final Rect bounds = drawable.getBounds();
+
+                if (bounds.width() > 0 && bounds.height() > 0) {
+                    bitmap = Bitmap.createBitmap(bounds.width(), bounds.height(), BITMAP_CONFIG);
+                } else {
+                    return null;
+                }
+            } else {
+                // Otherwise, create bitmap based on intrinsic size of the drawable
+                bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
+                        BITMAP_CONFIG);
+            }
+
+            // Create canvas using bitmap
+            Canvas canvas = new Canvas(bitmap);
+
+            // Draw the drawable on the canvas
+            // Save the bounds before hand and reset the drawable bounds afterwards
+            final Rect bounds = new Rect(drawable.getBounds());
+            drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+            drawable.draw(canvas);
+            drawable.setBounds(bounds);
+
+            return bitmap;
+        } catch (Exception e) {
+            // There was an unexpected problem, print out the stack track
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // endregion

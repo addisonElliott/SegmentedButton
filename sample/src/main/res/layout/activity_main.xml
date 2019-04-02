@@ -474,9 +474,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:padding="8dp"
                 app:drawableGravity="right"
                 app:drawablePadding="8dp"
-                android:padding="8dp"
                 app:drawableTint="@color/white"
                 app:selectedDrawableTint="@color/black"
                 app:text="Left" />
@@ -576,6 +576,57 @@
                 android:paddingBottom="6dp"
                 android:paddingTop="6dp"
                 app:drawable="@drawable/ic_b11" />
+
+        </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
+
+        <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
+            android:id="@+id/buttonGroup_roundSelectedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:elevation="2dp"
+            app:background="@color/white"
+            app:position="0"
+            app:radius="30dp"
+            app:rippleColor="@color/black"
+            app:selectedBackground="@color/blue_500"
+            app:selectedBorderColor="#555555"
+            app:selectedBorderWidth="2dp"
+            app:selectedButtonRadius="30dp"
+            app:selectionAnimationDuration="1000">
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-light"
+                android:padding="8dp"
+                app:selectedTextColor="@color/white"
+                app:text="Yes"
+                app:textColor="@color/black"
+                app:textSize="24sp" />
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-light"
+                android:padding="8dp"
+                app:selectedTextColor="@color/white"
+                app:text="Maybe"
+                app:textColor="@color/black"
+                app:textSize="24sp" />
+
+            <com.addisonelliott.segmentedbutton.SegmentedButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="sans-serif-light"
+                android:padding="8dp"
+                app:selectedTextColor="@color/white"
+                app:text="No"
+                app:textColor="@color/black"
+                app:textSize="24sp" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     </LinearLayout>
