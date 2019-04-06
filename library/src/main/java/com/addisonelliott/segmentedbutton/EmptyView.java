@@ -1,9 +1,9 @@
 package com.addisonelliott.segmentedbutton;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
-import androidx.annotation.Nullable;
 
 /**
  * Empty, transparent view useful as a "dummy" or filler view

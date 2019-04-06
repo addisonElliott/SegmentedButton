@@ -56,8 +56,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
 
-    implementation "androidx.appcompat:appcompat:$androidXLibraryVersion"
-    implementation "androidx.interpolator:interpolator:1.0.0"
-    implementation "androidx.core:core:1.0.1"
+    implementation "com.android.support:interpolator:28.0.0"
+    implementation "com.android.support:support-compat:28.0.0"
     implementation 'com.github.addisonElliott:RippleDrawable:2.0.2'
 }
