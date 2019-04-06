@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 
-group='com.github.addisonelliott'
+group = 'com.github.addisonelliott'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -58,5 +58,5 @@ dependencies {
 
     implementation "com.android.support:interpolator:28.0.0"
     implementation "com.android.support:support-compat:28.0.0"
-    implementation 'com.github.addisonElliott:RippleDrawable:2.0.2'
+    implementation 'com.github.addisonElliott:RippleDrawable:support'
 }
