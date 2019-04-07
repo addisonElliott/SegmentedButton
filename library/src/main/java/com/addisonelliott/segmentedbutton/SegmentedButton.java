@@ -40,6 +40,7 @@ import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
+import codetail.graphics.drawables.DrawableHotspotTouch;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -794,11 +795,6 @@ public class SegmentedButton extends View {
         if (rippleDrawableLollipop != null) {
             rippleDrawableLollipop.setHotspot(x, y);
         }
-
-        // Update the hotspot for the ripple drawable
-        if (rippleDrawable != null) {
-            rippleDrawable.setHotspot(x, y);
-        }
     }
 
     /**
@@ -1286,6 +1282,8 @@ public class SegmentedButton extends View {
             // animation
             rippleDrawable.setCallback(this);
             rippleDrawable.setBounds(0, 0, getWidth(), getHeight());
+
+            setOnTouchListener(new DrawableHotspotTouch(rippleDrawable));
 
             // Disable/nullify the lollipop RippleDrawable
             rippleDrawableLollipop = null;
