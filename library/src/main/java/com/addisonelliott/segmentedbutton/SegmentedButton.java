@@ -40,6 +40,7 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import codetail.graphics.drawables.DrawableHotspotTouch;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
