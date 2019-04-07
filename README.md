@@ -48,7 +48,27 @@ and:
 
 ```gradle
 dependencies {
-    compile 'com.github.addisonelliott:SegmentedButton:3.0.0'
+    implementation 'com.github.addisonelliott:SegmentedButton:$LATEST_VERSION'
+}
+```
+
+**Note:** The `$LATEST_VERSION` string should be replaced with the latest version. The available versions can be found
+here: https://jitpack.io/#addisonElliott/SegmentedButton
+
+This library uses the AndroidX packages rather than the older Android support libraries. Periodic releases with the
+Android support library will be released based on user demand with the version appended with `-support` (e.g. `3.1
+.2-support` for `$LATEST_VERSION`). It is strongly recommended to upgrade your project to AndroidX to obtain the latest
+features & bug fixes.
+
+Java 8 is required to use this library. This can be done by adding the following code to `build.gradle` while using the
+Android plugin with a version of `3.0.0` or higher.
+
+```
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 ```
 
