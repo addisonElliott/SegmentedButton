@@ -125,6 +125,9 @@ public class SegmentedButton extends View {
     // Drawable for the background when selected, this will be a ColorDrawable in the case a solid color is given
     private Drawable selectedBackgroundDrawable;
 
+    // Should button have rounded corners regardless of position
+    private boolean isRounded;
+
     // Color of the ripple to display over the button (default value is gray)
     private int rippleColor;
 
@@ -231,6 +234,8 @@ public class SegmentedButton extends View {
         if (ta.hasValue(R.styleable.SegmentedButton_selectedBackground)) {
             selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_selectedBackground);
         }
+
+        isRounded = ta.getBoolean(R.styleable.SegmentedButton_rounded, false);
 
         // Parse ripple color value and update the ripple
         setRipple(ta.getColor(R.styleable.SegmentedButton_rippleColor, Color.GRAY));
@@ -946,7 +951,7 @@ public class SegmentedButton extends View {
         // Background radius, shorthand variable to make code cleaner
         final float br = backgroundRadius;
 
-        if (isLeftButton() && isRightButton()) {
+        if (isRounded || (isLeftButton() && isRightButton())) {
             // Add radius on all sides, left & right
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF,
