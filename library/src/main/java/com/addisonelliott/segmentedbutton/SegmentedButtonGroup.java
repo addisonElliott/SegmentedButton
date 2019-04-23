@@ -443,20 +443,20 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     int getButtonPositionFromX(float x) {
         // Loop through each button
-        for (int i = 0; i < buttons.size(); ++i) {
+        int i = 0;
+        for (; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
 
             // If x value is less than the right-hand side of the button, this is the selected button
             // Note: No need to check the left side of button because we assume each button is directly connected
             // from left to right
             if (x <= button.getRight()) {
-                return i;
+                break;
             }
         }
 
-        // No reason it should ever reach this part
-        throw new IllegalStateException(String.format("X position does not have a button in getButtonPositionFromX "
-                + "(X = %f)", x));
+        // Return last button if x value is out of bounds
+        return i;
     }
 
     /**
@@ -475,7 +475,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     float getButtonPositionFromXF(float x) {
         // Loop through each button
-        for (int i = 0; i < buttons.size(); ++i) {
+        int i = 0;
+        for (; i < buttons.size(); ++i) {
             final SegmentedButton button = buttons.get(i);
 
             // If x value is less than the right-hand side of the button, this is the selected button
@@ -486,9 +487,8 @@ public class SegmentedButtonGroup extends LinearLayout {
             }
         }
 
-        // No reason it should ever reach this part
-        throw new IllegalStateException(String.format("X position does not have a button in getButtonPositionFromXF "
-                + "(X = %f)", x));
+        // Return last button if x value is out of bounds
+        return (float) i;
     }
 
     /**
