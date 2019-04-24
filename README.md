@@ -181,6 +181,7 @@ segmentedButtonGroup.getPosition();
 | ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
 | android:background              | `drawable\|color` | Set background for button when unselected                                    |
 | app:selectedBackground          | `drawable\|color` | Set background for button when selected                                      |
+| app:rounded                     | `boolean`         | Whether or not the button is rounded                                         |
 | app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
 | app:drawable                    | `drawable`        | Drawable to display                                                          |
 | app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |
