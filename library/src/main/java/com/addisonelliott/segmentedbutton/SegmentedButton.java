@@ -125,6 +125,9 @@ public class SegmentedButton extends View {
     // Drawable for the background when selected, this will be a ColorDrawable in the case a solid color is given
     private Drawable selectedBackgroundDrawable;
 
+    // Should button have rounded corners regardless of position
+    private boolean rounded;
+
     // Color of the ripple to display over the button (default value is gray)
     private int rippleColor;
 
@@ -231,6 +234,8 @@ public class SegmentedButton extends View {
         if (ta.hasValue(R.styleable.SegmentedButton_selectedBackground)) {
             selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_selectedBackground);
         }
+
+        rounded = ta.getBoolean(R.styleable.SegmentedButton_rounded, false);
 
         // Parse ripple color value and update the ripple
         setRipple(ta.getColor(R.styleable.SegmentedButton_rippleColor, Color.GRAY));
@@ -854,7 +859,7 @@ public class SegmentedButton extends View {
      * If none are set, no corners are rounded and this parameter is not used.
      *
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius, left button,
-     * right button & width/height are completed.
+     * right button, rounded & width/height are completed.
      *
      * @param backgroundRadius radius of corners of parent button group in pixels
      */
@@ -885,7 +890,7 @@ public class SegmentedButton extends View {
      * in the group
      *
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius,
-     * leftButton, rightButton & width/height are completed.
+     * leftButton, rightButton, rounded & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
     void setLeftButton(SegmentedButton leftButton) {
@@ -897,11 +902,28 @@ public class SegmentedButton extends View {
      * in the group
      *
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius, leftButton,
-     * rightButton & width/height are completed.
+     * rightButton, rounded & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
     void setRightButton(SegmentedButton rightButton) {
         this.rightButton = rightButton;
+    }
+
+    /**
+     * Returns whether this button is rounded
+     */
+    public boolean isRounded() {
+        return rounded;
+    }
+
+    /**
+     * Sets whether button is rounded regardless of its position in group
+     *
+     * Note: You must manually call setupBackgroundClipPath after all changes to background radius, leftButton,
+     * rightButton, rounded & width/height are completed.
+     */
+    public void setRounded(boolean rounded) {
+        this.rounded = rounded;
     }
 
     /**
@@ -921,7 +943,7 @@ public class SegmentedButton extends View {
      *
      * If isLeftButton() is true, this radius will be used to clip the bottom-left and top-left corners.
      * If isRightButton() is true, this radius will be used to clip the bottom-right and top-right corners.
-     * If both are true, then all corners will be rounded with the radius.
+     * If both are true or isRounded() is true, then all corners will be rounded with the radius.
      * If none are set, no corners are rounded and this parameter is not used.
      *
      * This function should be called when the size of the button changes, if the background radius changes and/or if
@@ -946,7 +968,7 @@ public class SegmentedButton extends View {
         // Background radius, shorthand variable to make code cleaner
         final float br = backgroundRadius;
 
-        if (isLeftButton() && isRightButton()) {
+        if (isRounded() || (isLeftButton() && isRightButton())) {
             // Add radius on all sides, left & right
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF,
