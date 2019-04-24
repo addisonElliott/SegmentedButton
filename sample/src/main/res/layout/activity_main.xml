@@ -655,7 +655,7 @@
                 app:selectedTextColor="@color/white"
                 app:text="Button"
                 app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:textSize="20sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
@@ -665,7 +665,7 @@
                 app:selectedTextColor="@color/white"
                 app:text="Button 2"
                 app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:textSize="20sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
@@ -675,7 +675,7 @@
                 app:selectedTextColor="@color/white"
                 app:text="Button 3"
                 app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:textSize="20sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
@@ -685,7 +685,7 @@
                 app:selectedTextColor="@color/white"
                 app:text="Button 4"
                 app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:textSize="20sp" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     </LinearLayout>
