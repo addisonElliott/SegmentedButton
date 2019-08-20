@@ -20,17 +20,17 @@ This project is originally forked from [ceryle/SegmentedButton](https://github.c
 
 ## Preview
 
-![1](https://www.addisonelliott.net/SegmentedButtonImages/Gradient.gif)
-![2](https://www.addisonelliott.net/SegmentedButtonImages/LordOfTheRings.gif)
-![3](https://www.addisonelliott.net/SegmentedButtonImages/DCSuperheros.gif)
-![4](https://www.addisonelliott.net/SegmentedButtonImages/MarvelSuperheros.gif)
-![5](https://www.addisonelliott.net/SegmentedButtonImages/Guys.gif)
-![6](https://www.addisonelliott.net/SegmentedButtonImages/StarWars.gif)
-![7](https://www.addisonelliott.net/SegmentedButtonImages/DarthVader.gif)
-![8](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybe.gif)
-![9](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybeRound.gif)
-![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)
-![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)
+[![1](https://www.addisonelliott.net/SegmentedButtonImages/Gradient.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L26)
+[![2](https://www.addisonelliott.net/SegmentedButtonImages/LordOfTheRings.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L91)
+[![3](https://www.addisonelliott.net/SegmentedButtonImages/DCSuperheros.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L147)
+[![4](https://www.addisonelliott.net/SegmentedButtonImages/MarvelSuperheros.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L216)
+[![5](https://www.addisonelliott.net/SegmentedButtonImages/Guys.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L253)
+[![6](https://www.addisonelliott.net/SegmentedButtonImages/StarWars.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L285)
+[![7](https://www.addisonelliott.net/SegmentedButtonImages/DarthVader.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L334)
+[![8](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybe.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L399)
+[![9](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybeRound.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L583)
+[![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L459)
+[![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L498)
 
 ## Installation
 
