@@ -183,8 +183,7 @@ Check out the [sample project](https://github.com/addisonElliott/SegmentedButton
 | ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
 | android:background              | `drawable\|color` | Set background for button when unselected (default: transparent)             |
 | app:selectedBackground          | `drawable\|color` | Set background for button when selected (default: transparent)               |
-| app:rounded                     | `boolean`         | Whether or not the button is rounded. Note: This is used to round **BOTH** 
-sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
+| app:rounded                     | `boolean`         | Whether or not the button is rounded. Note: This is used to round **BOTH** sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
 | app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
 | app:drawable                    | `drawable`        | Drawable to display                                                          |
 | app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |
@@ -192,8 +191,7 @@ sides of a button. The typical use case is for rounded buttons with a transparen
 | app:selectedDrawableTint        | `color`           | Tint color for drawable when selected                                        |
 | app:drawableWidth               | `dimension`       | Width of drawable (default uses intrinsic)                                   |
 | app:drawableHeight              | `dimension`       | Height of drawable (default uses intrinsic)                                  |
-| app:drawableGravity             | `enum`            | Determines where drawable should be placed in relation to the text. Valid 
-options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                                                     |
+| app:drawableGravity             | `enum`            | Determines where drawable should be placed in relation to the text. Valid options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                                                     |
 | app:text                        | `string`          | Text to display on button                                                    |
 | app:textColor                   | `color`           | Color of text when button is unselected                                      |
 | app:selectedTextColor           | `color`           | Color of text when button is selected                                        |
