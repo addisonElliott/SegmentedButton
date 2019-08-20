@@ -183,7 +183,7 @@ Check out the [sample project](https://github.com/addisonElliott/SegmentedButton
 | ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
 | android:background              | `drawable\|color` | Set background for button when unselected (default: transparent)             |
 | app:selectedBackground          | `drawable\|color` | Set background for button when selected (default: transparent)               |
-| app:rounded                     | `boolean`         | Whether or not the button is rounded. Note: This is used to round **BOTH** sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
+| app:rounded                     | `boolean`         | Whether or not the button is rounded. **Note:** This is used to round **BOTH** sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
 | app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
 | app:drawable                    | `drawable`        | Drawable to display                                                          |
 | app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |
