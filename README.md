@@ -63,11 +63,11 @@ latest features & bug fixes.
 **Note:** Java 8 is required to use this library. This can be done by adding the following code to `build.gradle` while
 using the Android plugin with a version of `3.0.0` or higher.
 
-```
+```gradle
 android {
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility '1.8'
+        targetCompatibility '1.8'
     }
 }
 ```
@@ -146,14 +146,16 @@ segmentedButtonGroup.setOnPositionChangedListener(new OnPositionChangedListener(
 segmentedButtonGroup.getPosition();
 ```
 
+Check out the [sample project](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml) for additional examples
+
 ## Attributes
 
 ### SegmentedButtonGroup
 
 | Attribute                          | Format            | Description                                                                |
 | ---------------------------------- | ----------------- | -------------------------------------------------------------------------- |
-| android:background                 | `drawable\|color` | Set background for every button when unselected                            |
-| app:selectedBackground             | `drawable\|color` | Set background for every button when selected                              |
+| android:background                 | `drawable\|color` | Set background for every button when unselected (default: transparent)     |
+| app:selectedBackground             | `drawable\|color` | Set background for every button when selected (default: transparent)       |
 | app:borderWidth                    | `dimension`       | Width of border around button group                                        |
 | app:borderColor                    | `color`           | Color of border                                                            |
 | app:borderDashWidth                | `dimension`       | Width of dashes, 0 indicates solid line                                    |
@@ -179,9 +181,10 @@ segmentedButtonGroup.getPosition();
 
 | Option Name                     | Format            | Description                                                                  |
 | ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
-| android:background              | `drawable\|color` | Set background for button when unselected                                    |
-| app:selectedBackground          | `drawable\|color` | Set background for button when selected                                      |
-| app:rounded                     | `boolean`         | Whether or not the button is rounded                                         |
+| android:background              | `drawable\|color` | Set background for button when unselected (default: transparent)             |
+| app:selectedBackground          | `drawable\|color` | Set background for button when selected (default: transparent)               |
+| app:rounded                     | `boolean`         | Whether or not the button is rounded. Note: This is used to round **BOTH** 
+sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
 | app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
 | app:drawable                    | `drawable`        | Drawable to display                                                          |
 | app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |
@@ -189,7 +192,8 @@ segmentedButtonGroup.getPosition();
 | app:selectedDrawableTint        | `color`           | Tint color for drawable when selected                                        |
 | app:drawableWidth               | `dimension`       | Width of drawable (default uses intrinsic)                                   |
 | app:drawableHeight              | `dimension`       | Height of drawable (default uses intrinsic)                                  |
-| app:drawableGravity             | `enum`            | Determines where drawable should be placed in relation to the text. Valid options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                                                     |
+| app:drawableGravity             | `enum`            | Determines where drawable should be placed in relation to the text. Valid 
+options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                                                     |
 | app:text                        | `string`          | Text to display on button                                                    |
 | app:textColor                   | `color`           | Color of text when button is unselected                                      |
 | app:selectedTextColor           | `color`           | Color of text when button is selected                                        |
