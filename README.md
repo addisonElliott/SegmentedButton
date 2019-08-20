@@ -20,17 +20,20 @@ This project is originally forked from [ceryle/SegmentedButton](https://github.c
 
 ## Preview
 
-![1](https://www.addisonelliott.net/SegmentedButtonImages/Gradient.gif)
-![2](https://www.addisonelliott.net/SegmentedButtonImages/LordOfTheRings.gif)
-![3](https://www.addisonelliott.net/SegmentedButtonImages/DCSuperheros.gif)
-![4](https://www.addisonelliott.net/SegmentedButtonImages/MarvelSuperheros.gif)
-![5](https://www.addisonelliott.net/SegmentedButtonImages/Guys.gif)
-![6](https://www.addisonelliott.net/SegmentedButtonImages/StarWars.gif)
-![7](https://www.addisonelliott.net/SegmentedButtonImages/DarthVader.gif)
-![8](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybe.gif)
-![9](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybeRound.gif)
-![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)
-![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)
+[![1](https://www.addisonelliott.net/SegmentedButtonImages/Gradient.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L26)
+[![2](https://www.addisonelliott.net/SegmentedButtonImages/LordOfTheRings.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L91)
+[![3](https://www.addisonelliott.net/SegmentedButtonImages/DCSuperheros.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L147)
+[![4](https://www.addisonelliott.net/SegmentedButtonImages/MarvelSuperheros.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L216)
+[![5](https://www.addisonelliott.net/SegmentedButtonImages/Guys.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L253)
+[![6](https://www.addisonelliott.net/SegmentedButtonImages/StarWars.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L285)
+[![7](https://www.addisonelliott.net/SegmentedButtonImages/DarthVader.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L334)
+[![8](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybe.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L399)
+[![9](https://www.addisonelliott.net/SegmentedButtonImages/YesNoMaybeRound.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L583)
+[![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L459)
+[![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L498)
+[![12](https://www.addisonelliott.net/SegmentedButtonImages/RoundedTransparentButtons.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L634)
+
+Code for all images can be found in the [sample project](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml)
 
 ## Installation
 
@@ -63,11 +66,11 @@ latest features & bug fixes.
 **Note:** Java 8 is required to use this library. This can be done by adding the following code to `build.gradle` while
 using the Android plugin with a version of `3.0.0` or higher.
 
-```
+```gradle
 android {
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility '1.8'
+        targetCompatibility '1.8'
     }
 }
 ```
@@ -146,14 +149,16 @@ segmentedButtonGroup.setOnPositionChangedListener(new OnPositionChangedListener(
 segmentedButtonGroup.getPosition();
 ```
 
+Check out the [sample project](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml) for additional examples
+
 ## Attributes
 
 ### SegmentedButtonGroup
 
 | Attribute                          | Format            | Description                                                                |
 | ---------------------------------- | ----------------- | -------------------------------------------------------------------------- |
-| android:background                 | `drawable\|color` | Set background for every button when unselected                            |
-| app:selectedBackground             | `drawable\|color` | Set background for every button when selected                              |
+| android:background                 | `drawable\|color` | Set background for every button when unselected (default: transparent)     |
+| app:selectedBackground             | `drawable\|color` | Set background for every button when selected (default: transparent)       |
 | app:borderWidth                    | `dimension`       | Width of border around button group                                        |
 | app:borderColor                    | `color`           | Color of border                                                            |
 | app:borderDashWidth                | `dimension`       | Width of dashes, 0 indicates solid line                                    |
@@ -179,9 +184,9 @@ segmentedButtonGroup.getPosition();
 
 | Option Name                     | Format            | Description                                                                  |
 | ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
-| android:background              | `drawable\|color` | Set background for button when unselected                                    |
-| app:selectedBackground          | `drawable\|color` | Set background for button when selected                                      |
-| app:rounded                     | `boolean`         | Whether or not the button is rounded                                         |
+| android:background              | `drawable\|color` | Set background for button when unselected (default: transparent)             |
+| app:selectedBackground          | `drawable\|color` | Set background for button when selected (default: transparent)               |
+| app:rounded                     | `boolean`         | Whether or not the button is rounded.<br />**Note:** This is used to round **BOTH** sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
 | app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
 | app:drawable                    | `drawable`        | Drawable to display                                                          |
 | app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |

@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.4.2'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
 
     }
@@ -27,7 +27,6 @@ ext {
     minSdkVersion = 16
     compileSdkVersion = 28
     buildToolsVersion = '28.0.3'
-    androidXLibraryVersion = '1.0.2'
 }
 
 task clean(type: Delete) {

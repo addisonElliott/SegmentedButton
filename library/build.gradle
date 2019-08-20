@@ -24,8 +24,8 @@ android {
     // Configure only for each module that uses Java 8 language features (either in its source code or through
     // dependencies).
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility '1.8'
+        targetCompatibility '1.8'
     }
 }
 
@@ -54,10 +54,10 @@ artifacts {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13-beta-3'
 
-    implementation "androidx.appcompat:appcompat:$androidXLibraryVersion"
+    implementation "androidx.appcompat:appcompat:1.0.2"
     implementation "androidx.interpolator:interpolator:1.0.0"
-    implementation "androidx.core:core:1.0.1"
-    implementation 'com.github.addisonElliott:RippleDrawable:3.0.0'
+    implementation "androidx.core:core:1.0.2"
+    api 'com.github.addisonElliott:RippleDrawable:3.0.0'
 }
