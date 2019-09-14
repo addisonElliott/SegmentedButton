@@ -44,6 +44,7 @@ import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
+import com.addisonelliott.segmentedbutton.SegmentedButton.OnVisibilityChangedListener;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -372,6 +373,10 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setSelectedButtonRadius(selectedButtonRadius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
+            button._setOnVisibilityChangedListener((button1, visibility) -> {
+                final int index1 = SegmentedButtonGroup.this.buttonLayout.indexOfChild(button1);
+                SegmentedButtonGroup.this.dividerLayout.getChildAt(index1).setVisibility(visibility);
+            });
 
             // Setup button with ripple if enabled and a color is given
             // Otherwise disable ripple on the button if ripple is disabled
@@ -759,19 +764,6 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     public SegmentedButton getButton(int index) {
         return buttons.get(index);
-    }
-
-    /**
-     * This method is NOT meant for public consumption.
-     *
-     * Rather, it is called by SegmentedButton's when their visibility is changed
-     *
-     * @param button     button that visibility was changed for
-     * @param visibility visibility type of the button
-     */
-    public void _setButtonVisibility(SegmentedButton button, int visibility) {
-        final int index = this.buttonLayout.indexOfChild(button);
-        this.dividerLayout.getChildAt(index).setVisibility(visibility);
     }
 
     /**

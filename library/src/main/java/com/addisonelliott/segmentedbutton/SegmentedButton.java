@@ -168,6 +168,9 @@ public class SegmentedButton extends View {
     // Typeface to use for displaying the text, this is created from the fontFamily & textStyle attributes
     private Typeface textTypeface;
 
+    // Internal listener that is called when the visibility of this button is changed
+    private OnVisibilityChangedListener onVisibilityChangedListener;
+
     // endregion
 
     // region Constructor
@@ -1099,8 +1102,9 @@ public class SegmentedButton extends View {
         super.setVisibility(visibility);
 
         // Notify the parent button group of change
-        final SegmentedButtonGroup parent = (SegmentedButtonGroup)this.getParent();
-        parent._setButtonVisibility(this, visibility);
+        if (onVisibilityChangedListener != null) {
+            onVisibilityChangedListener.onVisibilityChanged(this, visibility);
+        }
     }
 
     /**
@@ -1716,6 +1720,17 @@ public class SegmentedButton extends View {
         updateSize();
     }
 
+    /**
+     * This sets a listener that will be called when the visibility of the current button is changed.
+     *
+     * This listener is meant for internal use by SegmentedButtonGroup ONLY
+     *
+     * DO NOT USE
+     */
+    void _setOnVisibilityChangedListener(OnVisibilityChangedListener listener) {
+        this.onVisibilityChangedListener = listener;
+    }
+
     // endregion
 
     // region Helper functions
@@ -1780,6 +1795,20 @@ public class SegmentedButton extends View {
             e.printStackTrace();
             return null;
         }
+    }
+
+    // endregion
+
+    // region Listeners
+
+    /**
+     * Interface definition for a callback that will be invoked when the visibility of the button changes
+     *
+     * This is an internal listener meant to be used ONLY by the SegmentedButtonGroup
+     */
+    public interface OnVisibilityChangedListener {
+
+        void onVisibilityChanged(SegmentedButton button, int visibility);
     }
 
     // endregion

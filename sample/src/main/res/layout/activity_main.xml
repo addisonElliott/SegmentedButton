@@ -316,7 +316,6 @@
                 android:layout_weight="2"
                 android:paddingBottom="6dp"
                 android:paddingLeft="45dp"
-                android:visibility="gone"
                 android:paddingRight="45dp"
                 android:paddingTop="6dp"
                 app:drawable="@drawable/ic_b9" />
@@ -369,8 +368,7 @@
                 android:layout_weight="2"
                 app:drawable="@drawable/ic_b7"
                 app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black"
-                tools:visibility="gone" />
+                app:selectedDrawableTint="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -434,7 +432,6 @@
                 android:padding="8dp"
                 app:selectedTextColor="@color/white"
                 app:text="Maybe"
-                android:visibility="gone"
                 app:textColor="@color/black"
                 app:textSize="24sp" />
 
@@ -620,8 +617,7 @@
                 app:selectedTextColor="@color/white"
                 app:text="Maybe"
                 app:textColor="@color/black"
-                app:textSize="24sp"
-                tools:visibility="gone" />
+                app:textSize="24sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
