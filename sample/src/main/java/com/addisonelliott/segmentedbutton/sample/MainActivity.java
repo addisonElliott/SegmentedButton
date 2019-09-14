@@ -49,7 +49,8 @@ enum Action {
     ChangeTypeface,
     ChangeSelectedButtonRadius,
     ChangeSelectedButtonBorderSolid,
-    ChangeSelectedButtonBorderDashed;
+    ChangeSelectedButtonBorderDashed,
+    ToggleHiddenButtons;
 
     public String getDisplayText() {
         if (this == None) {
@@ -102,6 +103,8 @@ enum Action {
             return "Change selected button border (solid)";
         } else if (this == ChangeSelectedButtonBorderDashed) {
             return "Change selected button border (dashed)";
+        } else if (this == ToggleHiddenButtons) {
+            return "Toggle hidden buttons";
         } else {
             return "";
         }
@@ -343,6 +346,24 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
                 roundSelectedButtonGroup.setSelectedBorder(16, Color.BLACK, 6, 2);
                 break;
 
+            case ToggleHiddenButtons: {
+                SegmentedButton button = gradientButtonGroup.getButton(0);
+                button.setVisibility(button.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+                button = starWarsButtonGroup.getButton(1);
+                button.setVisibility(button.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+                button = darthVaderButtonGroup.getButton(2);
+                button.setVisibility(button.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+                button = draggableButtonGroup.getButton(0);
+                button.setVisibility(button.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+                button = roundSelectedButtonGroup.getButton(2);
+                button.setVisibility(button.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            }
+            break;
+
             default:
                 break;
         }
@@ -369,12 +390,9 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         final BadgeDrawable drawable = new BadgeDrawable(Color.RED, 80, 50, 3, 3);
         leftButton.setDrawable(drawable);
 
-        dynamicButtonGroup.setOnPositionChangedListener(new OnPositionChangedListener() {
-            @Override
-            public void onPositionChanged(final int position) {
-                if (position == 0) {
-                    drawable.setCount(drawable.getCount() + 1);
-                }
+        dynamicButtonGroup.setOnPositionChangedListener(position -> {
+            if (position == 0) {
+                drawable.setCount(drawable.getCount() + 1);
             }
         });
 
