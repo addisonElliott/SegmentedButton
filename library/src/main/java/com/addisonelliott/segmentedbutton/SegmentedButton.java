@@ -32,6 +32,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -336,7 +337,8 @@ public class SegmentedButton extends View {
 
         // API 28 has a bug with vector drawables where the selected tint color is always applied to the drawable
         // To prevent this, the vector drawable is converted to a bitmap
-        if (VERSION.SDK_INT == VERSION_CODES.P && drawable instanceof VectorDrawable) {
+        if ((VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && drawable instanceof VectorDrawable)
+                || drawable instanceof VectorDrawableCompat) {
             Bitmap bitmap = getBitmapFromVectorDrawable(drawable);
             return new BitmapDrawable(context.getResources(), bitmap);
         } else {
