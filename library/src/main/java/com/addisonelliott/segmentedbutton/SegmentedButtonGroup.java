@@ -373,9 +373,72 @@ public class SegmentedButtonGroup extends LinearLayout {
             button.setSelectedButtonRadius(selectedButtonRadius);
             button.setDefaultBackground(backgroundDrawable);
             button.setDefaultSelectedBackground(selectedBackgroundDrawable);
+
+            // Setup listener that detects changes in visibility for the buttons
             button._setOnVisibilityChangedListener((button1, visibility) -> {
+                // Mimic visibility for the corresponding divider (i.e. make visible if parent is visible, invisible
+                // otherwise)
                 final int index1 = SegmentedButtonGroup.this.buttonLayout.indexOfChild(button1);
                 SegmentedButtonGroup.this.dividerLayout.getChildAt(index1).setVisibility(visibility);
+
+                // Find the first visible button to the left of this button (or null if none)
+                SegmentedButton leftButton = null;
+                for (int i = index1 - 1; i >= 0; --i) {
+                    final SegmentedButton button_ = buttons.get(i);
+                    if (button_.getVisibility() != GONE) {
+                        leftButton = button_;
+                        break;
+                    }
+                }
+
+                // Find the first visible button to the right of this button (or null if none)
+                SegmentedButton rightButton = null;
+                for (int i = index1 + 1; i < buttons.size(); ++i) {
+                    final SegmentedButton button_ = buttons.get(i);
+                    if (button_.getVisibility() != GONE) {
+                        rightButton = button_;
+                        break;
+                    }
+                }
+
+                // Below, we update the buttons leftButton and rightButton properties
+                // Think of the buttons in the group like a chain, each button knows about the button to the left and
+                // right of itself.
+                if (visibility == GONE) {
+                    // This button is being hidden, we leave the left/right button properties alone because they dont
+                    // matter
+                    //
+                    // Update the "chain" of buttons so that the first visible left button is linked to the first
+                    // visible right button
+                    if (leftButton != null) {
+                        leftButton.setRightButton(rightButton);
+                        leftButton.setupBackgroundClipPath();
+                    }
+
+                    // Update the "chain" of buttons so that the first visible right button is linked to the first
+                    // visible left button
+                    if (rightButton != null) {
+                        rightButton.setLeftButton(leftButton);
+                        rightButton.setupBackgroundClipPath();
+                    }
+                } else {
+                    // This button is being shown again, we update the left/right button to be the first visible ones
+                    button1.setLeftButton(leftButton);
+                    button1.setRightButton(rightButton);
+                    button1.setupBackgroundClipPath();
+
+                    // Update the "chain" of buttons so that the left button points to this button now
+                    if (leftButton != null) {
+                        leftButton.setRightButton(button1);
+                        leftButton.setupBackgroundClipPath();
+                    }
+
+                    // Update the "chain" of buttons so that the right button points to this button now
+                    if (rightButton != null) {
+                        rightButton.setLeftButton(button1);
+                        rightButton.setupBackgroundClipPath();
+                    }
+                }
             });
 
             // Setup button with ripple if enabled and a color is given
@@ -393,16 +456,27 @@ public class SegmentedButtonGroup extends LinearLayout {
             // If this is NOT the first item in the group, then update the previous button and this button with its
             // respective right button and left button.
             if (position != 0) {
-                final SegmentedButton oldButton = buttons.get(position - 1);
+                // Find the first visible button to the left of this button (or null if none)
+                SegmentedButton leftButton = null;
+                for (int i = buttons.size() - 1; i >= 0; --i) {
+                    final SegmentedButton button_ = buttons.get(i);
+                    if (button_.getVisibility() != GONE) {
+                        leftButton = button_;
+                        break;
+                    }
+                }
 
-                // Old button's right button is this new button
-                // This button's left button is the old button
-                oldButton.setRightButton(button);
-                button.setLeftButton(oldButton);
+                // If there is a visible button to the left, then set it to point to this button if its visible or
+                // otherwise null to treat it as an end button
+                if (leftButton != null) {
+                    leftButton.setRightButton(button.getVisibility() != GONE ? button : null);
+                    // Update background clip path for that button since it may need to add/remove round edges
+                    leftButton.setupBackgroundClipPath();
+                }
 
-                // Update the background clip path for that button (removes rounding edges since it's not the
-                // right-most button anymore)
-                oldButton.setupBackgroundClipPath();
+                // Always set this button to point to the leftmost button
+                // In the case this button is not visible, then it does not matter since it wont be drawn
+                button.setLeftButton(leftButton);
             }
 
             // Sets up the background clip path, selected button clip path, and selected button border
@@ -629,7 +703,7 @@ public class SegmentedButtonGroup extends LinearLayout {
         int currentEndButtonPosition = currentButtonPosition + 1;
         while (currentEndButtonPosition < buttons.size()
                 && buttons.get(currentEndButtonPosition).getVisibility() == GONE) {
-            currentEndButtonPosition++;
+            ++currentEndButtonPosition;
         }
 
         // Grab the current button from the position and clip the right side of the button to show the appropriate
