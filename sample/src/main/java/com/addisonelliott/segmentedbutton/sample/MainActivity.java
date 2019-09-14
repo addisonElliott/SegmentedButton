@@ -390,12 +390,9 @@ public class MainActivity extends AppCompatActivity implements OnItemSelectedLis
         final BadgeDrawable drawable = new BadgeDrawable(Color.RED, 80, 50, 3, 3);
         leftButton.setDrawable(drawable);
 
-        dynamicButtonGroup.setOnPositionChangedListener(new OnPositionChangedListener() {
-            @Override
-            public void onPositionChanged(final int position) {
-                if (position == 0) {
-                    drawable.setCount(drawable.getCount() + 1);
-                }
+        dynamicButtonGroup.setOnPositionChangedListener(position -> {
+            if (position == 0) {
+                drawable.setCount(drawable.getCount() + 1);
             }
         });
 

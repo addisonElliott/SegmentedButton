@@ -736,9 +736,13 @@ public class SegmentedButtonGroup extends LinearLayout {
             buttons.get(lastPosition).clipRight(1.0f);
         }
 
-        // Repeat same process above but check with where the last button position ended. Note, we know this is
-        // always 1 plus the lastPosition because the width of the selected button is 1.
-        final int lastEndPosition = lastPosition + 1;
+        // Repeat same process above but check with where the last button position ended. Note, this last end position
+        // is the next VISIBLE button, so we start at 1 plus the last position because the width of the selected button
+        // is 1
+        int lastEndPosition = lastPosition + 1;
+        while (lastEndPosition < buttons.size() && buttons.get(lastEndPosition).getVisibility() == GONE) {
+            ++lastEndPosition;
+        }
 
         // Clip any views like explained above
         if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
