@@ -247,7 +247,7 @@ public class SegmentedButton extends View {
         // Load drawable if available, otherwise variable will be null
         if (ta.hasValue(R.styleable.SegmentedButton_drawable)) {
             int drawableResId = ta.getResourceId(R.styleable.SegmentedButton_drawable, -1);
-            drawable = readCompatDrawable(context, drawableResId);
+            drawable = AppCompatResources.getDrawable(context, drawableResId);
         }
         drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
@@ -325,26 +325,6 @@ public class SegmentedButton extends View {
         } else {
             textStaticLayout = new StaticLayout(text, textPaint, textMaxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
                     false);
-        }
-    }
-
-    private Drawable readCompatDrawable(Context context, int drawableResId) {
-        Drawable drawable = AppCompatResources.getDrawable(context, drawableResId);
-
-        // Check if drawable is vector
-        boolean isVectorDrawable;
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-            isVectorDrawable = drawable instanceof VectorDrawable;
-        } else {
-            isVectorDrawable = drawable instanceof VectorDrawableCompat;
-        }
-
-        // If drawable is vector, then create a bitmap to support changing tint when selected
-        if (isVectorDrawable) {
-            Bitmap bitmap = getBitmapFromVectorDrawable(drawable);
-            return new BitmapDrawable(context.getResources(), bitmap);
-        } else {
-            return drawable;
         }
     }
 
@@ -1735,25 +1715,6 @@ public class SegmentedButton extends View {
     // endregion
 
     // region Helper functions
-
-    /**
-     * Create a bitmap from a specified vector drawable
-     *
-     * @param vectorDrawable vector drawable to convert to a bitmap
-     */
-    public static Bitmap getBitmapFromVectorDrawable(Drawable vectorDrawable) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            vectorDrawable = (DrawableCompat.wrap(vectorDrawable)).mutate();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
-                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        vectorDrawable.draw(canvas);
-
-        return bitmap;
-    }
 
     /**
      * Create a bitmap from a specified drawable
