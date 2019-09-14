@@ -24,6 +24,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -39,7 +40,10 @@ import androidx.annotation.FloatRange;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 import codetail.graphics.drawables.DrawableHotspotTouch;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -245,7 +249,8 @@ public class SegmentedButton extends View {
 
         // Load drawable if available, otherwise variable will be null
         if (ta.hasValue(R.styleable.SegmentedButton_drawable)) {
-            drawable = ta.getDrawable(R.styleable.SegmentedButton_drawable);
+            int drawableResId = ta.getResourceId(R.styleable.SegmentedButton_drawable, -1);
+            drawable = readCompatDrawable(context, drawableResId);
         }
         drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
@@ -325,6 +330,20 @@ public class SegmentedButton extends View {
                     false);
         }
     }
+
+    private Drawable readCompatDrawable(Context context, int drawableResId) {
+        Drawable drawable = AppCompatResources.getDrawable(context, drawableResId);
+
+        // API 28 has a bug with vector drawables where the selected tint color is always applied to the drawable
+        // To prevent this, the vector drawable is converted to a bitmap
+        if (VERSION.SDK_INT == VERSION_CODES.P && drawable instanceof VectorDrawable) {
+            Bitmap bitmap = getBitmapFromVectorDrawable(drawable);
+            return new BitmapDrawable(context.getResources(), bitmap);
+        } else {
+            return drawable;
+        }
+    }
+
 
     private void initDrawable() {
         // Drawable position is calculated regardless of if drawable exists
@@ -1734,6 +1753,25 @@ public class SegmentedButton extends View {
     // endregion
 
     // region Helper functions
+
+    /**
+     * Create a bitmap from a specified vector drawable
+     *
+     * @param vectorDrawable vector drawable to convert to a bitmap
+     */
+    public static Bitmap getBitmapFromVectorDrawable(Drawable vectorDrawable) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            vectorDrawable = (DrawableCompat.wrap(vectorDrawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
+                vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        vectorDrawable.draw(canvas);
+
+        return bitmap;
+    }
 
     /**
      * Create a bitmap from a specified drawable
