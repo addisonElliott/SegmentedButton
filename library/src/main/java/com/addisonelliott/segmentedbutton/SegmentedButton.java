@@ -331,9 +331,6 @@ public class SegmentedButton extends View {
     private Drawable readCompatDrawable(Context context, int drawableResId) {
         Drawable drawable = AppCompatResources.getDrawable(context, drawableResId);
 
-        // If drawable is vector, then create a bitmap to support changing tint when selected
-        // On API 28, vector drawables are converted to a bitmap
-
         // API 28 has a bug with vector drawables where the selected tint color is always applied to the drawable
         // To prevent this, the vector drawable is converted to a bitmap
         if (VERSION.SDK_INT == VERSION_CODES.P && drawable instanceof VectorDrawable) {
