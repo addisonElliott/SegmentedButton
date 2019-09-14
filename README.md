@@ -32,6 +32,7 @@ This project is originally forked from [ceryle/SegmentedButton](https://github.c
 [![10](https://www.addisonelliott.net/SegmentedButtonImages/LeftRight.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L459)
 [![11](https://www.addisonelliott.net/SegmentedButtonImages/PickupDropoff.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L498)
 [![12](https://www.addisonelliott.net/SegmentedButtonImages/RoundedTransparentButtons.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L634)
+[![12](https://www.addisonelliott.net/SegmentedButtonImages/SportsEquipment.gif)](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml#L690)
 
 Code for all images can be found in the [sample project](https://github.com/addisonElliott/SegmentedButton/blob/master/sample/src/main/res/layout/activity_main.xml)
 
