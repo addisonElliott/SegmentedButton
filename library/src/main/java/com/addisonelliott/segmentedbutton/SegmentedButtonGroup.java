@@ -47,6 +47,7 @@ import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SegmentedButtonGroup extends LinearLayout {
 
@@ -420,6 +421,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             // dividerWidth from the width to center them.
             // TODO Divider not appropriately aligned for wrap_content, need to find a handler to update the layout on
             EmptyView dividerView = new EmptyView(getContext());
+            dividerView.setVisibility(button.getVisibility());
             dividerLayout.addView(dividerView, params);
         } else {
             // Not allowed to have children of any type besides SegmentedButton
@@ -450,7 +452,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             // If x value is less than the right-hand side of the button, this is the selected button
             // Note: No need to check the left side of button because we assume each button is directly connected
             // from left to right
-            if (x <= button.getRight()) {
+            if (button.getVisibility() != GONE && x <= button.getRight()) {
                 break;
             }
         }
@@ -482,7 +484,7 @@ public class SegmentedButtonGroup extends LinearLayout {
             // If x value is less than the right-hand side of the button, this is the selected button
             // Note: No need to check the left side of button because we assume each button is directly connected
             // from left to right
-            if (x < button.getRight()) {
+            if (button.getVisibility() != GONE && x < button.getRight()) {
                 return i + (x - button.getLeft()) / button.getWidth();
             }
         }
@@ -533,7 +535,7 @@ public class SegmentedButtonGroup extends LinearLayout {
                 final int position = getButtonPositionFromX(ev.getX());
 
                 // If button cannot be dragged, user is NOT pressing the currently selected button or the button is
-                // being animated, then just set drag offset o NaN meaning drag is not activated
+                // being animated, then just set drag offset to NaN meaning drag is not activated
                 if (!draggable || this.position != position || (buttonAnimator != null && buttonAnimator.isRunning())) {
                     dragOffsetX = Float.NaN;
                     break;
@@ -617,9 +619,13 @@ public class SegmentedButtonGroup extends LinearLayout {
         final int currentButtonPosition = (int) currentPosition;
         final float currentOffset = currentPosition - currentButtonPosition;
 
-        // Get the current button end position, which will always be the current button position plus 1 because the
-        // width of the selected button is 1
-        final int currentEndButtonPosition = currentButtonPosition + 1;
+        // Get the current button end position, which will start at the current button plus 1 because the width of the
+        // selected button is 1. Check each button to the right for the first one that is not GONE
+        int currentEndButtonPosition = currentButtonPosition + 1;
+        while (currentEndButtonPosition < buttons.size()
+                && buttons.get(currentEndButtonPosition).getVisibility() == GONE) {
+            currentEndButtonPosition++;
+        }
 
         // Grab the current button from the position and clip the right side of the button to show the appropriate
         // offset
@@ -753,6 +759,19 @@ public class SegmentedButtonGroup extends LinearLayout {
      */
     public SegmentedButton getButton(int index) {
         return buttons.get(index);
+    }
+
+    /**
+     * This method is NOT meant for public consumption.
+     *
+     * Rather, it is called by SegmentedButton's when their visibility is changed
+     *
+     * @param button     button that visibility was changed for
+     * @param visibility visibility type of the button
+     */
+    public void _setButtonVisibility(SegmentedButton button, int visibility) {
+        final int index = this.buttonLayout.indexOfChild(button);
+        this.dividerLayout.getChildAt(index).setVisibility(visibility);
     }
 
     /**
@@ -1111,13 +1130,50 @@ public class SegmentedButtonGroup extends LinearLayout {
             return;
         }
 
+        // Loop through the buttons between the start and stop position to find any buttons with visibility equal to
+        // GONE. Add to a list for later
+        final List<Integer> buttonGoneIndices = new ArrayList<>();
+        final boolean movingRight = currentPosition < position;
+        if (movingRight) {
+            for (int i = (int) Math.ceil(currentPosition); i < position; ++i) {
+                if (buttons.get(i).getVisibility() == GONE) {
+                    buttonGoneIndices.add(i);
+                }
+            }
+        } else {
+            for (int i = (int) Math.floor(currentPosition); i > position; --i) {
+                if (buttons.get(i).getVisibility() == GONE) {
+                    buttonGoneIndices.add(i + 1);
+                }
+            }
+        }
+
         // Animate value from current position to the new position
         // Fraction positions such as 1.25 means we are 75% in button 1 and 25% in button 2.
         // The position indicates the position of the left side of the selected button
-        buttonAnimator = ValueAnimator.ofFloat(currentPosition, position);
+        //
+        // The new position is adjusted to remove GONE buttons
+        buttonAnimator = ValueAnimator.ofFloat(currentPosition,
+                movingRight ? position - buttonGoneIndices.size() : position + buttonGoneIndices.size());
 
         // For each update to the animation value, move the button
-        buttonAnimator.addUpdateListener(animation -> moveSelectedButton((float) animation.getAnimatedValue()));
+        buttonAnimator.addUpdateListener(animation -> {
+            float value = (float) animation.getAnimatedValue();
+
+            // Account for GONE buttons in between the indices
+            // Depending on if we're moving left/right, we add/subtract one when a button is missing
+            // This will skip the GONE button
+            for (int index : buttonGoneIndices) {
+                if (movingRight && value >= index) {
+                    value += 1;
+                } else if (!movingRight && value <= index) {
+                    value -= 1;
+                }
+            }
+
+            // Move to the new position
+            moveSelectedButton(value);
+        });
 
         // Set the parameters for the button animation
         buttonAnimator.setDuration(selectionAnimationDuration);

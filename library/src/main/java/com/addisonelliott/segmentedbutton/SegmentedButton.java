@@ -1094,6 +1094,15 @@ public class SegmentedButton extends View {
         invalidate();
     }
 
+    @Override
+    public void setVisibility(final int visibility) {
+        super.setVisibility(visibility);
+
+        // Notify the parent button group of change
+        final SegmentedButtonGroup parent = (SegmentedButtonGroup)this.getParent();
+        parent._setButtonVisibility(this, visibility);
+    }
+
     /**
      * Sets the background of the button to be the drawable background if it does not have a background already and
      * the drawable is not null
