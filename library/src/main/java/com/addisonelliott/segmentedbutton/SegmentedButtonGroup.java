@@ -72,11 +72,11 @@ public class SegmentedButtonGroup extends LinearLayout
     // of the valid values
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
-            ANIM_INTERPOLATOR_NONE, ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN, ANIM_INTERPOLATOR_BOUNCE,
-            ANIM_INTERPOLATOR_LINEAR, ANIM_INTERPOLATOR_DECELERATE, ANIM_INTERPOLATOR_CYCLE,
-            ANIM_INTERPOLATOR_ANTICIPATE, ANIM_INTERPOLATOR_ACCELERATE_DECELERATE, ANIM_INTERPOLATOR_ACCELERATE,
-            ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT, ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN,
-            ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT
+        ANIM_INTERPOLATOR_NONE, ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN, ANIM_INTERPOLATOR_BOUNCE,
+        ANIM_INTERPOLATOR_LINEAR, ANIM_INTERPOLATOR_DECELERATE, ANIM_INTERPOLATOR_CYCLE,
+        ANIM_INTERPOLATOR_ANTICIPATE, ANIM_INTERPOLATOR_ACCELERATE_DECELERATE, ANIM_INTERPOLATOR_ACCELERATE,
+        ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT, ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN,
+        ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT
     })
     public @interface AnimationInterpolator {}
 
@@ -228,12 +228,12 @@ public class SegmentedButtonGroup extends LinearLayout
         // Call super addView so that we do not trigger an Exception since only SegmentedButton instances can be
         // added to this view
         super.addView(container, -1, new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
+            LayoutParams.MATCH_PARENT));
 
         // Layout that contains all SegmentedButton's
         buttonLayout = new LinearLayout(getContext());
         buttonLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.WRAP_CONTENT));
+            LayoutParams.WRAP_CONTENT));
         buttonLayout.setOrientation(LinearLayout.HORIZONTAL);
         container.addView(buttonLayout);
 
@@ -242,7 +242,7 @@ public class SegmentedButtonGroup extends LinearLayout
         // top of them
         borderView = new EmptyView(context);
         borderView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
+            ViewGroup.LayoutParams.MATCH_PARENT));
         container.addView(borderView);
 
         // Create layout that contains dividers for each button
@@ -254,7 +254,7 @@ public class SegmentedButtonGroup extends LinearLayout
         // buttonLayout
         dividerLayout = new LinearLayout(getContext());
         dividerLayout.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT,
-                LayoutParams.MATCH_PARENT));
+            LayoutParams.MATCH_PARENT));
         dividerLayout.setOrientation(LinearLayout.HORIZONTAL);
         dividerLayout.setClickable(false);
         dividerLayout.setFocusable(false);
@@ -334,12 +334,12 @@ public class SegmentedButtonGroup extends LinearLayout
                 if (isInEditMode())
                 {
                     setDivider(ta.getDrawable(R.styleable.SegmentedButtonGroup_divider), dividerWidth, dividerRadius,
-                            dividerPadding);
+                        dividerPadding);
                 }
                 else
                 {
                     setDivider(ContextCompat.getDrawable(context, value.resourceId), dividerWidth, dividerRadius,
-                            dividerPadding);
+                        dividerPadding);
                 }
             }
             else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT)
@@ -351,12 +351,12 @@ public class SegmentedButtonGroup extends LinearLayout
             {
                 // Invalid type for the divider, throw an exception
                 throw new IllegalArgumentException("Invalid type for SegmentedButtonGroup divider in layout XML "
-                        + "resource. Must be a color or drawable");
+                    + "resource. Must be a color or drawable");
             }
         }
 
         int selectionAnimationInterpolator = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationInterpolator,
-                ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN);
+            ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN);
         setSelectionAnimationInterpolator(selectionAnimationInterpolator);
         selectionAnimationDuration = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationDuration, 500);
 
@@ -515,7 +515,7 @@ public class SegmentedButtonGroup extends LinearLayout
             button.setupBackgroundClipPath();
             button.setupSelectedButtonClipPath();
             button.setSelectedButtonBorder(selectedBorderWidth, selectedBorderColor, selectedBorderDashWidth,
-                    selectedBorderDashGap);
+                selectedBorderDashGap);
 
             // Add the button to the main group instead and store the button in our buttons list
             buttonLayout.addView(button, params);
@@ -527,18 +527,21 @@ public class SegmentedButtonGroup extends LinearLayout
 
             // Add a divider view to the divider layout that mimics the size of the button
             // This view is used as essentially a spacer for the dividers in the divider layout
-            // TODO If layout_weight is not used then the alignment of the dividers are off, need to subtract
-            // dividerWidth from the width to center them.
-            // TODO Divider not appropriately aligned for wrap_content, need to find a handler to update the layout on
-            EmptyView dividerView = new EmptyView(getContext());
+            // The divider view needs to know the divider width in order to offset the width correctly
+            ButtonActor dividerView = new ButtonActor(getContext());
+            dividerView.setButton(button);
+            dividerView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             dividerView.setVisibility(button.getVisibility());
-            dividerLayout.addView(dividerView, params);
+            Drawable dividerDrawable = dividerLayout.getDividerDrawable();
+            if (dividerDrawable != null)
+                dividerView.setDividerWidth(dividerDrawable.getIntrinsicWidth());
+            dividerLayout.addView(dividerView);
         }
         else
         {
             // Not allowed to have children of any type besides SegmentedButton
             throw new IllegalArgumentException("Invalid child view for SegmentedButtonGroup. Only SegmentedButton's "
-                    + "are valid children of the group");
+                + "are valid children of the group");
         }
     }
 
@@ -744,7 +747,7 @@ public class SegmentedButtonGroup extends LinearLayout
         // selected button is 1. Check each button to the right for the first one that is not GONE
         int currentEndButtonPosition = currentButtonPosition + 1;
         while (currentEndButtonPosition < buttons.size()
-                && buttons.get(currentEndButtonPosition).getVisibility() == GONE)
+            && buttons.get(currentEndButtonPosition).getVisibility() == GONE)
         {
             ++currentEndButtonPosition;
         }
@@ -792,7 +795,7 @@ public class SegmentedButtonGroup extends LinearLayout
 
         // Clip any views like explained above
         if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
-                && lastEndPosition < buttons.size())
+            && lastEndPosition < buttons.size())
             buttons.get(lastEndPosition).clipRight(1.0f);
 
         // Update the lastPosition for the next animation frame
@@ -1275,7 +1278,7 @@ public class SegmentedButtonGroup extends LinearLayout
         // Also if the user is not dragging the button. If the user lets go from dragging and the button is still on
         // the same position but slightly offset, then we want to snap back to normal.
         if (position < 0 || position >= buttons.size() || (position == this.position && (buttonAnimator != null
-                && !buttonAnimator.isRunning()) && Float.isNaN(dragOffsetX)))
+            && !buttonAnimator.isRunning()) && Float.isNaN(dragOffsetX)))
             return;
 
         // If not animating or if the animation interpolator is null, then just update the selected position
@@ -1312,7 +1315,7 @@ public class SegmentedButtonGroup extends LinearLayout
         //
         // The new position is adjusted to remove GONE buttons
         buttonAnimator = ValueAnimator.ofFloat(currentPosition,
-                movingRight ? position - buttonGoneIndices.size() : position + buttonGoneIndices.size());
+            movingRight ? position - buttonGoneIndices.size() : position + buttonGoneIndices.size());
 
         // For each update to the animation value, move the button
         buttonAnimator.addUpdateListener(animation -> {
@@ -1475,6 +1478,14 @@ public class SegmentedButtonGroup extends LinearLayout
 
         dividerLayout.setDividerPadding(padding);
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+
+        // Loop through and update the divider width for each of the dummy divider views
+        for (int i = 0; i < dividerLayout.getChildCount(); ++i)
+        {
+            final ButtonActor view = (ButtonActor)dividerLayout.getChildAt(i);
+            view.setDividerWidth(width);
+        }
+        dividerLayout.requestLayout();
     }
 
     /**
@@ -1490,7 +1501,7 @@ public class SegmentedButtonGroup extends LinearLayout
         // Create GradientDrawable of the specified color
         // This is used to specify the corner radius, unlike ColorDrawable that does not have that feature
         GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
-                new int[] {color, color});
+            new int[] {color, color});
 
         drawable.setCornerRadius(radius);
         drawable.setShape(GradientDrawable.RECTANGLE);
@@ -1499,6 +1510,14 @@ public class SegmentedButtonGroup extends LinearLayout
         dividerLayout.setDividerDrawable(drawable);
         dividerLayout.setDividerPadding(padding);
         dividerLayout.setShowDividers(SHOW_DIVIDER_MIDDLE);
+
+        // Loop through and update the divider width for each of the dummy divider views
+        for (int i = 0; i < dividerLayout.getChildCount(); ++i)
+        {
+            final ButtonActor view = (ButtonActor)dividerLayout.getChildAt(i);
+            view.setDividerWidth(width);
+        }
+        dividerLayout.requestLayout();
     }
 
     /**
