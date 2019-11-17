@@ -51,8 +51,8 @@ import java.lang.annotation.RetentionPolicy;
 
 @SuppressWarnings("unused")
 @SuppressLint("RtlHardcoded")
-public class SegmentedButton extends View {
-
+public class SegmentedButton extends View
+{
     // region Variables & Constants
     private static final String TAG = "SegmentedButton";
 
@@ -180,25 +180,29 @@ public class SegmentedButton extends View {
 
     // region Constructor
 
-    public SegmentedButton(Context context) {
+    public SegmentedButton(Context context)
+    {
         super(context);
 
         init(context, null);
     }
 
-    public SegmentedButton(Context context, AttributeSet attrs) {
+    public SegmentedButton(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
 
         init(context, attrs);
     }
 
-    public SegmentedButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SegmentedButton(Context context, AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
 
         init(context, attrs);
     }
 
-    private void init(Context context, @Nullable AttributeSet attrs) {
+    private void init(Context context, @Nullable AttributeSet attrs)
+    {
         // Retrieve custom attributes
         getAttributes(context, attrs);
 
@@ -226,7 +230,8 @@ public class SegmentedButton extends View {
         setClickable(true);
     }
 
-    private void getAttributes(Context context, @Nullable AttributeSet attrs) {
+    private void getAttributes(Context context, @Nullable AttributeSet attrs)
+    {
         // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
         // to the default
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SegmentedButton);
@@ -234,14 +239,12 @@ public class SegmentedButton extends View {
         // Load background if available, this can be a drawable or a color
         // In the instance of a color, a ColorDrawable is created and used instead
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
-        if (ta.hasValue(R.styleable.SegmentedButton_android_background)) {
+        if (ta.hasValue(R.styleable.SegmentedButton_android_background))
             backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_android_background);
-        }
 
         // Load background on selection if available, can be drawable or color
-        if (ta.hasValue(R.styleable.SegmentedButton_selectedBackground)) {
+        if (ta.hasValue(R.styleable.SegmentedButton_selectedBackground))
             selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_selectedBackground);
-        }
 
         rounded = ta.getBoolean(R.styleable.SegmentedButton_rounded, false);
 
@@ -249,7 +252,8 @@ public class SegmentedButton extends View {
         setRipple(ta.getColor(R.styleable.SegmentedButton_rippleColor, Color.GRAY));
 
         // Load drawable if available, otherwise variable will be null
-        if (ta.hasValue(R.styleable.SegmentedButton_drawable)) {
+        if (ta.hasValue(R.styleable.SegmentedButton_drawable))
+        {
             int drawableResId = ta.getResourceId(R.styleable.SegmentedButton_drawable, -1);
             drawable = readCompatDrawable(context, drawableResId);
         }
@@ -279,38 +283,49 @@ public class SegmentedButton extends View {
         final int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
 
         // If a font family is present then load typeface with text style from that
-        if (hasFontFamily) {
+        if (hasFontFamily)
+        {
             // Note: TypedArray.getFont is used for Android O & above while ResourcesCompat.getFont is used for below
             // Experienced an odd bug in the design viewer of Android Studio where it would not work with only using
             // the ResourcesCompat.getFont function. Unsure of the reason but this fixes it
-            if (VERSION.SDK_INT >= VERSION_CODES.O) {
+            if (VERSION.SDK_INT >= VERSION_CODES.O)
+            {
                 textTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily), textStyle);
-            } else {
+            }
+            else
+            {
                 final int fontFamily = ta.getResourceId(R.styleable.SegmentedButton_android_fontFamily, 0);
 
-                if (fontFamily > 0) {
+                if (fontFamily > 0)
+                {
                     textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
-                } else {
+                }
+                else
+                {
                     // On lower API Android versions, fontFamily returns 0 for default fonts such as "sans-serif" and
                     // "monospace". Thus, we get the font as a string and then try to load that way
                     textTypeface = Typeface.create(ta.getString(R.styleable.SegmentedButton_android_fontFamily),
                             textStyle);
                 }
             }
-        } else {
-            textTypeface = Typeface.create((Typeface) null, textStyle);
+        }
+        else
+        {
+            textTypeface = Typeface.create((Typeface)null, textStyle);
         }
 
         ta.recycle();
     }
 
-    private void initText() {
+    private void initText()
+    {
         // Text position is calculated regardless of if text exists
         // Not worth extra effort of not setting two float values
         textPosition = new PointF();
 
         // If there is no text then do not bother
-        if (!hasText) {
+        if (!hasText)
+        {
             textStaticLayout = null;
             return;
         }
@@ -323,49 +338,53 @@ public class SegmentedButton extends View {
         textPaint.setTypeface(textTypeface);
 
         // Initial kickstart to setup the text layout by assuming the text will be all in one line
-        textMaxWidth = (int) textPaint.measureText(text);
-        if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+        textMaxWidth = (int)textPaint.measureText(text);
+        Log.v(TAG, String.format("initText called(%s): %d", text, textMaxWidth));
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.M)
+        {
             textStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, textMaxWidth).build();
-        } else {
+        }
+        else
+        {
             textStaticLayout = new StaticLayout(text, textPaint, textMaxWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
                     false);
         }
     }
 
-    private Drawable readCompatDrawable(Context context, int drawableResId) {
+    private Drawable readCompatDrawable(Context context, int drawableResId)
+    {
         Drawable drawable = AppCompatResources.getDrawable(context, drawableResId);
 
         // API 28 has a bug with vector drawables where the selected tint color is always applied to the drawable
         // To prevent this, the vector drawable is converted to a bitmap
         if ((VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP && drawable instanceof VectorDrawable)
-                || drawable instanceof VectorDrawableCompat) {
+                || drawable instanceof VectorDrawableCompat)
+        {
             Bitmap bitmap = getBitmapFromVectorDrawable(drawable);
             return new BitmapDrawable(context.getResources(), bitmap);
-        } else {
-            return drawable;
         }
+        else
+            return drawable;
     }
 
 
-    private void initDrawable() {
+    private void initDrawable()
+    {
         // Drawable position is calculated regardless of if drawable exists
         // Not worth extra effort of not setting two float values
         drawablePosition = new PointF();
 
         // If there is no drawable then do not bother
-        if (drawable == null) {
+        if (drawable == null)
             return;
-        }
 
         // If drawable has a tint color, then create a color filter that will be applied to it
-        if (hasDrawableTint) {
+        if (hasDrawableTint)
             drawableColorFilter = new PorterDuffColorFilter(drawableTint, PorterDuff.Mode.SRC_IN);
-        }
 
         // If selected drawable has a tint color, then create a color filter that will be applied to it
-        if (hasSelectedDrawableTint) {
+        if (hasSelectedDrawableTint)
             selectedDrawableColorFilter = new PorterDuffColorFilter(selectedDrawableTint, PorterDuff.Mode.SRC_IN);
-        }
     }
 
     // endregion
@@ -374,7 +393,8 @@ public class SegmentedButton extends View {
 
     @SuppressLint("DrawAllocation")
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+    {
         // Measured width & height
         int width, height;
 
@@ -389,11 +409,14 @@ public class SegmentedButton extends View {
         // drawable and text.
         int desiredWidth = getPaddingLeft() + getPaddingRight();
 
-        if (Gravity.isHorizontal(drawableGravity)) {
+        if (Gravity.isHorizontal(drawableGravity))
+        {
             // When drawable and text are inline horizontally, then the total desired width is:
             //     padding left + text width (assume one line) + drawable padding + drawable width + padding right
             desiredWidth += textWidth + drawablePadding + drawableWidth;
-        } else {
+        }
+        else
+        {
             // When drawable and text are on top of each other, the total desired width is:
             //     padding left + max(text width, drawable width) + padding right
             desiredWidth += Math.max(textWidth, drawableWidth);
@@ -418,11 +441,14 @@ public class SegmentedButton extends View {
 
         int desiredHeight = getPaddingTop() + getPaddingBottom();
 
-        if (Gravity.isHorizontal(drawableGravity)) {
+        if (Gravity.isHorizontal(drawableGravity))
+        {
             // When drawable and text are horizontal, the total desired height is:
             //     padding left + max(text width, drawable width) + padding right
             desiredHeight += Math.max(textHeight, drawableHeight);
-        } else {
+        }
+        else
+        {
             // When drawable and text are vertical, then the total desired height is:
             //     padding left + text width (assume one line) + drawable padding + drawable width + padding right
             desiredHeight += textHeight + drawablePadding + drawableHeight;
@@ -435,16 +461,24 @@ public class SegmentedButton extends View {
         //      - MeasureSpec.UNSPECIFIED: Set height to desired size
         height = resolveSize(desiredHeight, heightMeasureSpec);
 
+        Log.v(TAG, String.format("onMeasure called(%s): %d %d", text, widthMeasureSpec, heightMeasureSpec));
+        Log.v(TAG, String.format("Desired width: %d Width: %d", desiredWidth, width));
+        Log.v(TAG, String.format("Desired height: %d Height: %d", desiredHeight, height));
+        Log.v(TAG, String.format("Text info: %d %d %d", textMaxWidth, getPaddingTop(), getPaddingRight()));
+
         // Required to be called to notify the View of the width & height decided
         setMeasuredDimension(width, height);
     }
 
     @Override
-    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh) {
+    protected void onSizeChanged(final int w, final int h, final int oldw, final int oldh)
+    {
         super.onSizeChanged(w, h, oldw, oldh);
 
         // Calculate new positions and bounds for text & drawable
         updateSize();
+
+        Log.v(TAG, String.format("onSizeChanged(%s): %d %d %d %d", text, w, h, oldw, oldh));
 
         // Recalculate the background clip path since width & height have changed
         setupBackgroundClipPath();
@@ -459,11 +493,11 @@ public class SegmentedButton extends View {
      * @param width         size, in pixels, of the button
      * @param drawableWidth size, in pixels, of the drawable
      */
-    private void measureTextWidth(int width, int drawableWidth) {
+    private void measureTextWidth(int width, int drawableWidth)
+    {
         // If there is no text, then we don't need to do anything
-        if (!hasText) {
+        if (!hasText)
             return;
-        }
 
         // Set drawable width to be the drawable width if the drawable has horizontal gravity, otherwise the drawable
         // width doesnt matter
@@ -473,16 +507,18 @@ public class SegmentedButton extends View {
         int textWidth = Math.min(width - getPaddingLeft() - getPaddingRight() - newDrawableWidth, textMaxWidth);
 
         // Odd case where there is not enough space for the padding and drawable width so we just return
-        if (textWidth < 0) {
+        if (textWidth < 0)
             return;
-        }
 
         // Create new static layout with width
         // Old way of creating static layout was deprecated but I dont think there is any speed difference between
         // the two
-        if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.M)
+        {
             textStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, textWidth).build();
-        } else {
+        }
+        else
+        {
             textStaticLayout = new StaticLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
                     false);
         }
@@ -493,7 +529,8 @@ public class SegmentedButton extends View {
      *
      * This will be called on onSizeChanged, which is called less frequently than onMeasure which will speed things up
      */
-    private void updateSize() {
+    private void updateSize()
+    {
         final int width = getWidth(), height = getHeight();
         final int textWidth = hasText ? textStaticLayout.getWidth() : 0;
         final int textHeight = hasText ? textStaticLayout.getHeight() : 0;
@@ -503,7 +540,8 @@ public class SegmentedButton extends View {
                 : drawable.getIntrinsicHeight() : 0;
 
         // Calculates the X/Y positions of the text and drawable now that the measured size is known
-        if (Gravity.isHorizontal(drawableGravity)) {
+        if (Gravity.isHorizontal(drawableGravity))
+        {
             // Calculate Y position for horizontal gravity, i.e. center the drawable and/or text if necessary
             textPosition.y = getPaddingTop()
                     + (height - getPaddingTop() - getPaddingBottom() - textHeight) / 2.0f;
@@ -515,14 +553,19 @@ public class SegmentedButton extends View {
             final float startPosition = (width - textWidth - drawableWidth - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
-            if (drawableGravity == Gravity.LEFT) {
+            if (drawableGravity == Gravity.LEFT)
+            {
                 textPosition.x = startPosition + drawableWidth + drawablePadding;
                 drawablePosition.x = startPosition;
-            } else if (drawableGravity == Gravity.RIGHT) {
+            }
+            else if (drawableGravity == Gravity.RIGHT)
+            {
                 textPosition.x = startPosition;
                 drawablePosition.x = startPosition + textWidth + drawablePadding;
             }
-        } else {
+        }
+        else
+        {
             // Calculate X position for vertical gravity, i.e. center the drawable and/or text horizontally if necessary
             textPosition.x = getPaddingLeft()
                     + (width - getPaddingLeft() - getPaddingRight() - textWidth) / 2.0f;
@@ -534,40 +577,40 @@ public class SegmentedButton extends View {
             final float startPosition = (height - textHeight - drawableHeight - drawablePadding) / 2.0f;
 
             // Position the drawable & text based on the gravity
-            if (drawableGravity == Gravity.TOP) {
+            if (drawableGravity == Gravity.TOP)
+            {
                 textPosition.y = startPosition + drawableHeight + drawablePadding;
                 drawablePosition.y = startPosition;
-            } else if (drawableGravity == Gravity.BOTTOM) {
+            }
+            else if (drawableGravity == Gravity.BOTTOM)
+            {
                 textPosition.y = startPosition;
                 drawablePosition.y = startPosition + textHeight + drawablePadding;
             }
         }
 
         // Set bounds of drawable if it exists
-        if (drawable != null) {
-            drawable.setBounds((int) drawablePosition.x, (int) drawablePosition.y,
-                    (int) drawablePosition.x + drawableWidth, (int) drawablePosition.y + drawableHeight);
+        if (drawable != null)
+        {
+            drawable.setBounds((int)drawablePosition.x, (int)drawablePosition.y,
+                    (int)drawablePosition.x + drawableWidth, (int)drawablePosition.y + drawableHeight);
         }
 
         // Set bounds of background drawable if it exists
-        if (backgroundDrawable != null) {
+        if (backgroundDrawable != null)
             backgroundDrawable.setBounds(0, 0, width, height);
-        }
 
         // Set bounds of selected background drawable if it exists
-        if (selectedBackgroundDrawable != null) {
+        if (selectedBackgroundDrawable != null)
             selectedBackgroundDrawable.setBounds(0, 0, width, height);
-        }
 
         // Set bounds of ripple drawable if it exists
-        if (rippleDrawableLollipop != null) {
+        if (rippleDrawableLollipop != null)
             rippleDrawableLollipop.setBounds(0, 0, width, height);
-        }
 
         // Set bounds of ripple drawable if it exists
-        if (rippleDrawable != null) {
+        if (rippleDrawable != null)
             rippleDrawable.setBounds(0, 0, width, height);
-        }
     }
 
     // endregion
@@ -575,14 +618,16 @@ public class SegmentedButton extends View {
     // region Drawing
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas)
+    {
         super.onDraw(canvas);
 
         final int width = getWidth();
         final int height = getHeight();
 
         // Draw background (unselected)
-        if (backgroundDrawable != null) {
+        if (backgroundDrawable != null)
+        {
             // Draw the background with rounded corners if the background clip path and background paint objet are
             // non-null. The background clip path will be present if the background has rounded corners. See
             // setupBackgroundClipPath for more details. Ideally the backgroundPaint object will always be present
@@ -590,15 +635,16 @@ public class SegmentedButton extends View {
             // the drawable because of unknown bounds on program start.
             //
             // Otherwise, the background is drawn normally via the drawable with no rounded corners
-            if (backgroundClipPath != null && backgroundPaint != null) {
+            if (backgroundClipPath != null && backgroundPaint != null)
                 canvas.drawPath(backgroundClipPath, backgroundPaint);
-            } else {
+            else
                 backgroundDrawable.draw(canvas);
-            }
         }
 
         // Draw text (unselected)
-        if (hasText) {
+        Log.v(TAG, String.format("onDraw called(%s)", text));
+        if (hasText)
+        {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
             textPaint.setColor(textColor);
@@ -607,7 +653,8 @@ public class SegmentedButton extends View {
         }
 
         // Draw drawable (unselected)
-        if (drawable != null) {
+        if (drawable != null)
+        {
             drawable.setColorFilter(drawableColorFilter);
             drawable.draw(canvas);
         }
@@ -625,7 +672,8 @@ public class SegmentedButton extends View {
         //
         // The amount of the left or right side being shown is based on the relativeClippingPosition, a value from
         // 0.0f to 1.0f representing the relative position on the button.
-        if (isClippingLeft) {
+        if (isClippingLeft)
+        {
             // If clipping the left, then relativeClipPosition * width represents the right side of the selected
             // button that is shown/clipped.
             //
@@ -644,7 +692,9 @@ public class SegmentedButton extends View {
             // doesn't matter.
             final float leftButtonWidth = isLeftButton() ? width : leftButton.getWidth();
             rectF.set((relativeClipPosition - 1.0f) * leftButtonWidth, 0.0f, relativeClipPosition * width, height);
-        } else {
+        }
+        else
+        {
             // Otherwise, if clipping the right, then the relativeClipPosition * width represents the left side of
             // the selected button that is shown/clipped.
             //
@@ -671,19 +721,25 @@ public class SegmentedButton extends View {
         //      2. Background has a radius (i.e. backgroundRadius > 0)
         // In these two cases, the background is drawn using a BitmapShader contained in the background paint object/
         // Otherwise, the background is drawn normally via the drawable with no rounded corners.
-        if (selectedButtonRadius > 0 && selectedBackgroundPaint != null) {
+        if (selectedButtonRadius > 0 && selectedBackgroundPaint != null)
+        {
             path.reset();
             path.addRoundRect(rectF, selectedButtonRadii, Direction.CW);
 
             canvas.drawPath(path, selectedBackgroundPaint);
-        } else if (backgroundClipPath != null && selectedBackgroundPaint != null) {
+        }
+        else if (backgroundClipPath != null && selectedBackgroundPaint != null)
+        {
             canvas.drawPath(backgroundClipPath, selectedBackgroundPaint);
-        } else if (selectedBackgroundDrawable != null) {
+        }
+        else if (selectedBackgroundDrawable != null)
+        {
             selectedBackgroundDrawable.draw(canvas);
         }
 
         // Draw text (selected)
-        if (hasText) {
+        if (hasText)
+        {
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
             // If a selected text color was specified, then use that, otherwise we want to default to the original
@@ -694,7 +750,8 @@ public class SegmentedButton extends View {
         }
 
         // Draw drawable (selected)
-        if (drawable != null) {
+        if (drawable != null)
+        {
             // If a selected drawable tint was used, then use that, but if it wasn't specified we want to stick with
             // the normal tint color.
             drawable.setColorFilter(hasSelectedDrawableTint ? selectedDrawableColorFilter : drawableColorFilter);
@@ -702,7 +759,8 @@ public class SegmentedButton extends View {
         }
 
         // Draw a border around the selected button
-        if (selectedButtonBorderPaint != null) {
+        if (selectedButtonBorderPaint != null)
+        {
             // Get the border width from the paint information and divide by 2
             // Remember that rectF is the rectangle that was setup for the appropriate clip path above
             // Note that this rectangle should NOT be touched after the clip path is set otherwise the border drawn
@@ -729,17 +787,20 @@ public class SegmentedButton extends View {
 
         // Clip to the background clip path if available
         // This is used so the ripple effect will stop at the rounded corners of the background
-        if (backgroundClipPath != null) {
+        if (backgroundClipPath != null)
+        {
             canvas.clipPath(backgroundClipPath);
         }
 
         // Draw ripple drawable to show ripple effect on click
-        if (rippleDrawableLollipop != null) {
+        if (rippleDrawableLollipop != null)
+        {
             rippleDrawableLollipop.draw(canvas);
         }
 
         // Draw ripple drawable to show ripple effect on click
-        if (rippleDrawable != null) {
+        if (rippleDrawable != null)
+        {
             rippleDrawable.draw(canvas);
         }
 
@@ -761,7 +822,8 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 0.0f
      *                         would represent no clipping and 1.0f would represent clipping the entire view
      */
-    void clipLeft(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
+    void clipLeft(@FloatRange(from = 0.0, to = 1.0) float relativePosition)
+    {
         // Clipping from the left side, set to true
         isClippingLeft = true;
 
@@ -787,7 +849,8 @@ public class SegmentedButton extends View {
      * @param relativePosition Position from 0.0f to 1.0f that represents where to end clipping. A value of 1.0f
      *                         would represent no clipping and 0.0f would represent clipping the entire view
      */
-    void clipRight(@FloatRange(from = 0.0, to = 1.0) float relativePosition) {
+    void clipRight(@FloatRange(from = 0.0, to = 1.0) float relativePosition)
+    {
         // Clipping from the right side, set to false
         isClippingLeft = false;
 
@@ -817,13 +880,13 @@ public class SegmentedButton extends View {
      */
     @SuppressLint("NewApi")
     @Override
-    public void drawableHotspotChanged(final float x, final float y) {
+    public void drawableHotspotChanged(final float x, final float y)
+    {
         super.drawableHotspotChanged(x, y);
 
         // Update the hotspot for the ripple drawable
-        if (rippleDrawableLollipop != null) {
+        if (rippleDrawableLollipop != null)
             rippleDrawableLollipop.setHotspot(x, y);
-        }
     }
 
     /**
@@ -837,18 +900,17 @@ public class SegmentedButton extends View {
      * updated manually here since the base View class does not know about the ripple drawable.
      */
     @Override
-    protected void drawableStateChanged() {
+    protected void drawableStateChanged()
+    {
         super.drawableStateChanged();
 
         // Update the state for the ripple drawable
-        if (rippleDrawableLollipop != null) {
+        if (rippleDrawableLollipop != null)
             rippleDrawableLollipop.setState(getDrawableState());
-        }
 
         // Update the state for the ripple drawable
-        if (rippleDrawable != null) {
+        if (rippleDrawable != null)
             rippleDrawable.setState(getDrawableState());
-        }
     }
 
     /**
@@ -862,7 +924,8 @@ public class SegmentedButton extends View {
      * animate
      */
     @Override
-    protected boolean verifyDrawable(@NonNull final Drawable who) {
+    protected boolean verifyDrawable(@NonNull final Drawable who)
+    {
         // Very obscure and difficult to find but it is noted in the source code docstring for this function
         // Return true if the drawable is the ripple drawable (backport or regular)
         // Normally the super class handles this automatically for the background drawable but the ripple drawable is
@@ -887,7 +950,8 @@ public class SegmentedButton extends View {
      *
      * @param backgroundRadius radius of corners of parent button group in pixels
      */
-    void setBackgroundRadius(int backgroundRadius) {
+    void setBackgroundRadius(int backgroundRadius)
+    {
         this.backgroundRadius = backgroundRadius;
     }
 
@@ -896,7 +960,8 @@ public class SegmentedButton extends View {
      *
      * This is determined based on whether the rightButton variable is null
      */
-    private boolean isLeftButton() {
+    private boolean isLeftButton()
+    {
         return leftButton == null;
     }
 
@@ -905,7 +970,8 @@ public class SegmentedButton extends View {
      *
      * This is determined based on whether the rightButton variable is null
      */
-    private boolean isRightButton() {
+    private boolean isRightButton()
+    {
         return rightButton == null;
     }
 
@@ -917,7 +983,8 @@ public class SegmentedButton extends View {
      * leftButton, rightButton, rounded & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
-    void setLeftButton(SegmentedButton leftButton) {
+    void setLeftButton(SegmentedButton leftButton)
+    {
         this.leftButton = leftButton;
     }
 
@@ -929,14 +996,16 @@ public class SegmentedButton extends View {
      * rightButton, rounded & width/height are completed.
      */
     @SuppressWarnings("SameParameterValue")
-    void setRightButton(SegmentedButton rightButton) {
+    void setRightButton(SegmentedButton rightButton)
+    {
         this.rightButton = rightButton;
     }
 
     /**
      * Returns whether this button is rounded
      */
-    public boolean isRounded() {
+    public boolean isRounded()
+    {
         return rounded;
     }
 
@@ -946,7 +1015,8 @@ public class SegmentedButton extends View {
      * Note: You must manually call setupBackgroundClipPath after all changes to background radius, leftButton,
      * rightButton, rounded & width/height are completed.
      */
-    public void setRounded(boolean rounded) {
+    public void setRounded(boolean rounded)
+    {
         this.rounded = rounded;
     }
 
@@ -958,7 +1028,8 @@ public class SegmentedButton extends View {
      *
      * @param selectedButtonRadius radius of corners for selected button in pixels
      */
-    void setSelectedButtonRadius(int selectedButtonRadius) {
+    void setSelectedButtonRadius(int selectedButtonRadius)
+    {
         this.selectedButtonRadius = selectedButtonRadius;
     }
 
@@ -976,9 +1047,11 @@ public class SegmentedButton extends View {
      * Note that this function internally calls setupBackgroundBitmaps() because a change in the clip path will
      * require updating the bitmaps
      */
-    void setupBackgroundClipPath() {
+    void setupBackgroundClipPath()
+    {
         // If there is no background radius then skip
-        if (backgroundRadius == 0) {
+        if (backgroundRadius == 0)
+        {
             backgroundClipPath = null;
 
             // Update background bitmaps
@@ -992,20 +1065,27 @@ public class SegmentedButton extends View {
         // Background radius, shorthand variable to make code cleaner
         final float br = backgroundRadius;
 
-        if (isRounded() || (isLeftButton() && isRightButton())) {
+        if (isRounded() || (isLeftButton() && isRightButton()))
+        {
             // Add radius on all sides, left & right
             backgroundClipPath = new Path();
             backgroundClipPath.addRoundRect(rectF,
-                    new float[]{br, br, br, br, br, br, br, br}, Direction.CW);
-        } else if (isLeftButton()) {
+                    new float[] {br, br, br, br, br, br, br, br}, Direction.CW);
+        }
+        else if (isLeftButton())
+        {
             // Add radius on left side only
             backgroundClipPath = new Path();
-            backgroundClipPath.addRoundRect(rectF, new float[]{br, br, 0, 0, 0, 0, br, br}, Direction.CW);
-        } else if (isRightButton()) {
+            backgroundClipPath.addRoundRect(rectF, new float[] {br, br, 0, 0, 0, 0, br, br}, Direction.CW);
+        }
+        else if (isRightButton())
+        {
             // Add radius on right side only
             backgroundClipPath = new Path();
-            backgroundClipPath.addRoundRect(rectF, new float[]{0, 0, br, br, br, br, 0, 0}, Direction.CW);
-        } else {
+            backgroundClipPath.addRoundRect(rectF, new float[] {0, 0, br, br, br, br, 0, 0}, Direction.CW);
+        }
+        else
+        {
             backgroundClipPath = null;
         }
 
@@ -1013,9 +1093,8 @@ public class SegmentedButton extends View {
         // right-most buttons) is not supported with hardware acceleration until API 18
         // Thus, switch to software acceleration if the background clip path is not null (meaning the edges are
         // rounded) and the current version is less than 18
-        if (backgroundClipPath != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+        if (backgroundClipPath != null && Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
             setLayerType(LAYER_TYPE_SOFTWARE, null);
-        }
 
         // Update background bitmaps
         setupBackgroundBitmaps();
@@ -1029,7 +1108,8 @@ public class SegmentedButton extends View {
      * rounded corners. In addition, this function should be called when the drawable or selected drawable changes,
      * the selected button radius changes, or the size of either drawable changes.
      */
-    void setupBackgroundBitmaps() {
+    void setupBackgroundBitmaps()
+    {
         Bitmap bitmap;
 
         // Setup background paint object to render background using a bitmap shader approach under three conditions:
@@ -1037,14 +1117,15 @@ public class SegmentedButton extends View {
         //      2. There is a background drawable
         //      3. Able to successfully create bitmap from drawable
         if (backgroundClipPath != null && backgroundDrawable != null
-                && (bitmap = getBitmapFromDrawable(backgroundDrawable)) != null) {
+                && (bitmap = getBitmapFromDrawable(backgroundDrawable)) != null)
+        {
             final BitmapShader backgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP, TileMode.CLAMP);
 
             backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             backgroundPaint.setShader(backgroundBitmapShader);
-        } else {
-            backgroundPaint = null;
         }
+        else
+            backgroundPaint = null;
 
         // Setup selected background paint object to render background using a bitmap shader approach under three
         // conditions:
@@ -1052,15 +1133,16 @@ public class SegmentedButton extends View {
         //      2. There is a background drawable
         //      3. Able to successfully create bitmap from drawable
         if ((backgroundClipPath != null || selectedButtonRadius > 0) && selectedBackgroundDrawable != null
-                && (bitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null) {
+                && (bitmap = getBitmapFromDrawable(selectedBackgroundDrawable)) != null)
+        {
             final BitmapShader selectedBackgroundBitmapShader = new BitmapShader(bitmap, TileMode.CLAMP,
                     TileMode.CLAMP);
 
             selectedBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             selectedBackgroundPaint.setShader(selectedBackgroundBitmapShader);
-        } else {
-            selectedBackgroundPaint = null;
         }
+        else
+            selectedBackgroundPaint = null;
     }
 
     /**
@@ -1068,18 +1150,23 @@ public class SegmentedButton extends View {
      *
      * This function should be called if the selected button radius is changed
      */
-    void setupSelectedButtonClipPath() {
+    void setupSelectedButtonClipPath()
+    {
         // Setup selected button radii
         // Object allocated here rather than in onDraw to increase performance
-        selectedButtonRadii = new float[]{selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
+        selectedButtonRadii = new float[] {
+                selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
                 selectedButtonRadius, selectedButtonRadius, selectedButtonRadius, selectedButtonRadius,
-                selectedButtonRadius};
+                selectedButtonRadius
+        };
 
-        if (selectedButtonRadius > 0) {
+        if (selectedButtonRadius > 0)
+        {
             // Canvas.clipPath, used in onDraw for drawing the selected button clip path is not supported with
             // hardware acceleration until API 18. Thus, this switches to software acceleration if current Android
             // API version is less than 18.
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2)
+            {
                 setLayerType(LAYER_TYPE_SOFTWARE, null);
             }
         }
@@ -1098,8 +1185,10 @@ public class SegmentedButton extends View {
      * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
      * @param dashGap   Width of the gap for border, in pixels.
      */
-    void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
-        if (width > 0) {
+    void setSelectedButtonBorder(int width, @ColorInt int color, int dashWidth, int dashGap)
+    {
+        if (width > 0)
+        {
             // Allocate Paint object for drawing border here
             // Used in onDraw to draw the border around the selected button
             selectedButtonBorderPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -1107,10 +1196,13 @@ public class SegmentedButton extends View {
             selectedButtonBorderPaint.setStrokeWidth(width);
             selectedButtonBorderPaint.setColor(color);
 
-            if (dashWidth > 0.0f) {
-                selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[]{dashWidth, dashGap}, 0));
+            if (dashWidth > 0.0f)
+            {
+                selectedButtonBorderPaint.setPathEffect(new DashPathEffect(new float[] {dashWidth, dashGap}, 0));
             }
-        } else {
+        }
+        else
+        {
             // If the width is 0, then disable drawing border
             selectedButtonBorderPaint = null;
         }
@@ -1119,11 +1211,13 @@ public class SegmentedButton extends View {
     }
 
     @Override
-    public void setVisibility(final int visibility) {
+    public void setVisibility(final int visibility)
+    {
         super.setVisibility(visibility);
 
         // Notify the parent button group of change
-        if (onVisibilityChangedListener != null) {
+        if (onVisibilityChangedListener != null)
+        {
             onVisibilityChangedListener.onVisibilityChanged(this, visibility);
         }
     }
@@ -1139,8 +1233,10 @@ public class SegmentedButton extends View {
      *
      * @param drawable Drawable to set as the background
      */
-    void setDefaultBackground(@Nullable Drawable drawable) {
-        if (backgroundDrawable == null && drawable != null) {
+    void setDefaultBackground(@Nullable Drawable drawable)
+    {
+        if (backgroundDrawable == null && drawable != null)
+        {
             // Make sure to clone the drawable so that we can set the bounds on it
             backgroundDrawable = drawable.getConstantState().newDrawable();
         }
@@ -1157,8 +1253,10 @@ public class SegmentedButton extends View {
      *
      * @param drawable Drawable to set as the background
      */
-    void setDefaultSelectedBackground(@Nullable Drawable drawable) {
-        if (selectedBackgroundDrawable == null && drawable != null) {
+    void setDefaultSelectedBackground(@Nullable Drawable drawable)
+    {
+        if (selectedBackgroundDrawable == null && drawable != null)
+        {
             // Make sure to clone the drawable so that we can set the bounds on it
             selectedBackgroundDrawable = drawable.getConstantState().newDrawable();
         }
@@ -1171,7 +1269,8 @@ public class SegmentedButton extends View {
      *
      * @return the current background drawable when the button is not selected
      */
-    public Drawable getBackground() {
+    public Drawable getBackground()
+    {
         return backgroundDrawable;
     }
 
@@ -1181,7 +1280,8 @@ public class SegmentedButton extends View {
      * @param drawable drawable to set the background to
      */
     @Override
-    public void setBackground(final Drawable drawable) {
+    public void setBackground(final Drawable drawable)
+    {
         backgroundDrawable = drawable;
         backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
@@ -1198,11 +1298,15 @@ public class SegmentedButton extends View {
      *
      * @param color color to set the background to
      */
-    public void setBackground(@ColorInt int color) {
-        if (backgroundDrawable instanceof ColorDrawable) {
+    public void setBackground(@ColorInt int color)
+    {
+        if (backgroundDrawable instanceof ColorDrawable)
+        {
             // If the current drawable is a ColorDrawable, just change the color
-            ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
-        } else {
+            ((ColorDrawable)backgroundDrawable.mutate()).setColor(color);
+        }
+        else
+        {
             backgroundDrawable = new ColorDrawable(color);
             backgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
@@ -1222,7 +1326,8 @@ public class SegmentedButton extends View {
      * @param color color to set the background to
      */
     @Override
-    public void setBackgroundColor(@ColorInt int color) {
+    public void setBackgroundColor(@ColorInt int color)
+    {
         setBackground(color);
     }
 
@@ -1233,7 +1338,8 @@ public class SegmentedButton extends View {
      *
      * @return the current background drawable when the button is selected
      */
-    public Drawable getSelectedBackground() {
+    public Drawable getSelectedBackground()
+    {
         return selectedBackgroundDrawable;
     }
 
@@ -1242,7 +1348,8 @@ public class SegmentedButton extends View {
      *
      * @param drawable drawable to set the background to
      */
-    public void setSelectedBackground(final Drawable drawable) {
+    public void setSelectedBackground(final Drawable drawable)
+    {
         selectedBackgroundDrawable = drawable;
         selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
 
@@ -1259,11 +1366,15 @@ public class SegmentedButton extends View {
      *
      * @param color color to set the background to
      */
-    public void setSelectedBackground(@ColorInt int color) {
-        if (selectedBackgroundDrawable instanceof ColorDrawable) {
+    public void setSelectedBackground(@ColorInt int color)
+    {
+        if (selectedBackgroundDrawable instanceof ColorDrawable)
+        {
             // If the current drawable is a ColorDrawable, just change the color
-            ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
-        } else {
+            ((ColorDrawable)selectedBackgroundDrawable.mutate()).setColor(color);
+        }
+        else
+        {
             selectedBackgroundDrawable = new ColorDrawable(color);
             selectedBackgroundDrawable.setBounds(0, 0, getWidth(), getHeight());
         }
@@ -1279,7 +1390,8 @@ public class SegmentedButton extends View {
      *
      * @param color color to set the background to
      */
-    public void setSelectedBackgroundColor(@ColorInt int color) {
+    public void setSelectedBackgroundColor(@ColorInt int color)
+    {
         setSelectedBackground(color);
     }
 
@@ -1288,7 +1400,8 @@ public class SegmentedButton extends View {
      *
      * The ripple color is a tint color applied on top of the button when it is pressed
      */
-    public int getRippleColor() {
+    public int getRippleColor()
+    {
         return rippleColor;
     }
 
@@ -1303,11 +1416,15 @@ public class SegmentedButton extends View {
      *
      * @param enabled whether or not to enable the ripple effect for this button
      */
-    void setRipple(boolean enabled) {
-        if (enabled) {
+    void setRipple(boolean enabled)
+    {
+        if (enabled)
+        {
             // Recreate the ripple drawable and setup with the ripple color
             setRipple(rippleColor);
-        } else {
+        }
+        else
+        {
             // Set both ripple drawables to null so that we do not draw the ripple
             rippleDrawableLollipop = null;
             rippleDrawable = null;
@@ -1319,10 +1436,12 @@ public class SegmentedButton extends View {
      *
      * @param color color to set for the ripple effect for this button
      */
-    public void setRipple(@ColorInt int color) {
+    public void setRipple(@ColorInt int color)
+    {
         rippleColor = color;
 
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP)
+        {
             rippleDrawableLollipop = new RippleDrawable(ColorStateList.valueOf(rippleColor), null, null);
             // setCallback on Drawable allows animations to be scheduled and the drawable to invalidate the view on
             // animation
@@ -1331,7 +1450,9 @@ public class SegmentedButton extends View {
 
             // Disable/nullify the pre-lollipop RippleDrawable backport
             rippleDrawable = null;
-        } else {
+        }
+        else
+        {
             rippleDrawable = new codetail.graphics.drawables.RippleDrawable(ColorStateList.valueOf(rippleColor), null,
                     null);
             // setCallback on Drawable allows animations to be scheduled and the drawable to invalidate the view on
@@ -1351,7 +1472,8 @@ public class SegmentedButton extends View {
     /**
      * Returns the drawable for the button or null if no drawable is set
      */
-    public Drawable getDrawable() {
+    public Drawable getDrawable()
+    {
         return drawable;
     }
 
@@ -1362,7 +1484,8 @@ public class SegmentedButton extends View {
      *
      * @param drawable Drawable to set for the button
      */
-    public void setDrawable(final @Nullable Drawable drawable) {
+    public void setDrawable(final @Nullable Drawable drawable)
+    {
         this.drawable = drawable;
 
         // Request a layout, drawable may have different size and things need to be rearranged
@@ -1380,7 +1503,8 @@ public class SegmentedButton extends View {
      * The drawable padding is the space between the drawable and text, in pixels. If the drawable or the text is not
      * present, then the padding is ignored.
      */
-    public int getDrawablePadding() {
+    public int getDrawablePadding()
+    {
         return drawablePadding;
     }
 
@@ -1392,7 +1516,8 @@ public class SegmentedButton extends View {
      *
      * @param padding padding in pixels to set for the drawable
      */
-    public void setDrawablePadding(final int padding) {
+    public void setDrawablePadding(final int padding)
+    {
         drawablePadding = padding;
 
         requestLayout();
@@ -1406,7 +1531,8 @@ public class SegmentedButton extends View {
     /**
      * Whether or not there is a tint color applied to the drawable when the button is not selected
      */
-    public boolean hasDrawableTint() {
+    public boolean hasDrawableTint()
+    {
         return hasDrawableTint;
     }
 
@@ -1415,7 +1541,8 @@ public class SegmentedButton extends View {
      *
      * If hasDrawableTint is false, then this value will be undefined
      */
-    public int getDrawableTint() {
+    public int getDrawableTint()
+    {
         return drawableTint;
     }
 
@@ -1426,7 +1553,8 @@ public class SegmentedButton extends View {
      *
      * @param tint color for the drawable tint
      */
-    public void setDrawableTint(final @ColorInt int tint) {
+    public void setDrawableTint(final @ColorInt int tint)
+    {
         hasDrawableTint = true;
         drawableTint = tint;
 
@@ -1439,7 +1567,8 @@ public class SegmentedButton extends View {
     /**
      * Remove drawable tint color so that the normal drawable is shown when the button is not selected
      */
-    public void removeDrawableTint() {
+    public void removeDrawableTint()
+    {
         hasDrawableTint = false;
         drawableColorFilter = null;
 
@@ -1449,7 +1578,8 @@ public class SegmentedButton extends View {
     /**
      * Whether or not there is a tint color applied to the drawable when the button is selected
      */
-    public boolean hasSelectedDrawableTint() {
+    public boolean hasSelectedDrawableTint()
+    {
         return hasSelectedDrawableTint;
     }
 
@@ -1458,7 +1588,8 @@ public class SegmentedButton extends View {
      *
      * If hasSelectedDrawableTint is false, then this value will be undefined
      */
-    public int getSelectedDrawableTint() {
+    public int getSelectedDrawableTint()
+    {
         return selectedDrawableTint;
     }
 
@@ -1469,7 +1600,8 @@ public class SegmentedButton extends View {
      *
      * @param tint color for the drawable tint
      */
-    public void setSelectedDrawableTint(final @ColorInt int tint) {
+    public void setSelectedDrawableTint(final @ColorInt int tint)
+    {
         hasSelectedDrawableTint = true;
         selectedDrawableTint = tint;
 
@@ -1482,7 +1614,8 @@ public class SegmentedButton extends View {
     /**
      * Remove drawable tint color so that the normal drawable is shown when the button is selected
      */
-    public void removeSelectedDrawableTint() {
+    public void removeSelectedDrawableTint()
+    {
         hasSelectedDrawableTint = false;
         selectedDrawableColorFilter = null;
 
@@ -1492,7 +1625,8 @@ public class SegmentedButton extends View {
     /**
      * Whether or not the drawable has a width that was explicitly given
      */
-    public boolean hasDrawableWidth() {
+    public boolean hasDrawableWidth()
+    {
         return hasDrawableWidth;
     }
 
@@ -1501,7 +1635,8 @@ public class SegmentedButton extends View {
      *
      * If hasDrawableWidth is false, then this value will be undefined
      */
-    public int getDrawableWidth() {
+    public int getDrawableWidth()
+    {
         return drawableWidth;
     }
 
@@ -1513,7 +1648,8 @@ public class SegmentedButton extends View {
      *
      * @param width size in pixels of the width of the drawable
      */
-    public void setDrawableWidth(final int width) {
+    public void setDrawableWidth(final int width)
+    {
         hasDrawableWidth = (width != -1);
         drawableWidth = width;
 
@@ -1529,7 +1665,8 @@ public class SegmentedButton extends View {
     /**
      * Whether or not the drawable has a height that was explicitly given
      */
-    public boolean hasDrawableHeight() {
+    public boolean hasDrawableHeight()
+    {
         return hasDrawableHeight;
     }
 
@@ -1538,7 +1675,8 @@ public class SegmentedButton extends View {
      *
      * If hasDrawableHeight is false, then this value will be undefined
      */
-    public int getDrawableHeight() {
+    public int getDrawableHeight()
+    {
         return drawableHeight;
     }
 
@@ -1550,7 +1688,8 @@ public class SegmentedButton extends View {
      *
      * @param height size in pixels of the height of the drawable
      */
-    public void setDrawableHeight(final int height) {
+    public void setDrawableHeight(final int height)
+    {
         hasDrawableHeight = (height != -1);
         drawableHeight = height;
 
@@ -1568,7 +1707,8 @@ public class SegmentedButton extends View {
      *
      * The drawable can be placed to the left, top, right, or bottom of the text via this parameter
      */
-    public int getDrawableGravity() {
+    public int getDrawableGravity()
+    {
         return drawableGravity;
     }
 
@@ -1586,7 +1726,8 @@ public class SegmentedButton extends View {
      *
      * @param gravity new drawable gravity
      */
-    public void setDrawableGravity(final @GravityOptions int gravity) {
+    public void setDrawableGravity(final @GravityOptions int gravity)
+    {
         drawableGravity = gravity;
 
         // Request relayout because the drawable width is different now
@@ -1603,7 +1744,8 @@ public class SegmentedButton extends View {
      *
      * If no text is being shown, this will be either null or an empty string
      */
-    public String getText() {
+    public String getText()
+    {
         return text;
     }
 
@@ -1614,16 +1756,16 @@ public class SegmentedButton extends View {
      *
      * @param text new string to set text to in the button
      */
-    public void setText(final @Nullable String text) {
+    public void setText(final @Nullable String text)
+    {
         this.hasText = (text != null && !text.isEmpty());
         this.text = text;
 
         initText();
-
         requestLayout();
 
         // Calculate new positions and bounds for text & drawable
-        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // This may be redundant in the case that onSizeChanged gets called but there are cases where the size doesnt
         // change but the positions still need to be recalculated
         updateSize();
     }
@@ -1631,7 +1773,8 @@ public class SegmentedButton extends View {
     /**
      * Returns the text color when the button is not selected
      */
-    public int getTextColor() {
+    public int getTextColor()
+    {
         return textColor;
     }
 
@@ -1640,7 +1783,8 @@ public class SegmentedButton extends View {
      *
      * @param color text color
      */
-    public void setTextColor(final @ColorInt int color) {
+    public void setTextColor(final @ColorInt int color)
+    {
         textColor = color;
 
         invalidate();
@@ -1651,7 +1795,8 @@ public class SegmentedButton extends View {
      *
      * If this is false, then the text color will be the same as when the button is unselected
      */
-    public boolean hasSelectedTextColor() {
+    public boolean hasSelectedTextColor()
+    {
         return hasSelectedTextColor;
     }
 
@@ -1660,7 +1805,8 @@ public class SegmentedButton extends View {
      *
      * If hasSelectedTextColor is false, then this returned value is undefined
      */
-    public int getSelectedTextColor() {
+    public int getSelectedTextColor()
+    {
         return selectedTextColor;
     }
 
@@ -1669,7 +1815,8 @@ public class SegmentedButton extends View {
      *
      * @param color text color
      */
-    public void setSelectedTextColor(final @ColorInt int color) {
+    public void setSelectedTextColor(final @ColorInt int color)
+    {
         hasSelectedTextColor = true;
         selectedTextColor = color;
 
@@ -1681,7 +1828,8 @@ public class SegmentedButton extends View {
      *
      * The text color of the button when selected will be the normal text color of the button
      */
-    public void removeSelectedTextColor() {
+    public void removeSelectedTextColor()
+    {
         hasSelectedTextColor = false;
 
         invalidate();
@@ -1690,7 +1838,8 @@ public class SegmentedButton extends View {
     /**
      * Return the size of the text in pixels
      */
-    public float getTextSize() {
+    public float getTextSize()
+    {
         return textSize;
     }
 
@@ -1699,15 +1848,15 @@ public class SegmentedButton extends View {
      *
      * @param size new size in pixels of the text
      */
-    public void setTextSize(final float size) {
+    public void setTextSize(final float size)
+    {
         textSize = size;
-
-        if (!hasText) {
+        if (!hasText)
             return;
-        }
 
         textPaint.setTextSize(size);
 
+        initText();
         requestLayout();
 
         // Calculate new positions and bounds for text & drawable
@@ -1719,7 +1868,8 @@ public class SegmentedButton extends View {
     /**
      * Return the current typeface used for drawing text
      */
-    public Typeface getTextTypeface() {
+    public Typeface getTextTypeface()
+    {
         return textTypeface;
     }
 
@@ -1728,11 +1878,11 @@ public class SegmentedButton extends View {
      *
      * @param typeface new typeface for text
      */
-    public void setTextTypeface(final Typeface typeface) {
+    public void setTextTypeface(final Typeface typeface)
+    {
         textTypeface = typeface;
 
         initText();
-
         requestLayout();
 
         // Calculate new positions and bounds for text & drawable
@@ -1748,7 +1898,8 @@ public class SegmentedButton extends View {
      *
      * DO NOT USE
      */
-    void _setOnVisibilityChangedListener(OnVisibilityChangedListener listener) {
+    void _setOnVisibilityChangedListener(OnVisibilityChangedListener listener)
+    {
         this.onVisibilityChangedListener = listener;
     }
 
@@ -1761,8 +1912,10 @@ public class SegmentedButton extends View {
      *
      * @param vectorDrawable vector drawable to convert to a bitmap
      */
-    public static Bitmap getBitmapFromVectorDrawable(Drawable vectorDrawable) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+    public static Bitmap getBitmapFromVectorDrawable(Drawable vectorDrawable)
+    {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        {
             vectorDrawable = (DrawableCompat.wrap(vectorDrawable)).mutate();
         }
 
@@ -1782,25 +1935,28 @@ public class SegmentedButton extends View {
      *
      * @param drawable drawable to convert to a bitmap
      */
-    private static Bitmap getBitmapFromDrawable(@Nullable Drawable drawable) {
-        if (drawable == null) {
+    private static Bitmap getBitmapFromDrawable(@Nullable Drawable drawable)
+    {
+        if (drawable == null)
             return null;
-        }
 
         // Return bitmap if drawable is BitmapDrawable
-        if (drawable instanceof BitmapDrawable) {
-            return ((BitmapDrawable) drawable).getBitmap();
-        }
+        if (drawable instanceof BitmapDrawable)
+            return ((BitmapDrawable)drawable).getBitmap();
 
-        try {
+        try
+        {
             Bitmap bitmap;
 
-            if (drawable instanceof ColorDrawable) {
+            if (drawable instanceof ColorDrawable)
+            {
                 // Create a bitmap of fixed size for ColorDrawable since it inherently has no size
                 // Ideally, this size can be small because the bitmap can be stretched to fit any width/height
                 // without loss of quality
                 bitmap = Bitmap.createBitmap(COLORDRAWABLE_SIZE, COLORDRAWABLE_SIZE, BITMAP_CONFIG);
-            } else if (drawable instanceof GradientDrawable) {
+            }
+            else if (drawable instanceof GradientDrawable)
+            {
                 // GradientDrawable ALSO doesn't have a inherent size
                 // However, the size of the bitmap used to represent the GradientDrawable should be the size of the
                 // bounds.
@@ -1808,12 +1964,13 @@ public class SegmentedButton extends View {
                 // Return null if bounds are 0, this occurs if function is called before button is laid out
                 final Rect bounds = drawable.getBounds();
 
-                if (bounds.width() > 0 && bounds.height() > 0) {
+                if (bounds.width() > 0 && bounds.height() > 0)
                     bitmap = Bitmap.createBitmap(bounds.width(), bounds.height(), BITMAP_CONFIG);
-                } else {
+                else
                     return null;
-                }
-            } else {
+            }
+            else
+            {
                 // Otherwise, create bitmap based on intrinsic size of the drawable
                 bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
                         BITMAP_CONFIG);
@@ -1830,7 +1987,9 @@ public class SegmentedButton extends View {
             drawable.setBounds(bounds);
 
             return bitmap;
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             // There was an unexpected problem, print out the stack track
             e.printStackTrace();
             return null;
@@ -1846,8 +2005,8 @@ public class SegmentedButton extends View {
      *
      * This is an internal listener meant to be used ONLY by the SegmentedButtonGroup
      */
-    public interface OnVisibilityChangedListener {
-
+    public interface OnVisibilityChangedListener
+    {
         void onVisibilityChanged(SegmentedButton button, int visibility);
     }
 

@@ -53,22 +53,26 @@ import androidx.annotation.Nullable;
  * For the case of getDefaultSize for View, AT_MOST will return the maximum value but resolveSize will return UP TO
  * the max size, but it will prefer the desired value.
  */
-class EmptyView extends View {
-
-    public EmptyView(Context context) {
+class EmptyView extends View
+{
+    public EmptyView(Context context)
+    {
         super(context);
     }
 
-    public EmptyView(Context context, @Nullable AttributeSet attrs) {
+    public EmptyView(Context context, @Nullable AttributeSet attrs)
+    {
         super(context, attrs);
     }
 
-    public EmptyView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public EmptyView(Context context, @Nullable AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+    {
         // Desired size is the suggested minimum size
         // Resolve size based on the measure spec and go from there
         // resolveSize

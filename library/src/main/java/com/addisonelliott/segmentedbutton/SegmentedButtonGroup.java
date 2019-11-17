@@ -18,7 +18,6 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,14 +43,13 @@ import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
-import com.addisonelliott.segmentedbutton.SegmentedButton.OnVisibilityChangedListener;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SegmentedButtonGroup extends LinearLayout {
-
+public class SegmentedButtonGroup extends LinearLayout
+{
     // region Variables & Constants
     private static final String TAG = "SegmentedButtonGroup";
 
@@ -73,11 +71,13 @@ public class SegmentedButtonGroup extends LinearLayout {
     // Interface defined for linting purposes to ensure that an animation interpolator value (integer type) is one
     // of the valid values
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ANIM_INTERPOLATOR_NONE, ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN, ANIM_INTERPOLATOR_BOUNCE,
+    @IntDef({
+            ANIM_INTERPOLATOR_NONE, ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN, ANIM_INTERPOLATOR_BOUNCE,
             ANIM_INTERPOLATOR_LINEAR, ANIM_INTERPOLATOR_DECELERATE, ANIM_INTERPOLATOR_CYCLE,
             ANIM_INTERPOLATOR_ANTICIPATE, ANIM_INTERPOLATOR_ACCELERATE_DECELERATE, ANIM_INTERPOLATOR_ACCELERATE,
             ANIM_INTERPOLATOR_ANTICIPATE_OVERSHOOT, ANIM_INTERPOLATOR_FAST_OUT_LINEAR_IN,
-            ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT})
+            ANIM_INTERPOLATOR_LINEAR_OUT_SLOW_IN, ANIM_INTERPOLATOR_OVERSHOOT
+    })
     public @interface AnimationInterpolator {}
 
     // This ViewGroup consists of a FrameLayout as it's child which contains three items:
@@ -176,39 +176,43 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     // region Constructor
 
-    public SegmentedButtonGroup(Context context) {
+    public SegmentedButtonGroup(Context context)
+    {
         super(context);
 
         init(context, null);
     }
 
-    public SegmentedButtonGroup(Context context, AttributeSet attrs) {
+    public SegmentedButtonGroup(Context context, AttributeSet attrs)
+    {
         super(context, attrs);
 
         init(context, attrs);
     }
 
-    public SegmentedButtonGroup(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SegmentedButtonGroup(Context context, AttributeSet attrs, int defStyleAttr)
+    {
         super(context, attrs, defStyleAttr);
 
         init(context, attrs);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SegmentedButtonGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SegmentedButtonGroup(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes)
+    {
         super(context, attrs, defStyleAttr, defStyleRes);
 
         init(context, attrs);
     }
 
-    private void init(Context context, @Nullable AttributeSet attrs) {
+    private void init(Context context, @Nullable AttributeSet attrs)
+    {
         // Create and set outline provider for the segmented button group
         // This is used to provide an outline for the layout because it may have rounded corners
         // The primary benefit to using this is that shadows will follow the contour of the outline rather than the
         // rectangular bounds
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP)
             setOutlineProvider(new OutlineProvider());
-        }
 
         buttons = new ArrayList<>();
 
@@ -260,21 +264,20 @@ public class SegmentedButtonGroup extends LinearLayout {
         getAttributes(context, attrs);
     }
 
-    private void getAttributes(Context context, @Nullable AttributeSet attrs) {
+    private void getAttributes(Context context, @Nullable AttributeSet attrs)
+    {
         // According to docs for obtainStyledAttributes, attrs can be null and I assume that each value will be set
         // to the default
         final TypedArray ta = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SegmentedButtonGroup, 0, 0);
 
         // Load background if available, this can be a drawable or a color
         // Note: Not well documented but getDrawable will return a ColorDrawable if a color is specified
-        if (ta.hasValue(R.styleable.SegmentedButtonGroup_android_background)) {
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_android_background))
             backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_android_background);
-        }
 
         // Load background on selection if available, can be drawable or color
-        if (ta.hasValue(R.styleable.SegmentedButtonGroup_selectedBackground)) {
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_selectedBackground))
             selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_selectedBackground);
-        }
 
         // Note: Must read radius before setBorder call in order to round the border corners!
         radius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
@@ -320,23 +323,32 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Load divider value if available, the divider can be either a drawable resource or a color
         // Load the TypedValue first and check the type to determine if color or drawable
         final TypedValue value = new TypedValue();
-        if (ta.getValue(R.styleable.SegmentedButtonGroup_divider, value)) {
-            if (value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_STRING) {
+        if (ta.getValue(R.styleable.SegmentedButtonGroup_divider, value))
+        {
+            if (value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_STRING)
+            {
                 // Note: Odd case where Android Studio layout preview editor will fail to display a
                 // SegmentedButtonGroup with a divider drawable because value.resourceId returns 0 and thus
                 // ContextCompat.getDrawable will return NullPointerException
                 // Loading drawable TypedArray.getDrawable or doing TypedArray.getResourceId fixes the problem
-                if (isInEditMode()) {
+                if (isInEditMode())
+                {
                     setDivider(ta.getDrawable(R.styleable.SegmentedButtonGroup_divider), dividerWidth, dividerRadius,
                             dividerPadding);
-                } else {
+                }
+                else
+                {
                     setDivider(ContextCompat.getDrawable(context, value.resourceId), dividerWidth, dividerRadius,
                             dividerPadding);
                 }
-            } else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+            }
+            else if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT)
+            {
                 // Divider is a color, value.data is the color value
                 setDivider(value.data, dividerWidth, dividerRadius, dividerPadding);
-            } else {
+            }
+            else
+            {
                 // Invalid type for the divider, throw an exception
                 throw new IllegalArgumentException("Invalid type for SegmentedButtonGroup divider in layout XML "
                         + "resource. Must be a color or drawable");
@@ -358,9 +370,11 @@ public class SegmentedButtonGroup extends LinearLayout {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        if (child instanceof SegmentedButton) {
-            final SegmentedButton button = (SegmentedButton) child;
+    public void addView(View child, int index, ViewGroup.LayoutParams params)
+    {
+        if (child instanceof SegmentedButton)
+        {
+            final SegmentedButton button = (SegmentedButton)child;
 
             // New position of the button will be the size of the buttons before the button is added
             // For example, if there are 5 buttons, then the indices are 0, 1, 2, 3, 4, so the next index is 5!
@@ -383,9 +397,11 @@ public class SegmentedButtonGroup extends LinearLayout {
 
                 // Find the first visible button to the left of this button (or null if none)
                 SegmentedButton leftButton = null;
-                for (int i = index1 - 1; i >= 0; --i) {
+                for (int i = index1 - 1; i >= 0; --i)
+                {
                     final SegmentedButton button_ = buttons.get(i);
-                    if (button_.getVisibility() != GONE) {
+                    if (button_.getVisibility() != GONE)
+                    {
                         leftButton = button_;
                         break;
                     }
@@ -393,9 +409,11 @@ public class SegmentedButtonGroup extends LinearLayout {
 
                 // Find the first visible button to the right of this button (or null if none)
                 SegmentedButton rightButton = null;
-                for (int i = index1 + 1; i < buttons.size(); ++i) {
+                for (int i = index1 + 1; i < buttons.size(); ++i)
+                {
                     final SegmentedButton button_ = buttons.get(i);
-                    if (button_.getVisibility() != GONE) {
+                    if (button_.getVisibility() != GONE)
+                    {
                         rightButton = button_;
                         break;
                     }
@@ -404,37 +422,44 @@ public class SegmentedButtonGroup extends LinearLayout {
                 // Below, we update the buttons leftButton and rightButton properties
                 // Think of the buttons in the group like a chain, each button knows about the button to the left and
                 // right of itself.
-                if (visibility == GONE) {
+                if (visibility == GONE)
+                {
                     // This button is being hidden, we leave the left/right button properties alone because they dont
                     // matter
                     //
                     // Update the "chain" of buttons so that the first visible left button is linked to the first
                     // visible right button
-                    if (leftButton != null) {
+                    if (leftButton != null)
+                    {
                         leftButton.setRightButton(rightButton);
                         leftButton.setupBackgroundClipPath();
                     }
 
                     // Update the "chain" of buttons so that the first visible right button is linked to the first
                     // visible left button
-                    if (rightButton != null) {
+                    if (rightButton != null)
+                    {
                         rightButton.setLeftButton(leftButton);
                         rightButton.setupBackgroundClipPath();
                     }
-                } else {
+                }
+                else
+                {
                     // This button is being shown again, we update the left/right button to be the first visible ones
                     button1.setLeftButton(leftButton);
                     button1.setRightButton(rightButton);
                     button1.setupBackgroundClipPath();
 
                     // Update the "chain" of buttons so that the left button points to this button now
-                    if (leftButton != null) {
+                    if (leftButton != null)
+                    {
                         leftButton.setRightButton(button1);
                         leftButton.setupBackgroundClipPath();
                     }
 
                     // Update the "chain" of buttons so that the right button points to this button now
-                    if (rightButton != null) {
+                    if (rightButton != null)
+                    {
                         rightButton.setLeftButton(button1);
                         rightButton.setupBackgroundClipPath();
                     }
@@ -445,22 +470,28 @@ public class SegmentedButtonGroup extends LinearLayout {
             // Otherwise disable ripple on the button if ripple is disabled
             // The ripple color is only passed to the buttons if a color is specified, otherwise the default color is
             // used from the button itself
-            if (ripple && hasRippleColor) {
+            if (ripple && hasRippleColor)
+            {
                 // Set button ripple color only if a value was given globally
                 button.setRipple(rippleColor);
-            } else if (!ripple) {
+            }
+            else if (!ripple)
+            {
                 // Disable the ripple on the button
                 button.setRipple(false);
             }
 
             // If this is NOT the first item in the group, then update the previous button and this button with its
             // respective right button and left button.
-            if (position != 0) {
+            if (position != 0)
+            {
                 // Find the first visible button to the left of this button (or null if none)
                 SegmentedButton leftButton = null;
-                for (int i = buttons.size() - 1; i >= 0; --i) {
+                for (int i = buttons.size() - 1; i >= 0; --i)
+                {
                     final SegmentedButton button_ = buttons.get(i);
-                    if (button_.getVisibility() != GONE) {
+                    if (button_.getVisibility() != GONE)
+                    {
                         leftButton = button_;
                         break;
                     }
@@ -468,7 +499,8 @@ public class SegmentedButtonGroup extends LinearLayout {
 
                 // If there is a visible button to the left, then set it to point to this button if its visible or
                 // otherwise null to treat it as an end button
-                if (leftButton != null) {
+                if (leftButton != null)
+                {
                     leftButton.setRightButton(button.getVisibility() != GONE ? button : null);
                     // Update background clip path for that button since it may need to add/remove round edges
                     leftButton.setupBackgroundClipPath();
@@ -490,9 +522,8 @@ public class SegmentedButtonGroup extends LinearLayout {
             buttons.add(button);
 
             // If the given position to start at is this button, select it
-            if (this.position == position) {
+            if (this.position == position)
                 updateSelectedPosition(position);
-            }
 
             // Add a divider view to the divider layout that mimics the size of the button
             // This view is used as essentially a spacer for the dividers in the divider layout
@@ -502,7 +533,9 @@ public class SegmentedButtonGroup extends LinearLayout {
             EmptyView dividerView = new EmptyView(getContext());
             dividerView.setVisibility(button.getVisibility());
             dividerLayout.addView(dividerView, params);
-        } else {
+        }
+        else
+        {
             // Not allowed to have children of any type besides SegmentedButton
             throw new IllegalArgumentException("Invalid child view for SegmentedButtonGroup. Only SegmentedButton's "
                     + "are valid children of the group");
@@ -522,18 +555,19 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @return int representing index of the corresponding button
      * @throws IllegalStateException if no button contains the coordinate within its bounds
      */
-    int getButtonPositionFromX(float x) {
+    int getButtonPositionFromX(float x)
+    {
         // Loop through each button
         int i = 0;
-        for (; i < buttons.size(); ++i) {
+        for (; i < buttons.size(); ++i)
+        {
             final SegmentedButton button = buttons.get(i);
 
             // If x value is less than the right-hand side of the button, this is the selected button
             // Note: No need to check the left side of button because we assume each button is directly connected
             // from left to right
-            if (button.getVisibility() != GONE && x <= button.getRight()) {
+            if (button.getVisibility() != GONE && x <= button.getRight())
                 break;
-            }
         }
 
         // Return last button if x value is out of bounds
@@ -554,22 +588,23 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @return float representing the fractional position of the corresponding button
      * @throws IllegalStateException if no button contains the coordinate within its bounds
      */
-    float getButtonPositionFromXF(float x) {
+    float getButtonPositionFromXF(float x)
+    {
         // Loop through each button
         int i = 0;
-        for (; i < buttons.size(); ++i) {
+        for (; i < buttons.size(); ++i)
+        {
             final SegmentedButton button = buttons.get(i);
 
             // If x value is less than the right-hand side of the button, this is the selected button
             // Note: No need to check the left side of button because we assume each button is directly connected
             // from left to right
-            if (button.getVisibility() != GONE && x < button.getRight()) {
+            if (button.getVisibility() != GONE && x < button.getRight())
                 return i + (x - button.getLeft()) / button.getWidth();
-            }
         }
 
         // Return last button if x value is out of bounds
-        return (float) i;
+        return (float)i;
     }
 
     /**
@@ -585,16 +620,18 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @hide
      */
     @Override
-    public boolean dispatchTouchEvent(final MotionEvent ev) {
+    public boolean dispatchTouchEvent(final MotionEvent ev)
+    {
         // Do not handle touch events if the view is disabled or not clickable
         // Oddly enough, the enabled and clickable states don't do anything unless specifically programmed into the
         // custom views
-        if (!isEnabled() || !isClickable()) {
+        if (!isEnabled() || !isClickable())
             return false;
-        }
 
-        switch (ev.getAction()) {
-            case MotionEvent.ACTION_UP: {
+        switch (ev.getAction())
+        {
+            case MotionEvent.ACTION_UP:
+            {
                 // Selected button position
                 final int position = getButtonPositionFromX(ev.getX());
 
@@ -609,13 +646,15 @@ public class SegmentedButtonGroup extends LinearLayout {
             }
             break;
 
-            case MotionEvent.ACTION_DOWN: {
+            case MotionEvent.ACTION_DOWN:
+            {
                 // Selected button position
                 final int position = getButtonPositionFromX(ev.getX());
 
                 // If button cannot be dragged, user is NOT pressing the currently selected button or the button is
                 // being animated, then just set drag offset to NaN meaning drag is not activated
-                if (!draggable || this.position != position || (buttonAnimator != null && buttonAnimator.isRunning())) {
+                if (!draggable || this.position != position || (buttonAnimator != null && buttonAnimator.isRunning()))
+                {
                     dragOffsetX = Float.NaN;
                     break;
                 }
@@ -638,11 +677,11 @@ public class SegmentedButtonGroup extends LinearLayout {
                 return true;
             }
 
-            case MotionEvent.ACTION_MOVE: {
+            case MotionEvent.ACTION_MOVE:
+            {
                 // Only drag if drag has been activated and hence is allowed
-                if (Float.isNaN(dragOffsetX)) {
+                if (Float.isNaN(dragOffsetX))
                     break;
-                }
 
                 // Get X coordinate of where the selected button should be by taking user's X location and subtract
                 // the offset
@@ -658,11 +697,13 @@ public class SegmentedButtonGroup extends LinearLayout {
             }
             break;
 
-            case MotionEvent.ACTION_CANCEL: {
+            case MotionEvent.ACTION_CANCEL:
+            {
                 // Cancel action is called when user leaves the view with their finger and another view captures the
                 // actions (e.g. scroll views for example)
                 // In this case, stop dragging and "snap" to nearest position
-                if (!Float.isNaN(dragOffsetX)) {
+                if (!Float.isNaN(dragOffsetX))
+                {
                     setPosition(Math.round(currentPosition), true);
 
                     // Enable scroll touch event interception again now that we're done dragging
@@ -685,7 +726,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * For example, a position of 2.25 would indicate that the selected button should START, i.e. the left side of
      * the selected button, at 1/4 of the width of the 3rd button.
      */
-    private void moveSelectedButton(final float position) {
+    private void moveSelectedButton(final float position)
+    {
         // Update current position to be the animated value
         // This is a float value indicating where the left-side of the button is located
         // For example, a currentPosition of 1.0 would mean all of button 1 was selected
@@ -695,14 +737,15 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Get the current button position and extract the offset. For example, a currentPosition of 2.25 would
         // result in a currentButtonPosition of 2 and the currentOffset to 0.25.
-        final int currentButtonPosition = (int) currentPosition;
+        final int currentButtonPosition = (int)currentPosition;
         final float currentOffset = currentPosition - currentButtonPosition;
 
         // Get the current button end position, which will start at the current button plus 1 because the width of the
         // selected button is 1. Check each button to the right for the first one that is not GONE
         int currentEndButtonPosition = currentButtonPosition + 1;
         while (currentEndButtonPosition < buttons.size()
-                && buttons.get(currentEndButtonPosition).getVisibility() == GONE) {
+                && buttons.get(currentEndButtonPosition).getVisibility() == GONE)
+        {
             ++currentEndButtonPosition;
         }
 
@@ -719,7 +762,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         // For the end button, we want to clip the left side of the button to match up with the right side of the
         // previous button. However, there is a slight chance the end button position might be out of range so we
         // check if it is first (do nothing if out of range, nothing to clip on left side of)
-        if (currentEndButtonPosition >= 0 && currentEndButtonPosition < buttons.size()) {
+        if (currentEndButtonPosition >= 0 && currentEndButtonPosition < buttons.size())
+        {
             // Grab the button directly to the right of the current button and clip the left
             final SegmentedButton currentEndButton = buttons.get(currentEndButtonPosition);
             currentEndButton.clipLeft(currentOffset);
@@ -732,7 +776,8 @@ public class SegmentedButtonGroup extends LinearLayout {
         // the end button position (where the selected button ends = currentButtonPosition + 1). If not equal, then
         // that means we are done showing the selected view on this button so we clip the entire view to just show
         // the normal button
-        if (lastPosition != currentButtonPosition && lastPosition != currentEndButtonPosition) {
+        if (lastPosition != currentButtonPosition && lastPosition != currentEndButtonPosition)
+        {
             buttons.get(lastPosition).clipRight(1.0f);
         }
 
@@ -740,15 +785,15 @@ public class SegmentedButtonGroup extends LinearLayout {
         // is the next VISIBLE button, so we start at 1 plus the last position because the width of the selected button
         // is 1
         int lastEndPosition = lastPosition + 1;
-        while (lastEndPosition < buttons.size() && buttons.get(lastEndPosition).getVisibility() == GONE) {
+        while (lastEndPosition < buttons.size() && buttons.get(lastEndPosition).getVisibility() == GONE)
+        {
             ++lastEndPosition;
         }
 
         // Clip any views like explained above
         if (lastEndPosition != currentEndButtonPosition && lastEndPosition != currentButtonPosition
-                && lastEndPosition < buttons.size()) {
+                && lastEndPosition < buttons.size())
             buttons.get(lastEndPosition).clipRight(1.0f);
-        }
 
         // Update the lastPosition for the next animation frame
         lastPosition = currentButtonPosition;
@@ -766,29 +811,33 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * In addition, the onPositionChangedListener will be called with the updated position.
      */
-    private void updateSelectedPosition(final int position) {
+    private void updateSelectedPosition(final int position)
+    {
         // Update position, current position and last position to the desired value
         this.position = position;
         this.currentPosition = position;
         this.lastPosition = position;
 
         // Loop through each button and reset it to the appropriate value
-        for (int i = 0; i < buttons.size(); ++i) {
+        for (int i = 0; i < buttons.size(); ++i)
+        {
             final SegmentedButton button = buttons.get(i);
 
-            if (i == position) {
+            if (i == position)
+            {
                 // Show entire selected view
                 button.clipRight(0.0f);
-            } else {
+            }
+            else
+            {
                 // Hide entire selected view
                 button.clipRight(1.0f);
             }
         }
 
         // Notify listener of position change
-        if (onPositionChangedListener != null) {
+        if (onPositionChangedListener != null)
             onPositionChangedListener.onPositionChanged(position);
-        }
     }
 
     // endregion
@@ -796,7 +845,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     // region Save & Restore State
 
     @Override
-    protected Parcelable onSaveInstanceState() {
+    protected Parcelable onSaveInstanceState()
+    {
         Bundle bundle = new Bundle();
         bundle.putParcelable("superState", super.onSaveInstanceState());
 
@@ -807,15 +857,17 @@ public class SegmentedButtonGroup extends LinearLayout {
     }
 
     @Override
-    protected void onRestoreInstanceState(final Parcelable state) {
+    protected void onRestoreInstanceState(final Parcelable state)
+    {
         // On off chance that the state is not a Bundle, just pass it to the parent class
         // Not sure why this would ever happen, but prevents a casting exception
-        if (!(state instanceof Bundle)) {
+        if (!(state instanceof Bundle))
+        {
             super.onRestoreInstanceState(state);
             return;
         }
 
-        final Bundle bundle = (Bundle) state;
+        final Bundle bundle = (Bundle)state;
 
         // Restore position of selected button
         final int position = bundle.getInt("position");
@@ -831,7 +883,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     /**
      * List of segmented buttons that are attached to this button group
      */
-    public ArrayList<SegmentedButton> getButtons() {
+    public ArrayList<SegmentedButton> getButtons()
+    {
         return buttons;
     }
 
@@ -840,7 +893,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * Segmented buttons are indexed according to their order of being added to this group
      */
-    public SegmentedButton getButton(int index) {
+    public SegmentedButton getButton(int index)
+    {
         return buttons.get(index);
     }
 
@@ -855,7 +909,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @return the current background drawable when the button is not selected
      */
-    public Drawable getBackground() {
+    public Drawable getBackground()
+    {
         return backgroundDrawable;
     }
 
@@ -867,14 +922,15 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param drawable drawable to set the background to
      */
     @Override
-    public void setBackground(final Drawable drawable) {
+    public void setBackground(final Drawable drawable)
+    {
         backgroundDrawable = drawable;
 
         // Check for non-null buttons because parent class calls setBackground
-        if (buttons != null) {
-            for (SegmentedButton button : buttons) {
+        if (buttons != null)
+        {
+            for (SegmentedButton button : buttons)
                 button.setBackground(drawable);
-            }
         }
     }
 
@@ -887,13 +943,17 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param color color to set the background to
      */
-    public void setBackground(@ColorInt int color) {
-        if (backgroundDrawable instanceof ColorDrawable) {
-            ((ColorDrawable) backgroundDrawable.mutate()).setColor(color);
+    public void setBackground(@ColorInt int color)
+    {
+        if (backgroundDrawable instanceof ColorDrawable)
+        {
+            ((ColorDrawable)backgroundDrawable.mutate()).setColor(color);
 
             // Required to update background for the buttons
             setBackground(backgroundDrawable);
-        } else {
+        }
+        else
+        {
             setBackground(new ColorDrawable(color));
         }
     }
@@ -908,7 +968,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @see #setBackground(int)
      */
     @Override
-    public void setBackgroundColor(@ColorInt int color) {
+    public void setBackgroundColor(@ColorInt int color)
+    {
         setBackground(color);
     }
 
@@ -923,7 +984,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @return the current background drawable when the button is selected
      */
-    public Drawable getSelectedBackground() {
+    public Drawable getSelectedBackground()
+    {
         return selectedBackgroundDrawable;
     }
 
@@ -934,12 +996,12 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param drawable drawable to set the background to
      */
-    public void setSelectedBackground(final Drawable drawable) {
+    public void setSelectedBackground(final Drawable drawable)
+    {
         selectedBackgroundDrawable = drawable;
 
-        for (SegmentedButton button : buttons) {
+        for (SegmentedButton button : buttons)
             button.setSelectedBackground(drawable);
-        }
     }
 
     /**
@@ -951,13 +1013,17 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param color color to set the background to
      */
-    public void setSelectedBackground(@ColorInt int color) {
-        if (selectedBackgroundDrawable instanceof ColorDrawable) {
-            ((ColorDrawable) selectedBackgroundDrawable.mutate()).setColor(color);
+    public void setSelectedBackground(@ColorInt int color)
+    {
+        if (selectedBackgroundDrawable instanceof ColorDrawable)
+        {
+            ((ColorDrawable)selectedBackgroundDrawable.mutate()).setColor(color);
 
             // Required to update background for the buttons
             setSelectedBackground(selectedBackgroundDrawable);
-        } else {
+        }
+        else
+        {
             setSelectedBackground(new ColorDrawable(color));
         }
     }
@@ -968,7 +1034,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param color color to set the background to
      * @see #setSelectedBackground(int)
      */
-    public void setSelectedBackgroundColor(@ColorInt int color) {
+    public void setSelectedBackgroundColor(@ColorInt int color)
+    {
         setSelectedBackground(color);
     }
 
@@ -977,14 +1044,16 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * 0px value indicates no border is present
      */
-    public int getBorderWidth() {
+    public int getBorderWidth()
+    {
         return borderWidth;
     }
 
     /**
      * Return color of the border
      */
-    public int getBorderColor() {
+    public int getBorderColor()
+    {
         return borderColor;
     }
 
@@ -993,7 +1062,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * 0px value indicates the border is solid
      */
-    public int getBorderDashWidth() {
+    public int getBorderDashWidth()
+    {
         return borderDashWidth;
     }
 
@@ -1002,7 +1072,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * Only relevant if border dash width is greater than 0px
      */
-    public int getBorderDashGap() {
+    public int getBorderDashGap()
+    {
         return borderDashGap;
     }
 
@@ -1014,14 +1085,16 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
      * @param dashGap   Width of the gap for border, in pixels.
      */
-    public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+    public void setBorder(int width, @ColorInt int color, int dashWidth, int dashGap)
+    {
         borderWidth = width;
         borderColor = color;
         borderDashWidth = dashWidth;
         borderDashGap = dashGap;
 
         // Border width of 0 indicates to hide borders
-        if (width > 0) {
+        if (width > 0)
+        {
             GradientDrawable borderDrawable = new GradientDrawable();
             // Set background color to be transparent so that buttons and everything underneath the border view is
             // still visible. This was an issue on API 16 Android where it would default to a black background
@@ -1033,7 +1106,9 @@ public class SegmentedButtonGroup extends LinearLayout {
             borderDrawable.setStroke(width, color, dashWidth, dashGap);
 
             borderView.setBackground(borderDrawable);
-        } else {
+        }
+        else
+        {
             borderView.setBackground(null);
         }
     }
@@ -1043,14 +1118,16 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * 0px value indicates no border is present
      */
-    public int getSelectedBorderWidth() {
+    public int getSelectedBorderWidth()
+    {
         return selectedBorderWidth;
     }
 
     /**
      * Return color of the border for the selected button
      */
-    public int getSelectedBorderColor() {
+    public int getSelectedBorderColor()
+    {
         return selectedBorderColor;
     }
 
@@ -1059,7 +1136,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * 0px value indicates the border is solid
      */
-    public int getSelectedBorderDashWidth() {
+    public int getSelectedBorderDashWidth()
+    {
         return selectedBorderDashWidth;
     }
 
@@ -1068,7 +1146,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * Only relevant if border dash width is greater than 0px
      */
-    public int getSelectedBorderDashGap() {
+    public int getSelectedBorderDashGap()
+    {
         return selectedBorderDashGap;
     }
 
@@ -1080,16 +1159,16 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param dashWidth Width of the dash for border, in pixels. Value of 0px means solid line (default is 0px)
      * @param dashGap   Width of the gap for border, in pixels.
      */
-    public void setSelectedBorder(int width, @ColorInt int color, int dashWidth, int dashGap) {
+    public void setSelectedBorder(int width, @ColorInt int color, int dashWidth, int dashGap)
+    {
         selectedBorderWidth = width;
         selectedBorderColor = color;
         selectedBorderDashWidth = dashWidth;
         selectedBorderDashGap = dashGap;
 
         // Loop through each button and set the selected button border
-        for (SegmentedButton button : buttons) {
+        for (SegmentedButton button : buttons)
             button.setSelectedButtonBorder(width, color, dashWidth, dashGap);
-        }
     }
 
     /**
@@ -1097,7 +1176,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * A value of 0px indicates the view is rectangular and has no rounded corners
      */
-    public int getRadius() {
+    public int getRadius()
+    {
         return radius;
     }
 
@@ -1106,11 +1186,13 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param radius value of new corner radius, in pixels
      */
-    public void setRadius(final int radius) {
+    public void setRadius(final int radius)
+    {
         this.radius = radius;
 
         // Update radius for each button
-        for (SegmentedButton button : buttons) {
+        for (SegmentedButton button : buttons)
+        {
             button.setBackgroundRadius(radius);
             button.setupBackgroundClipPath();
 
@@ -1118,15 +1200,13 @@ public class SegmentedButtonGroup extends LinearLayout {
         }
 
         // Update border for new radius
-        GradientDrawable borderDrawable = (GradientDrawable) borderView.getBackground();
-        if (borderDrawable != null) {
+        GradientDrawable borderDrawable = (GradientDrawable)borderView.getBackground();
+        if (borderDrawable != null)
             borderDrawable.setCornerRadius(radius - borderWidth / 2.0f);
-        }
 
         // Invalidate shadow outline so that it will be updated to follow the new radius
-        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+        if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP)
             invalidateOutline();
-        }
     }
 
     /**
@@ -1134,7 +1214,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * A value of 0px indicates the selected button will be rectangular and has no rounded corners
      */
-    public int getSelectedButtonRadius() {
+    public int getSelectedButtonRadius()
+    {
         return selectedButtonRadius;
     }
 
@@ -1143,11 +1224,13 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param selectedButtonRadius value of the new selected button corner radius, in pixels
      */
-    public void setSelectedButtonRadius(int selectedButtonRadius) {
+    public void setSelectedButtonRadius(int selectedButtonRadius)
+    {
         this.selectedButtonRadius = selectedButtonRadius;
 
         // Update the selected button radius for each button
-        for (SegmentedButton button : buttons) {
+        for (SegmentedButton button : buttons)
+        {
             button.setSelectedButtonRadius(selectedButtonRadius);
             button.setupSelectedButtonClipPath();
         }
@@ -1159,7 +1242,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * If the button is currently being animated, then the position will be the old button position until the
      * animation is complete
      */
-    public int getPosition() {
+    public int getPosition()
+    {
         return position;
     }
 
@@ -1181,7 +1265,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param position index of new button to select
      * @param animate  whether or not to animate moving to the button
      */
-    public void setPosition(final int position, final boolean animate) {
+    public void setPosition(final int position, final boolean animate)
+    {
         // Return and do nothing in two cases
         // First, if the position is out of bounds.
         // Second, if the desired position is equal to the current position do nothing. But, only do this under two
@@ -1190,12 +1275,12 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Also if the user is not dragging the button. If the user lets go from dragging and the button is still on
         // the same position but slightly offset, then we want to snap back to normal.
         if (position < 0 || position >= buttons.size() || (position == this.position && (buttonAnimator != null
-                && !buttonAnimator.isRunning()) && Float.isNaN(dragOffsetX))) {
+                && !buttonAnimator.isRunning()) && Float.isNaN(dragOffsetX)))
             return;
-        }
 
         // If not animating or if the animation interpolator is null, then just update the selected position
-        if (!animate || selectionAnimationInterpolator == null) {
+        if (!animate || selectionAnimationInterpolator == null)
+        {
             updateSelectedPosition(position);
             return;
         }
@@ -1204,17 +1289,20 @@ public class SegmentedButtonGroup extends LinearLayout {
         // GONE. Add to a list for later
         final List<Integer> buttonGoneIndices = new ArrayList<>();
         final boolean movingRight = currentPosition < position;
-        if (movingRight) {
-            for (int i = (int) Math.ceil(currentPosition); i < position; ++i) {
-                if (buttons.get(i).getVisibility() == GONE) {
+        if (movingRight)
+        {
+            for (int i = (int)Math.ceil(currentPosition); i < position; ++i)
+            {
+                if (buttons.get(i).getVisibility() == GONE)
                     buttonGoneIndices.add(i);
-                }
             }
-        } else {
-            for (int i = (int) Math.floor(currentPosition); i > position; --i) {
-                if (buttons.get(i).getVisibility() == GONE) {
+        }
+        else
+        {
+            for (int i = (int)Math.floor(currentPosition); i > position; --i)
+            {
+                if (buttons.get(i).getVisibility() == GONE)
                     buttonGoneIndices.add(i + 1);
-                }
             }
         }
 
@@ -1228,17 +1316,17 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // For each update to the animation value, move the button
         buttonAnimator.addUpdateListener(animation -> {
-            float value = (float) animation.getAnimatedValue();
+            float value = (float)animation.getAnimatedValue();
 
             // Account for GONE buttons in between the indices
             // Depending on if we're moving left/right, we add/subtract one when a button is missing
             // This will skip the GONE button
-            for (int index : buttonGoneIndices) {
-                if (movingRight && value >= index) {
+            for (int index : buttonGoneIndices)
+            {
+                if (movingRight && value >= index)
                     value += 1;
-                } else if (!movingRight && value <= index) {
+                else if (!movingRight && value <= index)
                     value -= 1;
-                }
             }
 
             // Move to the new position
@@ -1248,9 +1336,11 @@ public class SegmentedButtonGroup extends LinearLayout {
         // Set the parameters for the button animation
         buttonAnimator.setDuration(selectionAnimationDuration);
         buttonAnimator.setInterpolator(selectionAnimationInterpolator);
-        buttonAnimator.addListener(new AnimatorListenerAdapter() {
+        buttonAnimator.addListener(new AnimatorListenerAdapter()
+        {
             @Override
-            public void onAnimationEnd(final Animator animation) {
+            public void onAnimationEnd(final Animator animation)
+            {
                 // Update the position of the button at the end of the animation
                 // Also resets all buttons to their appropriate state in case the animation went wrong in any way
                 updateSelectedPosition(position);
@@ -1268,7 +1358,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     /**
      * Returns whether or not the currently selected button can be moved via dragging
      */
-    public boolean isDraggable() {
+    public boolean isDraggable()
+    {
         return draggable;
     }
 
@@ -1279,7 +1370,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * selected button will follow the users finger. When the user lets go, the selected button will snap to the
      * nearest button
      */
-    public void setDraggable(final boolean draggable) {
+    public void setDraggable(final boolean draggable)
+    {
         this.draggable = draggable;
     }
 
@@ -1289,7 +1381,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * If false, then no animation will be shown if the user taps a button. Otherwise, if true a ripple effect will
      * be shown on button tap.
      */
-    public boolean hasRipple() {
+    public boolean hasRipple()
+    {
         return ripple;
     }
 
@@ -1298,7 +1391,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * The ripple color is a tint color applied on top of the button when it is pressed
      */
-    public int getRippleColor() {
+    public int getRippleColor()
+    {
         return rippleColor;
     }
 
@@ -1310,13 +1404,13 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param enabled whether or not to enable the ripple effect for all buttons in the group
      */
-    public void setRipple(final boolean enabled) {
+    public void setRipple(final boolean enabled)
+    {
         ripple = enabled;
 
         // Loop through and set the ripple for each button
-        for (SegmentedButton button : buttons) {
+        for (SegmentedButton button : buttons)
             button.setRipple(enabled);
-        }
     }
 
     /**
@@ -1326,20 +1420,21 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param color color to set for the ripple effect for all buttons in the group
      */
-    public void setRipple(final @ColorInt int color) {
+    public void setRipple(final @ColorInt int color)
+    {
         ripple = true;
         rippleColor = color;
 
         // Loop through and set the ripple color for each button
-        for (SegmentedButton button : buttons) {
+        for (SegmentedButton button : buttons)
             button.setRipple(color);
-        }
     }
 
     /**
      * Returns divider drawable that is placed between each button in the group, value of null indicates no drawable
      */
-    public Drawable getDivider() {
+    public Drawable getDivider()
+    {
         return dividerLayout.getDividerDrawable();
     }
 
@@ -1353,9 +1448,11 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param radius   corner radius of the divider drawable to round the corners, in pixels
      * @param padding  space above and below the divider drawable within the button group, in pixels
      */
-    public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding) {
+    public void setDivider(@Nullable Drawable drawable, int width, int radius, int padding)
+    {
         // Drawable of null indicates that we want to hide dividers
-        if (drawable == null) {
+        if (drawable == null)
+        {
             dividerLayout.setDividerDrawable(null);
             dividerLayout.setShowDividers(SHOW_DIVIDER_NONE);
             return;
@@ -1363,13 +1460,16 @@ public class SegmentedButtonGroup extends LinearLayout {
 
         // Set the corner radius and size if the drawable is a GradientDrawable
         // Otherwise just set the divider drawable like normal because we cant set the parameters
-        if (drawable instanceof GradientDrawable) {
-            GradientDrawable gradient = (GradientDrawable) drawable;
+        if (drawable instanceof GradientDrawable)
+        {
+            GradientDrawable gradient = (GradientDrawable)drawable;
             gradient.setSize(width, 0);
             gradient.setCornerRadius(radius);
 
             dividerLayout.setDividerDrawable(gradient);
-        } else {
+        }
+        else
+        {
             dividerLayout.setDividerDrawable(drawable);
         }
 
@@ -1385,11 +1485,12 @@ public class SegmentedButtonGroup extends LinearLayout {
      * @param radius  corner radius of the divider drawable to round the corners, in pixels
      * @param padding space above and below the divider drawable within the button group, in pixels
      */
-    public void setDivider(@ColorInt int color, int width, int radius, int padding) {
+    public void setDivider(@ColorInt int color, int width, int radius, int padding)
+    {
         // Create GradientDrawable of the specified color
         // This is used to specify the corner radius, unlike ColorDrawable that does not have that feature
         GradientDrawable drawable = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP,
-                new int[]{color, color});
+                new int[] {color, color});
 
         drawable.setCornerRadius(radius);
         drawable.setShape(GradientDrawable.RECTANGLE);
@@ -1405,7 +1506,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * This will return null if no animation is being used
      */
-    public Interpolator getSelectionAnimationInterpolator() {
+    public Interpolator getSelectionAnimationInterpolator()
+    {
         return selectionAnimationInterpolator;
     }
 
@@ -1414,7 +1516,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * If interpolator is null, no animation will be used
      */
-    public void setSelectionAnimationInterpolator(@Nullable Interpolator interpolator) {
+    public void setSelectionAnimationInterpolator(@Nullable Interpolator interpolator)
+    {
         selectionAnimationInterpolator = interpolator;
     }
 
@@ -1425,8 +1528,10 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param interpolator int value indicating which predefined Android interpolator to use
      */
-    public void setSelectionAnimationInterpolator(@AnimationInterpolator int interpolator) {
-        switch (interpolator) {
+    public void setSelectionAnimationInterpolator(@AnimationInterpolator int interpolator)
+    {
+        switch (interpolator)
+        {
             case ANIM_INTERPOLATOR_NONE:
                 selectionAnimationInterpolator = null;
                 break;
@@ -1484,7 +1589,8 @@ public class SegmentedButtonGroup extends LinearLayout {
     /**
      * Return the duration, in milliseconds, it takes to complete the animation to change selected button
      */
-    public int getSelectionAnimationDuration() {
+    public int getSelectionAnimationDuration()
+    {
         return selectionAnimationDuration;
     }
 
@@ -1493,21 +1599,24 @@ public class SegmentedButtonGroup extends LinearLayout {
      *
      * @param selectionAnimationDuration duration in milliseconds for animation to complete
      */
-    public void setSelectionAnimationDuration(final int selectionAnimationDuration) {
+    public void setSelectionAnimationDuration(final int selectionAnimationDuration)
+    {
         this.selectionAnimationDuration = selectionAnimationDuration;
     }
 
     /**
      * Returns the listener used for notifying position changes
      */
-    public OnPositionChangedListener getOnPositionChangedListener() {
+    public OnPositionChangedListener getOnPositionChangedListener()
+    {
         return onPositionChangedListener;
     }
 
     /**
      * Sets the listeners used for notifying position changes
      */
-    public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener) {
+    public void setOnPositionChangedListener(final OnPositionChangedListener onPositionChangedListener)
+    {
         this.onPositionChangedListener = onPositionChangedListener;
     }
 
@@ -1521,8 +1630,8 @@ public class SegmentedButtonGroup extends LinearLayout {
      * This callback will be called AFTER the animation is complete since the position does not change until the
      * completion of the animation.
      */
-    public interface OnPositionChangedListener {
-
+    public interface OnPositionChangedListener
+    {
         void onPositionChanged(int position);
     }
 
@@ -1538,10 +1647,11 @@ public class SegmentedButtonGroup extends LinearLayout {
      * same API.
      */
     @RequiresApi(api = VERSION_CODES.LOLLIPOP)
-    private class OutlineProvider extends ViewOutlineProvider {
-
+    private class OutlineProvider extends ViewOutlineProvider
+    {
         @Override
-        public void getOutline(final View view, final Outline outline) {
+        public void getOutline(final View view, final Outline outline)
+        {
             outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radius);
         }
     }
