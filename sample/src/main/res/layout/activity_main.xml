@@ -9,11 +9,12 @@
     android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_300"
         android:orientation="vertical"
-        android:paddingBottom="16dp">
+        android:paddingBottom="60dp">
 
         <Spinner
             android:id="@+id/spinner"
@@ -694,7 +695,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginLeft="4dp"
             android:layout_marginRight="4dp"
-            android:layout_marginBottom="60dp"
+            android:layout_marginBottom="6dp"
             android:weightSum="3"
             app:draggable="true"
             app:selectedBackground="@color/indigo_800"

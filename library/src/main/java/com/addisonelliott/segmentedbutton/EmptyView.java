@@ -6,7 +6,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 /**
- * Empty, transparent view useful as a "dummy" or filler view
+ * Empty, transparent view used as a "dummy" or filler view
  *
  * This view has a desired size of (minimumWidth, minimumHeight) but will not expand past this size if the space is
  * available. This is contrary to View's implementation, which will expand to fill the available space.
