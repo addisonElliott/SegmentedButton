@@ -421,6 +421,7 @@
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
                 app:selectedTextColor="@color/white"
+                app:selectedTextStyle="bold"
                 app:text="YES"
                 app:textColor="@color/black"
                 app:textSize="24sp" />
@@ -432,6 +433,7 @@
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
                 app:selectedTextColor="@color/white"
+                app:selectedTextStyle="bold"
                 app:text="Maybe"
                 app:textColor="@color/black"
                 app:textSize="24sp" />
@@ -443,6 +445,7 @@
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
                 app:selectedTextColor="@color/white"
+                app:selectedTextStyle="bold"
                 app:text="NO"
                 app:textColor="@color/black"
                 app:textSize="24sp" />
