@@ -202,6 +202,7 @@ Check out the [sample project](https://github.com/addisonElliott/SegmentedButton
 | app:textSize                    | `dimension`       | Font size of text                                                            |
 | android:fontFamily              | `font`            | Font for displaying text                                                     |
 | app:textStyle                   | `flag`            | Text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
+| app:selectedTextStyle           | `flag`            | Selected text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
 
 **All layout attributes have a corresponding function in Java that can be called to change programatically. See Javadocs of source code for more information.**
 
