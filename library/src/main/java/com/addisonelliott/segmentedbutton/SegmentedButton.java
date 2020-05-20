@@ -169,8 +169,8 @@ public class SegmentedButton extends View
     private int textColor, selectedTextColor;
     // Font size of the text in pixels (default value is 14sp)
     private float textSize;
-    // Typeface to use for displaying the text, this is created from the fontFamily & textStyle attributes
-    private Typeface textTypeface;
+    // Typeface for displaying the text and selected text, created from the fontFamily & textStyle attributes. Default value for selected is the text typeface.
+    private Typeface textTypeface, selectedTextTypeface;
 
     // Internal listener that is called when the visibility of this button is changed
     private OnVisibilityChangedListener onVisibilityChangedListener;
@@ -280,6 +280,7 @@ public class SegmentedButton extends View
 
         final boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
         final int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
+        final int selectedTextStyle = ta.getInt(R.styleable.SegmentedButton_selectedTextStyle, textStyle);
 
         // If a font family is present then load typeface with text style from that
         if (hasFontFamily)
@@ -290,6 +291,7 @@ public class SegmentedButton extends View
             if (VERSION.SDK_INT >= VERSION_CODES.O)
             {
                 textTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily), textStyle);
+                selectedTextTypeface = Typeface.create(ta.getFont(R.styleable.SegmentedButton_android_fontFamily), selectedTextStyle);
             }
             else
             {
@@ -298,6 +300,7 @@ public class SegmentedButton extends View
                 if (fontFamily > 0)
                 {
                     textTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), textStyle);
+                    selectedTextTypeface = Typeface.create(ResourcesCompat.getFont(context, fontFamily), selectedTextStyle);
                 }
                 else
                 {
@@ -305,12 +308,15 @@ public class SegmentedButton extends View
                     // "monospace". Thus, we get the font as a string and then try to load that way
                     textTypeface = Typeface.create(ta.getString(R.styleable.SegmentedButton_android_fontFamily),
                         textStyle);
+                    selectedTextTypeface = Typeface.create(ta.getString(R.styleable.SegmentedButton_android_fontFamily),
+                        selectedTextStyle);
                 }
             }
         }
         else
         {
             textTypeface = Typeface.create((Typeface)null, textStyle);
+            selectedTextTypeface = Typeface.create((Typeface)null, selectedTextStyle);
         }
 
         ta.recycle();
@@ -638,6 +644,7 @@ public class SegmentedButton extends View
             canvas.save();
             canvas.translate(textPosition.x, textPosition.y);
             textPaint.setColor(textColor);
+            textPaint.setTypeface(textTypeface);
             textStaticLayout.draw(canvas);
             canvas.restore();
         }
@@ -735,6 +742,7 @@ public class SegmentedButton extends View
             // If a selected text color was specified, then use that, otherwise we want to default to the original
             // text color
             textPaint.setColor(hasSelectedTextColor ? selectedTextColor : textColor);
+            textPaint.setTypeface(selectedTextTypeface);
             textStaticLayout.draw(canvas);
             canvas.restore();
         }
@@ -1871,12 +1879,34 @@ public class SegmentedButton extends View
     public void setTextTypeface(final Typeface typeface)
     {
         textTypeface = typeface;
+        refreshTypeface();
+    }
 
+    /**
+     * Return the current selected typeface used for drawing text
+     */
+    public Typeface getSelectedTextTypeface()
+    {
+        return selectedTextTypeface;
+    }
+
+    /**
+     * Set a new typeface to use for drawing text when the button is selected
+     *
+     * @param typeface new typeface for selected text
+     */
+    public void setSelectedTextTypeface(final Typeface typeface)
+    {
+        selectedTextTypeface = typeface;
+        refreshTypeface();
+    }
+
+    private void refreshTypeface() {
         initText();
         requestLayout();
 
         // Calculate new positions and bounds for text & drawable
-        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesnt
+        // This may be redundant if the case that onSizeChanged gets called but there are cases where the size doesn't
         // change but the positions still need to be recalculated
         updateSize();
     }
