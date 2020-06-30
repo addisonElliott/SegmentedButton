@@ -202,7 +202,9 @@ Check out the [sample project](https://github.com/addisonElliott/SegmentedButton
 | app:textSize                    | `dimension`       | Font size of text                                                            |
 | android:fontFamily              | `font`            | Font for displaying text                                                     |
 | app:textStyle                   | `flag`            | Text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
-| app:selectedTextStyle           | `flag`            | Selected text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
+| app:selectedTextStyle           | `flag`            | Selected text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC`
+| app:linesCount                  | `int`             | Maximum lines count, multiline by default                                    |
+| app:selectedTextStyle           | `enum`            | Ellipsize type, can be `none`, `start`, `middle`, `end`, `marquee`, none by default
 
 **All layout attributes have a corresponding function in Java that can be called to change programatically. See Javadocs of source code for more information.**
 
