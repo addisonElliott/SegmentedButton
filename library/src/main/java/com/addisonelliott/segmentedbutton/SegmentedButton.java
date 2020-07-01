@@ -31,6 +31,7 @@ import android.os.Build.VERSION_CODES;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -169,6 +170,10 @@ public class SegmentedButton extends View
     private int textColor, selectedTextColor;
     // Font size of the text in pixels (default value is 14sp)
     private float textSize;
+    // Lines count in StaticLayout, multiline by default
+    private int linesCount;
+    // Truncation type of segmented button text, not ellipsized by default
+    private TextUtils.TruncateAt ellipsize;
     // Typeface for displaying the text and selected text, created from the fontFamily & textStyle attributes. Default value for selected is the text typeface.
     private Typeface textTypeface, selectedTextTypeface;
 
@@ -272,6 +277,8 @@ public class SegmentedButton extends View
         textColor = ta.getColor(R.styleable.SegmentedButton_textColor, Color.GRAY);
         hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_selectedTextColor);
         selectedTextColor = ta.getColor(R.styleable.SegmentedButton_selectedTextColor, Color.WHITE);
+        linesCount = ta.getInt(R.styleable.SegmentedButton_linesCount, Integer.MAX_VALUE);
+        ellipsize = resolveEllipsizeType(ta.getInt(R.styleable.SegmentedButton_android_ellipsize, 0));
 
         // Convert 14sp to pixels for default value on text size
         final float px14sp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14.0f,
@@ -346,7 +353,11 @@ public class SegmentedButton extends View
         textMaxWidth = (int)textPaint.measureText(text);
         if (Build.VERSION.SDK_INT >= VERSION_CODES.M)
         {
-            textStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, textMaxWidth).build();
+            textStaticLayout = StaticLayout.Builder
+                .obtain(text, 0, text.length(), textPaint, textMaxWidth)
+                .setMaxLines(linesCount)
+                .setEllipsize(ellipsize)
+                .build();
         }
         else
         {
@@ -512,12 +523,15 @@ public class SegmentedButton extends View
         // the two
         if (Build.VERSION.SDK_INT >= VERSION_CODES.M)
         {
-            textStaticLayout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, textWidth).build();
+            textStaticLayout = StaticLayout.Builder
+                .obtain(text, 0, text.length(), textPaint, textWidth)
+                .setMaxLines(linesCount)
+                .setEllipsize(ellipsize)
+                .build();
         }
         else
         {
-            textStaticLayout = new StaticLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0,
-                false);
+            textStaticLayout = new StaticLayout(text, textPaint, textWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0, false);
         }
     }
 
@@ -2013,6 +2027,21 @@ public class SegmentedButton extends View
             // There was an unexpected problem, print out the stack track
             e.printStackTrace();
             return null;
+        }
+    }
+
+    private TextUtils.TruncateAt resolveEllipsizeType(int index) {
+        switch (index) {
+            case 1:
+                return TextUtils.TruncateAt.START;
+            case 2:
+                return TextUtils.TruncateAt.MIDDLE;
+            case 3:
+                return TextUtils.TruncateAt.END;
+            case 4:
+                return TextUtils.TruncateAt.MARQUEE;
+            default:
+                return null;
         }
     }
 

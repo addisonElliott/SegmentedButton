@@ -31,6 +31,14 @@
         <attr name="textColor" format="color" />
         <attr name="selectedTextColor" format="color" />
         <attr name="textSize" format="dimension" />
+        <attr name="linesCount" format="integer" />
+        <attr name="android:ellipsize">
+            <enum name="none" value="0" />
+            <enum name="start" value="1" />
+            <enum name="middle" value="2" />
+            <enum name="end" value="3" />
+            <enum name="marquee" value="4" />
+        </attr>
         <attr name="android:fontFamily" format="string" />
         <attr name="textStyle" format="integer">
             <flag name="normal" value="0" />
