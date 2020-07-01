@@ -10,7 +10,7 @@ android {
     defaultConfig {
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.compileSdkVersion
-        versionCode 11
+        versionCode 12
         versionName "3.1.9"
     }
 
