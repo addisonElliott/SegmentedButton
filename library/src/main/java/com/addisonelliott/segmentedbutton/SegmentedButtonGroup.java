@@ -574,7 +574,7 @@ public class SegmentedButtonGroup extends LinearLayout
         }
 
         // Return last button if x value is out of bounds
-        return i;
+        return Math.min(i, buttons.size() - 1);
     }
 
     /**
