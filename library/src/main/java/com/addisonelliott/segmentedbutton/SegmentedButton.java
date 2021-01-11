@@ -1098,7 +1098,9 @@ public class SegmentedButton extends View
         }
         else
         {
-            backgroundClipPath = null;
+            // Draw consistent background clip path
+            backgroundClipPath = new Path();
+            backgroundClipPath.addRect(rectF, Direction.CW);
         }
 
         // Canvas.clipPath, used in onDraw for drawing the background clip path (rounding the edges for left-most and
