@@ -259,7 +259,7 @@ public class SegmentedButton extends View
         if (ta.hasValue(R.styleable.SegmentedButton_drawable))
         {
             int drawableResId = ta.getResourceId(R.styleable.SegmentedButton_drawable, -1);
-            drawable = readCompatDrawable(context, drawableResId);
+            drawable = readCompatDrawable(context, drawableResId).mutate();
         }
         drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
         hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
