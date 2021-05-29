@@ -1,37 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="GlobalAttrs">
-        <attr name="rippleColor" format="color" />
-
-        <attr name="selectedBackground" format="reference|color" />
-    </declare-styleable>
-
     <declare-styleable name="SegmentedButton">
         <attr name="android:background" />
-        <attr name="selectedBackground" />
-
-        <attr name="rounded" format="boolean" />
-
-        <attr name="rippleColor" />
-
-        <attr name="drawable" format="reference" />
-        <attr name="drawablePadding" format="dimension" />
-        <attr name="drawableTint" format="color" />
-        <attr name="selectedDrawableTint" format="color" />
-        <attr name="drawableWidth" format="dimension" />
-        <attr name="drawableHeight" format="dimension" />
-        <attr name="drawableGravity" format="integer">
-            <flag name="top" value="0x30" />
-            <flag name="bottom" value="0x50" />
-            <flag name="left" value="0x03" />
-            <flag name="right" value="0x05" />
-        </attr>
-
-        <attr name="text" format="string" />
-        <attr name="textColor" format="color" />
-        <attr name="selectedTextColor" format="color" />
-        <attr name="textSize" format="dimension" />
-        <attr name="linesCount" format="integer" />
+        <attr name="android:fontFamily" format="string" />
         <attr name="android:ellipsize">
             <enum name="none" value="0" />
             <enum name="start" value="1" />
@@ -39,13 +10,34 @@
             <enum name="end" value="3" />
             <enum name="marquee" value="4" />
         </attr>
-        <attr name="android:fontFamily" format="string" />
-        <attr name="textStyle" format="integer">
+
+        <attr name="sb_selectedBackground" format="reference|color" />
+        <attr name="sb_rippleColor" format="color" />
+        <attr name="sb_rounded" format="boolean" />
+        <attr name="sb_drawable" format="reference" />
+        <attr name="sb_drawablePadding" format="dimension" />
+        <attr name="sb_drawableTint" format="color" />
+        <attr name="sb_selectedDrawableTint" format="color" />
+        <attr name="sb_drawableWidth" format="dimension" />
+        <attr name="sb_drawableHeight" format="dimension" />
+        <attr name="sb_drawableGravity" format="integer">
+            <flag name="top" value="0x30" />
+            <flag name="bottom" value="0x50" />
+            <flag name="left" value="0x03" />
+            <flag name="right" value="0x05" />
+        </attr>
+
+        <attr name="sb_text" format="string" />
+        <attr name="sb_textColor" format="color" />
+        <attr name="sb_selectedTextColor" format="color" />
+        <attr name="sb_textSize" format="dimension" />
+        <attr name="sb_linesCount" format="integer" />
+        <attr name="sb_textStyle" format="integer">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
-        <attr name="selectedTextStyle" format="integer">
+        <attr name="sb_selectedTextStyle" format="integer">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
@@ -54,34 +46,33 @@
 
     <declare-styleable name="SegmentedButtonGroup">
         <attr name="android:background" />
-        <attr name="selectedBackground" />
-
-        <attr name="borderWidth" format="dimension" />
-        <attr name="borderColor" format="color" />
-        <attr name="borderDashWidth" format="dimension" />
-        <attr name="borderDashGap" format="dimension" />
-
-        <attr name="selectedBorderWidth" format="dimension" />
-        <attr name="selectedBorderColor" format="color" />
-        <attr name="selectedBorderDashWidth" format="dimension" />
-        <attr name="selectedBorderDashGap" format="dimension" />
-
-        <attr name="radius" format="dimension" />
-        <attr name="selectedButtonRadius" format="dimension" />
-        <attr name="position" format="integer" />
-        <attr name="draggable" format="boolean" />
         <attr name="android:clickable" />
 
-        <attr name="ripple" format="boolean" />
-        <attr name="rippleColor" />
+        <attr name="sbg_borderWidth" format="dimension" />
+        <attr name="sbg_borderColor" format="color" />
+        <attr name="sbg_borderDashWidth" format="dimension" />
+        <attr name="sbg_borderDashGap" format="dimension" />
 
-        <attr name="divider" />
-        <attr name="dividerWidth" format="dimension" />
-        <attr name="dividerRadius" format="dimension" />
-        <attr name="dividerPadding" format="dimension" />
+        <attr name="sbg_selectedBackground" format="reference|color" />
+        <attr name="sbg_selectedBorderWidth" format="dimension" />
+        <attr name="sbg_selectedBorderColor" format="color" />
+        <attr name="sbg_selectedBorderDashWidth" format="dimension" />
+        <attr name="sbg_selectedBorderDashGap" format="dimension" />
 
-        <attr name="selectionAnimationDuration" format="integer" />
-        <attr name="selectionAnimationInterpolator" format="enum">
+        <attr name="sbg_radius" format="dimension" />
+        <attr name="sbg_selectedButtonRadius" format="dimension" />
+        <attr name="sbg_position" format="integer" />
+        <attr name="sbg_draggable" format="boolean" />
+        <attr name="sbg_ripple" format="boolean" />
+        <attr name="sbg_rippleColor" format="color" />
+
+        <attr name="sbg_divider" format="reference" />
+        <attr name="sbg_dividerWidth" format="dimension" />
+        <attr name="sbg_dividerRadius" format="dimension" />
+        <attr name="sbg_dividerPadding" format="dimension" />
+
+        <attr name="sbg_selectionAnimationDuration" format="integer" />
+        <attr name="sbg_selectionAnimationInterpolator" format="enum">
             <enum name="none" value="-1" />
             <enum name="fastOutSlowIn" value="0" />
             <enum name="bounce" value="1" />

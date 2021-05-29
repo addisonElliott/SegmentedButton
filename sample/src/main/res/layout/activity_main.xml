@@ -2,7 +2,6 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -48,44 +47,44 @@
                 android:layout_gravity="center_vertical"
                 android:elevation="2dp"
                 android:background="@drawable/gradient_drawable"
-                app:divider="@drawable/gradient_drawable_divider"
-                app:dividerPadding="10dp"
-                app:dividerRadius="10dp"
-                app:dividerWidth="4dp"
-                app:position="1"
-                app:radius="2dp"
-                app:ripple="true"
-                app:rippleColor="@color/blue_300"
-                app:selectedBackground="@drawable/gradient_drawable_selector"
-                app:selectionAnimationDuration="1000"
-                app:selectionAnimationInterpolator="fastOutSlowIn">
+                app:sbg_divider="@drawable/gradient_drawable_divider"
+                app:sbg_dividerPadding="10dp"
+                app:sbg_dividerRadius="10dp"
+                app:sbg_dividerWidth="4dp"
+                app:sbg_position="1"
+                app:sbg_radius="2dp"
+                app:sbg_ripple="true"
+                app:sbg_rippleColor="@color/blue_300"
+                app:sbg_selectedBackground="@drawable/gradient_drawable_selector"
+                app:sbg_selectionAnimationDuration="1000"
+                app:sbg_selectionAnimationInterpolator="fastOutSlowIn">
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:selectedTextColor="@color/white"
-                    app:text="Button 1"
-                    app:textColor="@color/black" />
+                    app:sb_selectedTextColor="@color/white"
+                    app:sb_text="Button 1"
+                    app:sb_textColor="@color/black" />
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:selectedTextColor="@color/white"
-                    app:text="Button 2"
-                    app:textColor="@color/black" />
+                    app:sb_selectedTextColor="@color/white"
+                    app:sb_text="Button 2"
+                    app:sb_textColor="@color/black" />
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:selectedTextColor="@color/white"
-                    app:text="Button 3"
-                    app:textColor="@color/black" />
+                    app:sb_selectedTextColor="@color/white"
+                    app:sb_text="Button 3"
+                    app:sb_textColor="@color/black" />
             </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
         </LinearLayout>
@@ -98,16 +97,16 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="#FFFFFF"
-            app:borderColor="@color/orange_700"
-            app:borderWidth="1dp"
-            app:divider="@color/orange_700"
-            app:dividerPadding="10dp"
-            app:dividerWidth="1dp"
-            app:position="0"
-            app:radius="30dp"
-            app:ripple="true"
-            app:rippleColor="@color/green_800"
-            app:selectedBackground="@color/green_900">
+            app:sbg_borderColor="@color/orange_700"
+            app:sbg_borderWidth="1dp"
+            app:sbg_divider="@color/orange_700"
+            app:sbg_dividerPadding="10dp"
+            app:sbg_dividerWidth="1dp"
+            app:sbg_position="0"
+            app:sbg_radius="30dp"
+            app:sbg_ripple="true"
+            app:sbg_rippleColor="@color/green_800"
+            app:sbg_selectedBackground="@color/green_900">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -115,11 +114,11 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/aniron"
                 android:padding="10dp"
-                app:drawable="@drawable/ic_aragorn"
-                app:drawableGravity="top"
-                app:selectedTextColor="@color/orange_700"
-                app:text="Aragorn"
-                app:textColor="@color/black" />
+                app:sb_drawable="@drawable/ic_aragorn"
+                app:sb_drawableGravity="top"
+                app:sb_selectedTextColor="@color/orange_700"
+                app:sb_text="Aragorn"
+                app:sb_textColor="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -127,11 +126,11 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/aniron"
                 android:padding="10dp"
-                app:drawable="@drawable/ic_gimli"
-                app:drawableGravity="top"
-                app:selectedTextColor="@color/grey_600"
-                app:text="Gimli"
-                app:textColor="@color/black" />
+                app:sb_drawable="@drawable/ic_gimli"
+                app:sb_drawableGravity="top"
+                app:sb_selectedTextColor="@color/grey_600"
+                app:sb_text="Gimli"
+                app:sb_textColor="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -139,11 +138,11 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/aniron"
                 android:padding="10dp"
-                app:drawable="@drawable/ic_legolas"
-                app:drawableGravity="top"
-                app:selectedTextColor="@color/yellow_200"
-                app:text="Legolas"
-                app:textColor="@color/black" />
+                app:sb_drawable="@drawable/ic_legolas"
+                app:sb_drawableGravity="top"
+                app:sb_selectedTextColor="@color/yellow_200"
+                app:sb_text="Legolas"
+                app:sb_textColor="@color/black" />
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
         <com.addisonelliott.segmentedbutton.SegmentedButtonGroup
@@ -153,16 +152,16 @@
             android:layout_margin="10dp"
             android:elevation="2dp"
             android:background="@color/red_700"
-            app:borderColor="@color/black"
-            app:borderWidth="1dp"
-            app:divider="@color/black"
-            app:dividerPadding="10dp"
-            app:dividerRadius="10dp"
-            app:dividerWidth="1dp"
-            app:radius="2dp"
-            app:selectedBackground="@color/black"
-            app:selectionAnimationDuration="1000"
-            app:selectionAnimationInterpolator="bounce">
+            app:sbg_borderColor="@color/black"
+            app:sbg_borderWidth="1dp"
+            app:sbg_divider="@color/black"
+            app:sbg_dividerPadding="10dp"
+            app:sbg_dividerRadius="10dp"
+            app:sbg_dividerWidth="1dp"
+            app:sbg_radius="2dp"
+            app:sbg_selectedBackground="@color/black"
+            app:sbg_selectionAnimationDuration="1000"
+            app:sbg_selectionAnimationInterpolator="bounce">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -171,13 +170,13 @@
                 android:drawablePadding="4dp"
                 android:fontFamily="@font/shaka_pow"
                 android:padding="10dp"
-                app:drawable="@drawable/ic_b5"
-                app:drawableGravity="left"
-                app:rippleColor="@color/blue_500"
-                app:selectedDrawableTint="@color/yellow_500"
-                app:selectedTextColor="@color/red_500"
-                app:text="Diana"
-                app:textColor="@color/black" />
+                app:sb_drawable="@drawable/ic_b5"
+                app:sb_drawableGravity="left"
+                app:sb_rippleColor="@color/blue_500"
+                app:sb_selectedDrawableTint="@color/yellow_500"
+                app:sb_selectedTextColor="@color/red_500"
+                app:sb_text="Diana"
+                app:sb_textColor="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -186,13 +185,13 @@
                 android:drawablePadding="4dp"
                 android:fontFamily="@font/shaka_pow"
                 android:padding="10dp"
-                app:drawable="@drawable/ic_b4"
-                app:drawableGravity="top"
-                app:rippleColor="@color/black"
-                app:selectedDrawableTint="@color/grey_500"
-                app:selectedTextColor="@color/yellow_500"
-                app:text="Batman"
-                app:textColor="@color/black" />
+                app:sb_drawable="@drawable/ic_b4"
+                app:sb_drawableGravity="top"
+                app:sb_rippleColor="@color/black"
+                app:sb_selectedDrawableTint="@color/grey_500"
+                app:sb_selectedTextColor="@color/yellow_500"
+                app:sb_text="Batman"
+                app:sb_textColor="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -201,13 +200,13 @@
                 android:drawablePadding="4dp"
                 android:fontFamily="@font/shaka_pow"
                 android:padding="10dp"
-                app:drawable="@drawable/ic_b3"
-                app:drawableGravity="right"
-                app:rippleColor="@color/yellow_500"
-                app:selectedDrawableTint="@color/blue_500"
-                app:selectedTextColor="@color/red_500"
-                app:text="Clark"
-                app:textColor="@color/black" />
+                app:sb_drawable="@drawable/ic_b3"
+                app:sb_drawableGravity="right"
+                app:sb_rippleColor="@color/yellow_500"
+                app:sb_selectedDrawableTint="@color/blue_500"
+                app:sb_selectedTextColor="@color/red_500"
+                app:sb_text="Clark"
+                app:sb_textColor="@color/black" />
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
         <LinearLayout
@@ -223,32 +222,32 @@
                 android:layout_weight="1"
                 android:elevation="2dp"
                 android:background="@color/white"
-                app:borderColor="@color/black"
-                app:borderWidth="1dp"
-                app:divider="@color/black"
-                app:dividerWidth="2dp"
-                app:position="0"
-                app:radius="30dp"
-                app:rippleColor="@color/blue_300"
-                app:selectedBackground="@color/yellow_600">
+                app:sbg_borderColor="@color/black"
+                app:sbg_borderWidth="1dp"
+                app:sbg_divider="@color/black"
+                app:sbg_dividerWidth="2dp"
+                app:sbg_position="0"
+                app:sbg_radius="30dp"
+                app:sbg_rippleColor="@color/blue_300"
+                app:sbg_selectedBackground="@color/yellow_600">
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:drawable="@drawable/ic_b1"
-                    app:drawableTint="@color/yellow_600"
-                    app:selectedDrawableTint="@color/black" />
+                    app:sb_drawable="@drawable/ic_b1"
+                    app:sb_drawableTint="@color/yellow_600"
+                    app:sb_selectedDrawableTint="@color/black" />
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:drawable="@drawable/ic_b2"
-                    app:drawableTint="@color/DarkRed"
-                    app:selectedDrawableTint="@color/black" />
+                    app:sb_drawable="@drawable/ic_b2"
+                    app:sb_drawableTint="@color/DarkRed"
+                    app:sb_selectedDrawableTint="@color/black" />
 
             </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -260,26 +259,26 @@
                 android:layout_weight="1"
                 android:elevation="2dp"
                 android:background="@color/white"
-                app:divider="@color/yellow_600"
-                app:dividerWidth="2dp"
-                app:position="0"
-                app:radius="30dp"
-                app:rippleColor="@color/black"
-                app:selectedBackground="@color/DarkRed">
+                app:sbg_divider="@color/yellow_600"
+                app:sbg_dividerWidth="2dp"
+                app:sbg_position="0"
+                app:sbg_radius="30dp"
+                app:sbg_rippleColor="@color/black"
+                app:sbg_selectedBackground="@color/DarkRed">
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:drawable="@drawable/ic_b17" />
+                    app:sb_drawable="@drawable/ic_b17" />
 
                 <com.addisonelliott.segmentedbutton.SegmentedButton
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="8dp"
-                    app:drawable="@drawable/ic_b6" />
+                    app:sb_drawable="@drawable/ic_b6" />
 
             </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
         </LinearLayout>
@@ -292,14 +291,14 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@color/red_400"
-            app:divider="@color/white"
-            app:dividerPadding="10dp"
-            app:dividerRadius="10dp"
-            app:dividerWidth="2dp"
-            app:position="1"
-            app:radius="2dp"
-            app:rippleColor="@color/red_200"
-            app:selectedBackground="@color/green_200">
+            app:sbg_divider="@color/white"
+            app:sbg_dividerPadding="10dp"
+            app:sbg_dividerRadius="10dp"
+            app:sbg_dividerWidth="2dp"
+            app:sbg_position="1"
+            app:sbg_radius="2dp"
+            app:sbg_rippleColor="@color/red_200"
+            app:sbg_selectedBackground="@color/green_200">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -309,7 +308,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="6dp"
-                app:drawable="@drawable/ic_b8" />
+                app:sb_drawable="@drawable/ic_b8" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -319,7 +318,7 @@
                 android:paddingLeft="45dp"
                 android:paddingRight="45dp"
                 android:paddingTop="6dp"
-                app:drawable="@drawable/ic_b9" />
+                app:sb_drawable="@drawable/ic_b9" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -329,7 +328,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:paddingTop="6dp"
-                app:drawable="@drawable/ic_b11" />
+                app:sb_drawable="@drawable/ic_b11" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -340,52 +339,52 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@color/black"
-            app:position="2"
-            app:radius="2dp"
-            app:rippleColor="@color/white"
-            app:selectedBackground="@color/white"
-            app:selectionAnimationDuration="1000"
-            app:selectionAnimationInterpolator="fastOutSlowIn">
+            app:sbg_position="2"
+            app:sbg_radius="2dp"
+            app:sbg_rippleColor="@color/white"
+            app:sbg_selectedBackground="@color/white"
+            app:sbg_selectionAnimationDuration="1000"
+            app:sbg_selectionAnimationInterpolator="fastOutSlowIn">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:drawable="@drawable/ic_b7"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black" />
+                app:sb_drawable="@drawable/ic_b7"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                app:drawable="@drawable/ic_b7"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black" />
+                app:sb_drawable="@drawable/ic_b7"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                app:drawable="@drawable/ic_b7"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black" />
+                app:sb_drawable="@drawable/ic_b7"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                app:drawable="@drawable/ic_b7"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black" />
+                app:sb_drawable="@drawable/ic_b7"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                app:drawable="@drawable/ic_b7"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black" />
+                app:sb_drawable="@drawable/ic_b7"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -405,14 +404,14 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@color/white"
-            app:borderColor="@color/black"
-            app:borderWidth="1dp"
-            app:draggable="true"
-            app:position="0"
-            app:radius="30dp"
-            app:rippleColor="@color/black"
-            app:selectedBackground="@color/green_800"
-            app:selectionAnimationDuration="1000">
+            app:sbg_borderColor="@color/black"
+            app:sbg_borderWidth="1dp"
+            app:sbg_draggable="true"
+            app:sbg_position="0"
+            app:sbg_radius="30dp"
+            app:sbg_rippleColor="@color/black"
+            app:sbg_selectedBackground="@color/green_800"
+            app:sbg_selectionAnimationDuration="1000">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -420,11 +419,11 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
-                app:selectedTextColor="@color/white"
-                app:selectedTextStyle="bold"
-                app:text="YES"
-                app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_selectedTextStyle="bold"
+                app:sb_text="YES"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="24sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -432,11 +431,11 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
-                app:selectedTextColor="@color/white"
-                app:selectedTextStyle="bold"
-                app:text="Maybe"
-                app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_selectedTextStyle="bold"
+                app:sb_text="Maybe"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="24sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -444,11 +443,11 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
-                app:selectedTextColor="@color/white"
-                app:selectedTextStyle="bold"
-                app:text="NO"
-                app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_selectedTextStyle="bold"
+                app:sb_text="NO"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="24sp" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -468,12 +467,12 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@color/black"
-            app:position="0"
-            app:radius="2dp"
-            app:rippleColor="@color/white"
-            app:selectedBackground="@color/white"
-            app:selectionAnimationDuration="1000"
-            app:selectionAnimationInterpolator="fastOutSlowIn">
+            app:sbg_position="0"
+            app:sbg_radius="2dp"
+            app:sbg_rippleColor="@color/white"
+            app:sbg_selectedBackground="@color/white"
+            app:sbg_selectionAnimationDuration="1000"
+            app:sbg_selectionAnimationInterpolator="fastOutSlowIn">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:id="@+id/button_left"
@@ -481,11 +480,11 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:padding="8dp"
-                app:drawableGravity="right"
-                app:drawablePadding="8dp"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black"
-                app:text="Left" />
+                app:sb_drawableGravity="right"
+                app:sb_drawablePadding="8dp"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black"
+                app:sb_text="Left" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:id="@+id/button_right"
@@ -493,10 +492,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:padding="8dp"
-                app:drawableGravity="right"
-                app:drawableTint="@color/white"
-                app:selectedDrawableTint="@color/black"
-                app:text="Right" />
+                app:sb_drawableGravity="right"
+                app:sb_drawableTint="@color/white"
+                app:sb_selectedDrawableTint="@color/black"
+                app:sb_text="Right" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -507,11 +506,11 @@
             android:layout_margin="4dp"
             android:elevation="3dp"
             android:background="@color/white"
-            app:position="0"
-            app:radius="20dp"
-            app:ripple="true"
-            app:rippleColor="@color/green_800"
-            app:selectedBackground="@color/blue_600">
+            app:sbg_position="0"
+            app:sbg_radius="20dp"
+            app:sbg_ripple="true"
+            app:sbg_rippleColor="@color/green_800"
+            app:sbg_selectedBackground="@color/blue_600">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -519,9 +518,9 @@
                 android:layout_weight="1"
                 android:padding="4dp"
                 android:background="@color/red_100"
-                app:selectedTextColor="@color/white"
-                app:text="Both"
-                app:textColor="@color/red" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Both"
+                app:sb_textColor="@color/red" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -529,9 +528,9 @@
                 android:layout_weight="1"
                 android:padding="8dp"
                 android:background="@color/green_100"
-                app:selectedTextColor="@color/white"
-                app:text="Pickup"
-                app:textColor="@color/black" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Pickup"
+                app:sb_textColor="@color/black" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -539,9 +538,9 @@
                 android:layout_weight="1"
                 android:padding="4dp"
                 android:background="@color/blue_100"
-                app:selectedTextColor="@color/white"
-                app:text="Dropoff"
-                app:textColor="@color/black" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Dropoff"
+                app:sb_textColor="@color/black" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -553,35 +552,35 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@color/red_400"
-            app:divider="@color/white"
-            app:dividerPadding="10dp"
-            app:dividerRadius="10dp"
-            app:dividerWidth="2dp"
-            app:position="0"
-            app:radius="2dp"
-            app:rippleColor="@color/red_200"
-            app:selectedBackground="@color/green_200">
+            app:sbg_divider="@color/white"
+            app:sbg_dividerPadding="10dp"
+            app:sbg_dividerRadius="10dp"
+            app:sbg_dividerWidth="2dp"
+            app:sbg_position="0"
+            app:sbg_radius="2dp"
+            app:sbg_rippleColor="@color/red_200"
+            app:sbg_selectedBackground="@color/green_200">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:paddingBottom="6dp"
                 android:paddingTop="6dp"
-                app:drawable="@drawable/ic_b8" />
+                app:sb_drawable="@drawable/ic_b8" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="128dp"
                 android:layout_height="wrap_content"
                 android:paddingBottom="6dp"
                 android:paddingTop="6dp"
-                app:drawable="@drawable/ic_b9" />
+                app:sb_drawable="@drawable/ic_b9" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="96dp"
                 android:layout_height="wrap_content"
                 android:paddingBottom="6dp"
                 android:paddingTop="6dp"
-                app:drawable="@drawable/ic_b11" />
+                app:sb_drawable="@drawable/ic_b11" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -592,14 +591,14 @@
             android:layout_margin="4dp"
             android:elevation="2dp"
             android:background="@color/white"
-            app:position="0"
-            app:radius="30dp"
-            app:rippleColor="@color/black"
-            app:selectedBackground="@color/blue_500"
-            app:selectedBorderColor="#555555"
-            app:selectedBorderWidth="2dp"
-            app:selectedButtonRadius="30dp"
-            app:selectionAnimationDuration="1000">
+            app:sbg_position="0"
+            app:sbg_radius="30dp"
+            app:sbg_rippleColor="@color/black"
+            app:sbg_selectedBackground="@color/blue_500"
+            app:sbg_selectedBorderColor="#555555"
+            app:sbg_selectedBorderWidth="2dp"
+            app:sbg_selectedButtonRadius="30dp"
+            app:sbg_selectionAnimationDuration="1000">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -607,10 +606,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
-                app:selectedTextColor="@color/white"
-                app:text="Yes"
-                app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Yes"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="24sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -618,10 +617,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
-                app:selectedTextColor="@color/white"
-                app:text="Maybe"
-                app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Maybe"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="24sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
@@ -629,10 +628,10 @@
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-light"
                 android:padding="8dp"
-                app:selectedTextColor="#FFFFFF"
-                app:text="No"
-                app:textColor="@color/black"
-                app:textSize="24sp" />
+                app:sb_selectedTextColor="#FFFFFF"
+                app:sb_text="No"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="24sp" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -642,52 +641,52 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="4dp"
-            app:radius="30dp"
-            app:selectedButtonRadius="30dp"
-            app:selectedBackground="@color/blue_500"
-            app:draggable="true"
-            app:ripple="true"
-            app:rippleColor="@color/blue_500">
+            app:sbg_radius="30dp"
+            app:sbg_selectedButtonRadius="30dp"
+            app:sbg_selectedBackground="@color/blue_500"
+            app:sbg_draggable="true"
+            app:sbg_ripple="true"
+            app:sbg_rippleColor="@color/blue_500">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                app:rounded="true"
-                app:selectedTextColor="@color/white"
-                app:text="Button"
-                app:textColor="@color/black"
-                app:textSize="20sp" />
+                app:sb_rounded="true"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Button"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="20sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                app:rounded="true"
-                app:selectedTextColor="@color/white"
-                app:text="Button 2"
-                app:textColor="@color/black"
-                app:textSize="20sp" />
+                app:sb_rounded="true"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Button 2"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="20sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                app:rounded="true"
-                app:selectedTextColor="@color/white"
-                app:text="Button 3"
-                app:textColor="@color/black"
-                app:textSize="20sp" />
+                app:sb_rounded="true"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Button 3"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="20sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                app:rounded="true"
-                app:selectedTextColor="@color/white"
-                app:text="Button 4"
-                app:textColor="@color/black"
-                app:textSize="20sp" />
+                app:sb_rounded="true"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Button 4"
+                app:sb_textColor="@color/black"
+                app:sb_textSize="20sp" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 
@@ -700,62 +699,58 @@
             android:layout_marginRight="4dp"
             android:layout_marginBottom="6dp"
             android:weightSum="3"
-            app:draggable="true"
-            app:selectedBackground="@color/indigo_800"
-            app:borderWidth="1dp"
-            app:borderColor="@color/indigo_800"
-            app:radius="12dp"
-            app:ripple="true"
-            app:rippleColor="@color/indigo_800"
-            >
+            app:sbg_borderColor="@color/indigo_800"
+            app:sbg_borderWidth="1dp"
+            app:sbg_draggable="true"
+            app:sbg_radius="12dp"
+            app:sbg_ripple="true"
+            app:sbg_rippleColor="@color/indigo_800"
+            app:sbg_selectedBackground="@color/indigo_800">
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="10dp"
-                app:textColor="@color/indigo_800"
-                app:selectedTextColor="@color/white"
-                app:text="Bar"
-                app:textSize="18sp"
-                app:drawable="@drawable/ic_chart_bar"
-                app:drawableTint="@color/indigo_800"
-                app:selectedDrawableTint="@color/white"
-                app:drawableGravity="top"
-                app:drawablePadding="4dp"
-                />
+                app:sb_drawable="@drawable/ic_chart_bar"
+                app:sb_drawableGravity="top"
+                app:sb_drawablePadding="4dp"
+                app:sb_drawableTint="@color/indigo_800"
+                app:sb_selectedDrawableTint="@color/white"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Bar"
+                app:sb_textColor="@color/indigo_800"
+                app:sb_textSize="18sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="10dp"
-                app:textColor="@color/indigo_800"
-                app:selectedTextColor="@color/white"
-                app:text="Pie"
-                app:textSize="18sp"
-                app:drawable="@drawable/ic_chart_pie"
-                app:drawableTint="@color/indigo_800"
-                app:selectedDrawableTint="@color/white"
-                app:drawableGravity="top"
-                app:drawablePadding="4dp"
-                />
+                app:sb_drawable="@drawable/ic_chart_pie"
+                app:sb_drawableGravity="top"
+                app:sb_drawablePadding="4dp"
+                app:sb_drawableTint="@color/indigo_800"
+                app:sb_selectedDrawableTint="@color/white"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Pie"
+                app:sb_textColor="@color/indigo_800"
+                app:sb_textSize="18sp" />
 
             <com.addisonelliott.segmentedbutton.SegmentedButton
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:padding="10dp"
-                app:textColor="@color/indigo_800"
-                app:selectedTextColor="@color/white"
-                app:text="Donut"
-                app:textSize="18sp"
-                app:drawable="@drawable/ic_chart_donut"
-                app:drawableTint="@color/indigo_800"
-                app:selectedDrawableTint="@color/white"
-                app:drawableGravity="top"
-                app:drawablePadding="4dp"
-                />
+                app:sb_drawable="@drawable/ic_chart_donut"
+                app:sb_drawableGravity="top"
+                app:sb_drawablePadding="4dp"
+                app:sb_drawableTint="@color/indigo_800"
+                app:sb_selectedDrawableTint="@color/white"
+                app:sb_selectedTextColor="@color/white"
+                app:sb_text="Donut"
+                app:sb_textColor="@color/indigo_800"
+                app:sb_textSize="18sp" />
 
         </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
     </LinearLayout>

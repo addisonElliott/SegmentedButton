@@ -247,47 +247,47 @@ public class SegmentedButton extends View
             backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_android_background);
 
         // Load background on selection if available, can be drawable or color
-        if (ta.hasValue(R.styleable.SegmentedButton_selectedBackground))
-            selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_selectedBackground);
+        if (ta.hasValue(R.styleable.SegmentedButton_sb_selectedBackground))
+            selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButton_sb_selectedBackground);
 
-        rounded = ta.getBoolean(R.styleable.SegmentedButton_rounded, false);
+        rounded = ta.getBoolean(R.styleable.SegmentedButton_sb_rounded, false);
 
         // Parse ripple color value and update the ripple
-        setRipple(ta.getColor(R.styleable.SegmentedButton_rippleColor, Color.GRAY));
+        setRipple(ta.getColor(R.styleable.SegmentedButton_sb_rippleColor, Color.GRAY));
 
         // Load drawable if available, otherwise variable will be null
-        if (ta.hasValue(R.styleable.SegmentedButton_drawable))
+        if (ta.hasValue(R.styleable.SegmentedButton_sb_drawable))
         {
-            int drawableResId = ta.getResourceId(R.styleable.SegmentedButton_drawable, -1);
+            int drawableResId = ta.getResourceId(R.styleable.SegmentedButton_sb_drawable, -1);
             drawable = readCompatDrawable(context, drawableResId);
         }
-        drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawablePadding, 0);
-        hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_drawableTint);
-        drawableTint = ta.getColor(R.styleable.SegmentedButton_drawableTint, -1);
-        hasSelectedDrawableTint = ta.hasValue(R.styleable.SegmentedButton_selectedDrawableTint);
-        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_selectedDrawableTint, -1);
-        hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_drawableWidth);
-        hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_drawableHeight);
-        drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableWidth, -1);
-        drawableHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_drawableHeight, -1);
-        drawableGravity = ta.getInteger(R.styleable.SegmentedButton_drawableGravity, Gravity.LEFT);
+        drawablePadding = ta.getDimensionPixelSize(R.styleable.SegmentedButton_sb_drawablePadding, 0);
+        hasDrawableTint = ta.hasValue(R.styleable.SegmentedButton_sb_drawableTint);
+        drawableTint = ta.getColor(R.styleable.SegmentedButton_sb_drawableTint, -1);
+        hasSelectedDrawableTint = ta.hasValue(R.styleable.SegmentedButton_sb_selectedDrawableTint);
+        selectedDrawableTint = ta.getColor(R.styleable.SegmentedButton_sb_selectedDrawableTint, -1);
+        hasDrawableWidth = ta.hasValue(R.styleable.SegmentedButton_sb_drawableWidth);
+        hasDrawableHeight = ta.hasValue(R.styleable.SegmentedButton_sb_drawableHeight);
+        drawableWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButton_sb_drawableWidth, -1);
+        drawableHeight = ta.getDimensionPixelSize(R.styleable.SegmentedButton_sb_drawableHeight, -1);
+        drawableGravity = ta.getInteger(R.styleable.SegmentedButton_sb_drawableGravity, Gravity.LEFT);
 
-        hasText = ta.hasValue(R.styleable.SegmentedButton_text);
-        text = ta.getString(R.styleable.SegmentedButton_text);
-        textColor = ta.getColor(R.styleable.SegmentedButton_textColor, Color.GRAY);
-        hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_selectedTextColor);
-        selectedTextColor = ta.getColor(R.styleable.SegmentedButton_selectedTextColor, Color.WHITE);
-        linesCount = ta.getInt(R.styleable.SegmentedButton_linesCount, Integer.MAX_VALUE);
+        hasText = ta.hasValue(R.styleable.SegmentedButton_sb_text);
+        text = ta.getString(R.styleable.SegmentedButton_sb_text);
+        textColor = ta.getColor(R.styleable.SegmentedButton_sb_textColor, Color.GRAY);
+        hasSelectedTextColor = ta.hasValue(R.styleable.SegmentedButton_sb_selectedTextColor);
+        selectedTextColor = ta.getColor(R.styleable.SegmentedButton_sb_selectedTextColor, Color.WHITE);
+        linesCount = ta.getInt(R.styleable.SegmentedButton_sb_linesCount, Integer.MAX_VALUE);
         ellipsize = resolveEllipsizeType(ta.getInt(R.styleable.SegmentedButton_android_ellipsize, 0));
 
         // Convert 14sp to pixels for default value on text size
         final float px14sp = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14.0f,
             context.getResources().getDisplayMetrics());
-        textSize = ta.getDimension(R.styleable.SegmentedButton_textSize, px14sp);
+        textSize = ta.getDimension(R.styleable.SegmentedButton_sb_textSize, px14sp);
 
         final boolean hasFontFamily = ta.hasValue(R.styleable.SegmentedButton_android_fontFamily);
-        final int textStyle = ta.getInt(R.styleable.SegmentedButton_textStyle, Typeface.NORMAL);
-        final int selectedTextStyle = ta.getInt(R.styleable.SegmentedButton_selectedTextStyle, textStyle);
+        final int textStyle = ta.getInt(R.styleable.SegmentedButton_sb_textStyle, Typeface.NORMAL);
+        final int selectedTextStyle = ta.getInt(R.styleable.SegmentedButton_sb_selectedTextStyle, textStyle);
 
         // If a font family is present then load typeface with text style from that
         if (hasFontFamily)

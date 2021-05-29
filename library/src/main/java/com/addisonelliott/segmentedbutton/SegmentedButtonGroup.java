@@ -276,21 +276,21 @@ public class SegmentedButtonGroup extends LinearLayout
             backgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_android_background);
 
         // Load background on selection if available, can be drawable or color
-        if (ta.hasValue(R.styleable.SegmentedButtonGroup_selectedBackground))
-            selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_selectedBackground);
+        if (ta.hasValue(R.styleable.SegmentedButtonGroup_sbg_selectedBackground))
+            selectedBackgroundDrawable = ta.getDrawable(R.styleable.SegmentedButtonGroup_sbg_selectedBackground);
 
         // Note: Must read radius before setBorder call in order to round the border corners!
-        radius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_radius, 0);
-        selectedButtonRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedButtonRadius, 0);
+        radius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_radius, 0);
+        selectedButtonRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_selectedButtonRadius, 0);
 
         // Setup border for button group
         // Width is the thickness of the border, color is the color of the border
         // Dash width and gap, if the dash width is not zero will make the border dashed with a ratio between dash
         // width and gap
-        borderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderWidth, 0);
-        borderColor = ta.getColor(R.styleable.SegmentedButtonGroup_borderColor, Color.BLACK);
-        borderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashWidth, 0);
-        borderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_borderDashGap, 0);
+        borderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_borderWidth, 0);
+        borderColor = ta.getColor(R.styleable.SegmentedButtonGroup_sbg_borderColor, Color.BLACK);
+        borderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_borderDashWidth, 0);
+        borderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_borderDashGap, 0);
 
         // Set the border to the read values, this will set the border values to itself but will create a
         // GradientDrawable containing the border
@@ -299,31 +299,31 @@ public class SegmentedButtonGroup extends LinearLayout
         // Get border information for the selected button
         // Same defaults as the border above, however this border information will be passed to each button so that
         // the correct border can be rendered around the selected button
-        selectedBorderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedBorderWidth, 0);
-        selectedBorderColor = ta.getColor(R.styleable.SegmentedButtonGroup_selectedBorderColor, Color.BLACK);
-        selectedBorderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedBorderDashWidth, 0);
-        selectedBorderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_selectedBorderDashGap, 0);
+        selectedBorderWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_selectedBorderWidth, 0);
+        selectedBorderColor = ta.getColor(R.styleable.SegmentedButtonGroup_sbg_selectedBorderColor, Color.BLACK);
+        selectedBorderDashWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_selectedBorderDashWidth, 0);
+        selectedBorderDashGap = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_selectedBorderDashGap, 0);
 
-        position = ta.getInt(R.styleable.SegmentedButtonGroup_position, 0);
-        draggable = ta.getBoolean(R.styleable.SegmentedButtonGroup_draggable, false);
+        position = ta.getInt(R.styleable.SegmentedButtonGroup_sbg_position, 0);
+        draggable = ta.getBoolean(R.styleable.SegmentedButtonGroup_sbg_draggable, false);
 
         // Update clickable property
         // Not updating this property sets the clickable value to false by default but this sets the default to true
         // while keeping the clickable value if specified in the layouot XML
         setClickable(ta.getBoolean(R.styleable.SegmentedButtonGroup_android_clickable, true));
 
-        ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_ripple, true);
-        hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_rippleColor);
-        rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_rippleColor, Color.GRAY);
+        ripple = ta.getBoolean(R.styleable.SegmentedButtonGroup_sbg_ripple, true);
+        hasRippleColor = ta.hasValue(R.styleable.SegmentedButtonGroup_sbg_rippleColor);
+        rippleColor = ta.getColor(R.styleable.SegmentedButtonGroup_sbg_rippleColor, Color.GRAY);
 
-        final int dividerWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerWidth, 1);
-        final int dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerRadius, 0);
-        final int dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_dividerPadding, 0);
+        final int dividerWidth = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_dividerWidth, 1);
+        final int dividerRadius = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_dividerRadius, 0);
+        final int dividerPadding = ta.getDimensionPixelSize(R.styleable.SegmentedButtonGroup_sbg_dividerPadding, 0);
 
         // Load divider value if available, the divider can be either a drawable resource or a color
         // Load the TypedValue first and check the type to determine if color or drawable
         final TypedValue value = new TypedValue();
-        if (ta.getValue(R.styleable.SegmentedButtonGroup_divider, value))
+        if (ta.getValue(R.styleable.SegmentedButtonGroup_sbg_divider, value))
         {
             if (value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_STRING)
             {
@@ -333,7 +333,7 @@ public class SegmentedButtonGroup extends LinearLayout
                 // Loading drawable TypedArray.getDrawable or doing TypedArray.getResourceId fixes the problem
                 if (isInEditMode())
                 {
-                    setDivider(ta.getDrawable(R.styleable.SegmentedButtonGroup_divider), dividerWidth, dividerRadius,
+                    setDivider(ta.getDrawable(R.styleable.SegmentedButtonGroup_sbg_divider), dividerWidth, dividerRadius,
                         dividerPadding);
                 }
                 else
@@ -355,10 +355,10 @@ public class SegmentedButtonGroup extends LinearLayout
             }
         }
 
-        int selectionAnimationInterpolator = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationInterpolator,
+        int selectionAnimationInterpolator = ta.getInt(R.styleable.SegmentedButtonGroup_sbg_selectionAnimationInterpolator,
             ANIM_INTERPOLATOR_FAST_OUT_SLOW_IN);
         setSelectionAnimationInterpolator(selectionAnimationInterpolator);
-        selectionAnimationDuration = ta.getInt(R.styleable.SegmentedButtonGroup_selectionAnimationDuration, 500);
+        selectionAnimationDuration = ta.getInt(R.styleable.SegmentedButtonGroup_sbg_selectionAnimationDuration, 500);
 
         // Recycle the typed array, required once done using it
         ta.recycle();

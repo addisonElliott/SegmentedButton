@@ -88,16 +88,16 @@ android {
     android:layout_margin="4dp"
     android:elevation="2dp"
     android:background="@color/white"
-    app:borderColor="@color/orange_700"
-    app:borderWidth="1dp"
-    app:divider="@color/orange_700"
-    app:dividerPadding="10dp"
-    app:dividerWidth="1dp"
-    app:position="0"
-    app:radius="30dp"
-    app:ripple="true"
-    app:rippleColor="@color/green_800"
-    app:selectedBackground="@color/green_900">
+    app:sbg_borderColor="@color/orange_700"
+    app:sbg_borderWidth="1dp"
+    app:sbg_divider="@color/orange_700"
+    app:sbg_dividerPadding="10dp"
+    app:sbg_dividerWidth="1dp"
+    app:sbg_position="0"
+    app:sbg_radius="30dp"
+    app:sbg_ripple="true"
+    app:sbg_rippleColor="@color/green_800"
+    app:sbg_selectedBackground="@color/green_900">
 
     <com.addisonelliott.segmentedbutton.SegmentedButton
         android:layout_width="0dp"
@@ -105,11 +105,11 @@ android {
         android:layout_weight="1"
         android:fontFamily="@font/aniron"
         android:padding="10dp"
-        app:drawable="@drawable/ic_aragorn"
-        app:drawableGravity="top"
-        app:selectedTextColor="@color/orange_700"
-        app:text="Aragorn"
-        app:textColor="@color/black" />
+        app:sb_drawable="@drawable/ic_aragorn"
+        app:sb_drawableGravity="top"
+        app:sb_selectedTextColor="@color/orange_700"
+        app:sb_text="Aragorn"
+        app:sb_textColor="@color/black" />
 
     <com.addisonelliott.segmentedbutton.SegmentedButton
         android:layout_width="0dp"
@@ -117,11 +117,11 @@ android {
         android:layout_weight="1"
         android:fontFamily="@font/aniron"
         android:padding="10dp"
-        app:drawable="@drawable/ic_gimli"
-        app:drawableGravity="top"
-        app:selectedTextColor="@color/grey_600"
-        app:text="Gimli"
-        app:textColor="@color/black" />
+        app:sb_drawable="@drawable/ic_gimli"
+        app:sb_drawableGravity="top"
+        app:sb_selectedTextColor="@color/grey_600"
+        app:sb_text="Gimli"
+        app:sb_textColor="@color/black" />
 
     <com.addisonelliott.segmentedbutton.SegmentedButton
         android:layout_width="0dp"
@@ -129,11 +129,11 @@ android {
         android:layout_weight="1"
         android:fontFamily="@font/aniron"
         android:padding="10dp"
-        app:drawable="@drawable/ic_legolas"
-        app:drawableGravity="top"
-        app:selectedTextColor="@color/yellow_200"
-        app:text="Legolas"
-        app:textColor="@color/black" />
+        app:sb_drawable="@drawable/ic_legolas"
+        app:sb_drawableGravity="top"
+        app:sb_selectedTextColor="@color/yellow_200"
+        app:sb_text="Legolas"
+        app:sb_textColor="@color/black" />
 </com.addisonelliott.segmentedbutton.SegmentedButtonGroup>
 ```
 
@@ -156,55 +156,55 @@ Check out the [sample project](https://github.com/addisonElliott/SegmentedButton
 
 ### SegmentedButtonGroup
 
-| Attribute                          | Format            | Description                                                                |
-| ---------------------------------- | ----------------- | -------------------------------------------------------------------------- |
-| android:background                 | `drawable\|color` | Set background for every button when unselected (default: transparent)     |
-| app:selectedBackground             | `drawable\|color` | Set background for every button when selected (default: transparent)       |
-| app:borderWidth                    | `dimension`       | Width of border around button group                                        |
-| app:borderColor                    | `color`           | Color of border                                                            |
-| app:borderDashWidth                | `dimension`       | Width of dashes, 0 indicates solid line                                    |
-| app:borderDashGap                  | `dimension`       | Width of gaps in dashes                                                    |
-| app:selectedBorderWidth            | `dimension`       | Width of border around selected button in group                            |
-| app:selectedBorderColor            | `color`           | Color of border for selected button in group                               |
-| app:selectedBorderDashWidth        | `dimension`       | Width of dashes for selected button in group, 0 indicates solid line       |
-| app:selectedBorderDashGap          | `dimension`       | Width of gaps in dashes for selected button in group                       |
-| app:radius                         | `dimension`       | Radius of corners for button group                                         |
-| app:selectedButtonRadius           | `dimension`       | Radius of corners for selected button in group                             |
-| app:position                       | `integer`         | Default button that is selected                                            |
-| app:draggable                      | `boolean`         | Whether or not buttons can be dragged to change selected state             |
-| app:ripple                         | `boolean`         | Whether or not ripple effect is enabled for all buttons                    |
-| app:rippleColor                    | `color`           | Ripple effect tint color for each button                                   |
-| app:divider                        | `drawable\|color` | Drawable or color to display for divider between buttons                   |
-| app:dividerWidth                   | `dimension`       | Width of the divider between buttons, 0 indicates no dividers              |
-| app:dividerRadius                  | `dimension`       | Corner radius for divider to round edges                                   |
-| app:dividerPadding                 | `dimension`       | Divider padding on top and bottom of divider                               |
-| app:selectionAnimationDuration     | `integer`         | Duration in ms for change button selection animation                       |
-| app:selectionAnimationInterpolator | `enum`            | Type of animation used for changing button. Valid options are listed below |
+| Attribute                              | Format            | Description                                                                |
+| ---------------------------------------| ----------------- | -------------------------------------------------------------------------- |
+| android:background                     | `drawable\|color` | Set background for every button when unselected (default: transparent)     |
+| app:sbg_selectedBackground             | `drawable\|color` | Set background for every button when selected (default: transparent)       |
+| app:sbg_borderWidth                    | `dimension`       | Width of border around button group                                        |
+| app:sbg_borderColor                    | `color`           | Color of border                                                            |
+| app:sbg_borderDashWidth                | `dimension`       | Width of dashes, 0 indicates solid line                                    |
+| app:sbg_borderDashGap                  | `dimension`       | Width of gaps in dashes                                                    |
+| app:sbg_selectedBorderWidth            | `dimension`       | Width of border around selected button in group                            |
+| app:sbg_selectedBorderColor            | `color`           | Color of border for selected button in group                               |
+| app:sbg_selectedBorderDashWidth        | `dimension`       | Width of dashes for selected button in group, 0 indicates solid line       |
+| app:sbg_selectedBorderDashGap          | `dimension`       | Width of gaps in dashes for selected button in group                       |
+| app:sbg_radius                         | `dimension`       | Radius of corners for button group                                         |
+| app:sbg_selectedButtonRadius           | `dimension`       | Radius of corners for selected button in group                             |
+| app:sbg_position                       | `integer`         | Default button that is selected                                            |
+| app:sbg_draggable                      | `boolean`         | Whether or not buttons can be dragged to change selected state             |
+| app:sbg_ripple                         | `boolean`         | Whether or not ripple effect is enabled for all buttons                    |
+| app:sbg_rippleColor                    | `color`           | Ripple effect tint color for each button                                   |
+| app:sbg_divider                        | `drawable\|color` | Drawable or color to display for divider between buttons                   |
+| app:sbg_dividerWidth                   | `dimension`       | Width of the divider between buttons, 0 indicates no dividers              |
+| app:sbg_dividerRadius                  | `dimension`       | Corner radius for divider to round edges                                   |
+| app:sbg_dividerPadding                 | `dimension`       | Divider padding on top and bottom of divider                               |
+| app:sbg_selectionAnimationDuration     | `integer`         | Duration in ms for change button selection animation                       |
+| app:sbg_selectionAnimationInterpolator | `enum`            | Type of animation used for changing button. Valid options are listed below |
 
 ### SegmentedButton
 
-| Option Name                     | Format            | Description                                                                  |
-| ------------------------------- | ----------------- | ---------------------------------------------------------------------------- |
-| android:background              | `drawable\|color` | Set background for button when unselected (default: transparent)             |
-| app:selectedBackground          | `drawable\|color` | Set background for button when selected (default: transparent)               |
-| app:rounded                     | `boolean`         | Whether or not the button is rounded.<br />**Note:** This is used to round **BOTH** sides of a button. The typical use case is for rounded buttons with a transparent background.                                        |
-| app:rippleColor                 | `color`           | Ripple effect tint color when user taps on button                            |
-| app:drawable                    | `drawable`        | Drawable to display                                                          |
-| app:drawablePadding             | `dimension`       | Padding between drawable and text                                            |
-| app:drawableTint                | `color`           | Tint color for drawable when unselected                                      |
-| app:selectedDrawableTint        | `color`           | Tint color for drawable when selected                                        |
-| app:drawableWidth               | `dimension`       | Width of drawable (default uses intrinsic)                                   |
-| app:drawableHeight              | `dimension`       | Height of drawable (default uses intrinsic)                                  |
-| app:drawableGravity             | `enum`            | Determines where drawable should be placed in relation to the text. Valid options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                                                     |
-| app:text                        | `string`          | Text to display on button                                                    |
-| app:textColor                   | `color`           | Color of text when button is unselected                                      |
-| app:selectedTextColor           | `color`           | Color of text when button is selected                                        |
-| app:textSize                    | `dimension`       | Font size of text                                                            |
-| android:fontFamily              | `font`            | Font for displaying text                                                     |
-| app:textStyle                   | `flag`            | Text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC` |
-| app:selectedTextStyle           | `flag`            | Selected text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC`
-| app:linesCount                  | `int`             | Maximum lines count, multiline by default, works with not-none ellipsize type|
-| android:ellipsize               | `enum`            | Ellipsize type, can be `none`, `start`, `middle`, `end`, `marquee`, none by default
+| Option Name                 | Format            | Description                                                                                                                                                                       |
+| ----------------------------| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| android:background          | `drawable\|color` | Set background for button when unselected (default: transparent)                                                                                                                  |
+| android:fontFamily          | `font`            | Font for displaying text                                                                                                                                                          |
+| android:ellipsize           | `enum`            | Ellipsize type, can be `none`, `start`, `middle`, `end`, `marquee`, none by default                                                                                               |
+| app:sb_selectedBackground   | `drawable\|color` | Set background for button when selected (default: transparent)                                                                                                                    |
+| app:sb_rounded              | `boolean`         | Whether or not the button is rounded.<br />**Note:** This is used to round **BOTH** sides of a button. The typical use case is for rounded buttons with a transparent background. |
+| app:sb_rippleColor          | `color`           | Ripple effect tint color when user taps on button                                                                                                                                 |
+| app:sb_drawable             | `drawable`        | Drawable to display                                                                                                                                                               |
+| app:sb_drawablePadding      | `dimension`       | Padding between drawable and text                                                                                                                                                 |
+| app:sb_drawableTint         | `color`           | Tint color for drawable when unselected                                                                                                                                           |
+| app:sb_selectedDrawableTint | `color`           | Tint color for drawable when selected                                                                                                                                             |
+| app:sb_drawableWidth        | `dimension`       | Width of drawable (default uses intrinsic)                                                                                                                                        |
+| app:sb_drawableHeight       | `dimension`       | Height of drawable (default uses intrinsic)                                                                                                                                       |
+| app:sb_drawableGravity      | `enum`            | Determines where drawable should be placed in relation to the text. Valid options are `Gravity.LEFT`, `Gravity.TOP`, `Gravity.RIGHT`, and `Gravity.BOTTOM`                        |
+| app:sb_text                 | `string`          | Text to display on button                                                                                                                                                         |
+| app:sb_textColor            | `color`           | Color of text when button is unselected                                                                                                                                           |
+| app:sb_selectedTextColor    | `color`           | Color of text when button is selected                                                                                                                                             |
+| app:sb_textSize             | `dimension`       | Font size of text                                                                                                                                                                 |
+| app:sb_textStyle            | `flag`            | Text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC`                                                                                                      |
+| app:sb_selectedTextStyle    | `flag`            | Selected text style, can be `Typeface.NORMAL`, `Typeface.BOLD`, and `Typeface.ITALIC`                                                                                             |
+| app:sb_linesCount           | `int`             | Maximum lines count, multiline by default, works with not-none ellipsize type                                                                                                     |
 
 **All layout attributes have a corresponding function in Java that can be called to change programatically. See Javadocs of source code for more information.**
 
@@ -223,7 +223,7 @@ Check out the [sample project](https://github.com/addisonElliott/SegmentedButton
 - linearOutSlowIn
 - overshoot
 
-These animations can be set using the attribute noted above like so: `app:selectionAnimationInterpolator="bounce"`.
+These animations can be set using the attribute noted above like so: `app:segmentedButtonGroup_selectionAnimationInterpolator="bounce"`.
 
 ## Support
 
